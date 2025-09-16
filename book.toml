@@ -1,0 +1,15 @@
+[book]
+authors = ["CSC 203 Instructors at Cal Poly"]
+language = "en"
+src = "src"
+title = "Cal Poly CSC 203 Lecture notes"
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output]
+
+[output.html]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
