@@ -1,0 +1,550 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Inheritance and equality - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="inheritance-and-equality"><a class="header" href="#inheritance-and-equality">Inheritance and equality</a></h1>
+<h2 id="plain-old-inheritance"><a class="header" href="#plain-old-inheritance">Plain old inheritance</a></h2>
+<p>So far, we have seen two ways of using polymorphism in Java: interfaces and abstract classes.
+In this lesson we will (briefly) talk about "plain old inheritance".</p>
+<p>In short: it is possible for "regular old classes" to be <code>extend</code>ed by other classes.
+For example, we could have...</p>
+<pre><code class="language-java">public class A extends B {
+  private int var1;
+
+  public A(int var1, int var2) {
+    super(var2); // Just like abstract classes, we need to invoke the super constructor
+    this.var1 = var1;
+  }
+}
+</code></pre>
+<p>...but unlike the examples about abstract classes, <code>class B</code> is a class <em>in its own right</em>.
+It represents an abstraction that can also be used to create objects.</p>
+<p>On the other hand, abstract classes help us to avoid code duplication and help us root shared behaviours in a common type, but we cannot create objects from abstract classes.</p>
+<p>A common example of this type of inheritance is GUI component libraries.
+For example, the Android development framework provides a bunch of classes that can be used for various frontend components, like <code>Button</code>, <code>TextArea</code>, or <code>ListView</code>.</p>
+<p>All of these classes are usable components in their own right, and can be used to create objects.
+However, it's likely that an Android app developer would want to create their own specialised versions of these components.
+For example, they may want to create a <code>TextArea</code> that has line numbers.
+To do that, they might create a class like:</p>
+<pre><code class="language-java">public class LineNumberTextArea extends TextArea {
+  ...
+}
+</code></pre>
+<p><strong>You've already seen plain old inheritance through the <code>Object</code> class.</strong></p>
+<p>In the lesson on <a href="../05-method-dispatch/">method dispatch</a>, we saw the following line of code.</p>
+<pre><code class="language-java">Object obj = new Object();
+</code></pre>
+<p>The fact that we were able to initialise the <code>obj</code> variable using the <code>Object</code> constructor should tell you that <code>Object</code> is <em>not</em> an abstract class.
+And, as we know, all reference types <code>extend</code> the <code>Object</code> class, and can inherit or override <code>Object</code>'s behaviours.</p>
+<p>Below are two methods defined in the <code>Object</code> class that are commonly overridden in subclasses. (There are more, but these two are relevant for this discussion.)</p>
+<ul>
+<li><code>public String toString()</code>: Computes and returns a <code>String</code> representation of the object. For the <code>Object</code> class, this simply returns the object's hash code (an unique-as-far-as-possible integer representing the object). This (not super useful) behaviour will be inherited by a subclass unless the subclass overrides it by writing its own <code>toString</code> method.</li>
+<li><code>public boolean equals(Object other)</code>: Checks if this <code>Object</code> (the calling object) is logically equal to the <code>other</code> object. For the <code>Object</code> class, this method checks if they are the same object (i.e., it is the same as using the <code>==</code> operator). If a subclass wants to define a more useful <code>equals</code> method, it must override it.</li>
+</ul>
+<h2 id="tostring"><a class="header" href="#tostring"><code>toString</code></a></h2>
+<p>The <code>Object</code> class defines a <code>toString</code> method whose job it is to return a short, human friendly string representation of the object.
+For a plain old <code>Object</code> which is almost never used directly by developers, this <code>toString</code> method simply returns the object's hash code, which itself is simply an integer representation of the object's memory address, unless you override it yourself, <a href="../12-hashcode/">which you should</a>.
+The <code>Object</code> has no other distinguishing features, so there's not much more to say about it.</p>
+<p><strong>You should always override <code>toString</code> when you write your own classes.</strong> It's often useful to have a <code>toString</code> method for your own classes.
+It brings a number of conveniences.</p>
+<ol>
+<li>You can simply "print" an object's info by giving the object as an argument to <code>System.out.print</code>. The <code>print</code> method will automatically call <code>toString</code> on whatever its argument is, if its argument is not a <code>String</code>. If you don't write a <code>toString</code> method, the runtime will simply move up the type hierarchy until it finds a <code>toString</code> method, and call that instead.<sup class="footnote-reference" id="fr-polymorphism-1"><a href="#footnote-polymorphism">1</a></sup></li>
+<li>When you give your object a <code>toString</code> method, you "buy into" a larger ecosystem of libraries.</li>
+</ol>
+<p>For example, suppose you've created your own custom linked list class, called <code>MyLinkedList</code>.
+For simplicity, let's say the list contains integers, and you are performing some complex operations on this linked list.</p>
+<p>You will hopefully be writing tests to check that your list functions are behaving as expected. E.g., you might write something like this:</p>
+<pre><code class="language-java">// Expected value is a list like 1 --&gt; 2 --&gt; 3
+MyLinkedList expected = new MyLinkedList(new Node(1, new Node(2, new Node(3, null)));
+MyLinkedList actual = .... // Assume you have called some complex function here that returns a list
+assertEquals(expected, actual);
+</code></pre>
+<p>If your test passes, all well and good.
+However, if your test fails, you're going to see an error message like this:</p>
+<pre><code class="language-txt">Expected: MyLinkedList@eb2184
+Actual: MyLinkedList@ai02481
+</code></pre>
+<p>The JUnit failure message for <code>assertEquals</code> automatically uses the object's <code>toString</code> method to communicate the expected value and actual values to the user.
+If you do not write a <code>toString</code> method, you're going to get the gibberish above.</p>
+<p>If you <em>do</em> write a <code>toString</code> method, you will get much nicer error messages in JUnit.
+For example, assuming you wrote a <code>toString</code> method that prints out each node's value with an arrow between them, you would see the following:</p>
+<pre><code class="language-txt">Expected: 1 --&gt; 2 --&gt; 3
+Actual: 3 --&gt; 2 --&gt; 1
+</code></pre>
+<p>Much easier to interpret!</p>
+<p><strong>In general, IDEs and libraries will use the <code>toString</code> method whenever they need to refer to an object in text output for a human to read.</strong></p>
+<p>Another really important example is the <a href="https://www.jetbrains.com/help/idea/debugging-code.html">debugger in IntelliJ IDEA</a> and most other Java IDEs. When you inspect a variable's value while debugging, the debugger by default displays the result of calling <code>toString</code> on that variable.
+Without a <code>toString</code> method for custom classes, you are just going to be given the Object's default <code>toString</code> which as we've seen above is not very useful.</p>
+<p>For example, consider the image below, reproduced from <a href="https://www.jetbrains.com/help/idea/debug-tool-window.html#sessions">IntelliJ's help docs</a>. In the screenshot, the user is inspecting the <code>this</code> object, which appears to be a <code>Whale</code> object.
+Unfortunately, the <code>Whale</code> in this example does <em>not</em> have a <code>toString</code> method, so the user has to expand the <code>this</code> object to inspect its data.
+If the <code>Whale</code> <em>did</em> have a <code>toString</code>, that value would be printed instead of <code>{Whale@784}</code> (the object's hash code).</p>
+<p><img src="debugger.png" alt="A screenshot of a debugger session. Notice the &#39;Whale@784&#39;." /></p>
+<p>A well-written <code>toString</code> can make this type of debugging go much faster.</p>
+<h3 id="tostring-should-not-have-any-side-effects"><a class="header" href="#tostring-should-not-have-any-side-effects"><code>toString</code> should not have any side-effects!</a></h3>
+<p>This is a <strong>REALLY IMPORTANT</strong> requirement of <code>toString</code> methods. A <code>toString</code> method must <strong>not</strong>, under any circumstances, make changes to an object, or generally have any other effects other than computing and returning a <code>String</code>.</p>
+<p>Because the <code>toString</code> method is implicitly used by so many libraries, it can lead to really subtle and hard-to-track-down bugs if the <code>toString</code> method also causes other effects like mutations, or writing to a file.</p>
+<p>A real example: In Spring 2023, in a java programming assignment, a student was reading data from a file in their <code>toString</code> method.
+Each file read was triggering a "cache miss counter" which counted how many times the file was read.
+This counter was supposed to end up with values within an expected range.
+Imagine their surprise when the program worked differently when it was run in debug mode vs. regular mode vs. test mode!
+Each use of <code>toString</code> (whether the student called it themselves or not) caused the counter to trigger — this means that, in addition to normal circumstances, the counter got triggered when a JUnit test case tried to display results, and when the student tried debug their program using the debugger.</p>
+<p>The act of using the debugger was itself manifesting the bug the student was trying to track down. What a nightmare!</p>
+<h2 id="equals"><a class="header" href="#equals"><code>equals</code></a></h2>
+<p>Next up, we will talk about the <code>equals</code> method in Java.
+All the way in the <a href="../01-intro-java/">first lesson</a>, we talked about how reference types (i.e., objects) must <em>not</em> be checked for equality using the <code>==</code> operator.
+We must instead use the <code>.equals</code> method.</p>
+<p>The <code>Object</code> class provides an <code>equals</code> method that all classes inherit, unless they write their own <code>equals</code> method.
+This "fallback" <code>equals</code> method does the same check as <code>==</code> — it checks if two variables' memory addresses are the same.
+That is, it checks if they both point to the same object.</p>
+<p>Like we've seen, this is not super useful. We can write our own <code>equals</code> method.</p>
+<p>The <code>equals</code> method in the <code>Object</code> class has the signature: <code>public boolean equals(Object other)</code>. Notice that it takes an <em><code>Object</code></em> as a parameter—it has to, because as far as <code>Object</code> is concerned, no other classes exist.</p>
+<p>This means that when we override <code>equals</code> in a subclass, even the subclass's <code>equals</code> method needs to take an <code>Object</code> as a parameter.</p>
+<p>Every <code>equals</code> method must do the following checks.</p>
+<ol>
+<li>Check if the incoming object is <code>null</code>. If it is <code>null</code>, then we cannot be equal to it, so return <code>false</code> and quit.
+<ul>
+<li>This step is necessary because we need the object to actually exist in order to check its type.</li>
+</ul>
+</li>
+<li>Check if the incoming object has the same type as our <code>this</code> object. If it does not, then we cannot be equal to it, so return <code>false</code> and quit.
+<ul>
+<li>This step is necessary because we need the types to match to be able to cast the incoming object to the <code>this</code> object's type. Because the parameter type is declared to be <code>Object</code>, you can call any <code>equals</code> with pretty much <em>any</em> parameter. We don't want nasty runtime errors because of that.</li>
+</ul>
+</li>
+<li>If the types match, cast the incoming object to our type, so that we can access its data.
+<ul>
+<li>This step is needed because we can't access the data we're interested in from the incoming object while its static type is still <code>Object</code>.</li>
+</ul>
+</li>
+<li>Compare the fields you need to compare to determine equality.
+<ul>
+<li>This step is necessary for, well, checking equality.</li>
+</ul>
+</li>
+</ol>
+<p>The <code>equals</code> method is a regrettably clunky bit of tedium baked into the Java language.
+Arguably, only step 4 above is germane to the task of deciding whether two objects are equal — all the other steps are just us fighting with the type and inheritance systems to be able to actually compare the data we want to compare.
+Unfortunately, as described above, all the steps are necessary or we risk runtime exceptions.
+So it goes.</p>
+<p>Luckily, most IDEs can generate an equals method for you if you have a class that contains instance variables.</p>
+<p>See the <code>Person</code> class below for an example.
+It contains two instance variables: <code>name</code> and <code>age</code>, and an <code>equals</code> method that considers two <code>Person</code> objects "equal" if they have equal names and equal ages.</p>
+<p>Use the "Walkthrough" button to see how each check that was described above is carried out.</p>
+<!--{% include casdocs.html url="Person.html" height="700px" %}-->
+<p>
+<div style="width: 100%; margin: auto;">
+  <small>
+    <a href="Person.html" target="_blank">
+      View in new tab
+    </a>
+    &nbsp;and then click <b>Walkthrough</b>.
+  </small>
+  <br/>
+  <object data="Person.html" width="100%" height="700px"></object>
+</div>
+</p>
+<p><strong>You should always write an <code>equals</code> method for any class that you create.</strong>
+Like the <code>toString</code> method, this buys you into a larger set of libraries.
+For example:</p>
+<ul>
+<li>The JUnit <code>assertEquals</code> method uses the <code>equals</code> method to check if its two arguments are equal.</li>
+</ul>
+<pre><code class="language-java">Point a = new Point(2, 3);
+Point b = new Point(2, 3);
+
+assertEquals(a, b);
+</code></pre>
+<p>The <code>assertEquals</code> above is equivalent to doing <code>assertTrue(a.equals(b))</code>.
+That is, <code>assertEquals</code> calls the <code>equals</code> method of the first argument, using the second argument as the input.
+If you do <em>not</em> write an <code>equals</code> method, the test above will fail, because it will be checking <em>sameness</em>, not equality.</p>
+<ul>
+<li>Java collections use the <code>equals</code> method for things like checking if a list contains an object, etc.</li>
+</ul>
+<p>Suppose you had the following <code>List&lt;Person&gt;</code>, and it contained some <code>Person</code> objects.</p>
+<pre><code class="language-java">List&lt;Person&gt; people = List.of(
+   new Person("Joe Bro", 29),
+   new Person("Pooja Ahuja", 31)
+);
+</code></pre>
+<p>Then, suppose in another function, you need to check if <code>"Pooja Ahuja"</code> exists in this list.
+You would use the list's <code>contains</code> function to do this check.</p>
+<pre><code class="language-java">Person pa = new Person("Pooja Ahuja", 31);
+assertTrue(people.list(contains(pa))); // Will this test pass or fail?
+</code></pre>
+<p>The <code>contains</code> method loops over the items in the <code>people</code> list, and checks if each one <code>equals</code> the <code>pa</code> object.
+If you do <em>not</em> give <code>Person</code> an <code>equals</code> method, it will default to inherited <code>equals</code> behaviour, i.e., it will check whether any item in the list is the <em>same</em> object as the one that <code>pa</code> points to.
+This means the test above will fail.</p>
+<p>If you <em>do</em> write an <code>equals</code> method for <code>Person</code>, the <code>contains</code> method does a much more logical check for equality—it checks each person in the <code>people</code> list and returns <code>true</code> if it finds a <code>Person</code> with the same name and age as <code>pa</code>.</p>
+<h2 id="inheritance-and-equality-1"><a class="header" href="#inheritance-and-equality-1">Inheritance and equality</a></h2>
+<p>...or, why we don't use <code>instanceof</code> in the type check of an <code>equals</code> method.</p>
+<p>Notice that in the <code>equals</code> method above, we are doing the type check using <code>this.getClass().equals(other.getClass())</code> and not <code>other instanceof Person</code>.
+The <code>getClass</code> method is inherited from <code>Object</code>, and returns the dynamic type of the calling object.</p>
+<blockquote>
+<p>Comparing the <em>class</em> of two objects lets you do an <em>exact match</em> comparison.
+So if <code>this</code> is a <code>Person</code> object, the boolean expression <code>this.getClass().equals(other.getClass())</code> will be <code>true</code> if and only if <code>other</code> is also a <code>Person</code> object.
+On the other hand, the boolean expression <code>other instanceof Person</code> will be <code>true</code> if <code>other</code> is a <code>Person</code> object or if it is some subtype of <code>Person</code>.</p>
+</blockquote>
+<p>Let's see an example of how this can go wrong.</p>
+<p>Consider the following type hierarchy.</p>
+<ul>
+<li>We have a <code>ClosedFigure</code> that has a <code>location</code>, a getter and setter method for it, and an <code>equals</code> method (two <code>ClosedFigure</code>s are considered equal if they have equal locations).</li>
+<li>We have a <code>Circle</code> that extends <code>ClosedFigure</code> and additionally has a <code>radius</code>. Two <code>Circle</code>s are considered equal if they have equal radii <em>and</em> locations.</li>
+<li>We have a <code>Square</code> that extends <code>ClosedFigure</code> and additionally has a <code>side</code> length. Two <code>Square</code>s are considered equal if they have equal side lengths <em>and</em> locations.</li>
+</ul>
+<p><code>Circle</code> and <code>Square</code> each have their own override of <code>ClosedFigure</code>'s <code>equals</code> method.
+None of these classes are abstract.</p>
+<pre class="mermaid">classDiagram
+   direction LR
+
+   ClosedFigure &lt;-- Circle : extends
+   ClosedFigure &lt;-- Square : extends
+
+   class ClosedFigure {
+      -Point location
+      location() Point
+      moveTo(Point) void
+      toString() String
+      equals(Object) boolean
+   }
+
+   class Circle {
+      -int radius
+      radius() int
+      equals(Object) boolean
+   }
+
+   class Square {
+      -int side
+      side() int
+      equals(Object) boolean
+   }
+</pre>
+<p>Let's take a look at the <code>equals</code> methods for these three classes.</p>
+<h3 id="closedfigure-equals"><a class="header" href="#closedfigure-equals"><code>ClosedFigure</code> <code>equals</code></a></h3>
+<p>The code below shows an <code>equals</code> method for the <code>ClosedFigure</code> class.
+Two <code>ClosedFigure</code>s are considered equal if they have the same location.</p>
+<p>This is pretty standard, just like we saw for the <code>Person</code> example above.</p>
+<pre><code class="language-java">@Override
+public boolean equals(Object other) {
+   if (other == null) {
+      return false;
+   }
+
+   if (getClass().equals(other.getClass())) {
+      return false;
+   }
+
+   return this.location.equals(((ClosedFigure) other).location);
+}
+</code></pre>
+<h3 id="circle-equals"><a class="header" href="#circle-equals"><code>Circle</code> <code>equals</code></a></h3>
+<p>Two <code>Circle</code>s are considered equal if they have the same radii <em>and</em> they have the same location.
+Now, we could easily copy the <code>equals</code> method from above and just add an <code>&amp;&amp;</code> to that last return statement to also check the radii of the circles.
+But that would be code duplication, and we don't want that.</p>
+<p>Instead, since <code>Circle extends ClosedFigure</code>, we can use that inheritance relationship so re-use <code>ClosedFigure</code>'s equals method for the location check (and really, all the other checks except the radius check).</p>
+<p>In the code below, there is no null check or type check—those checks are already being taken care of by the <code>ClosedFigure</code> class.</p>
+<pre><code class="language-java">@Override
+public boolean equals(Object other){
+   return super.equals(other) &amp;&amp; this.radius == ((Circle) other).radius;
+}
+</code></pre>
+<p>The compound boolean expression in the return statement above will "short circuit" if the first condition is <code>false</code>.
+That is, if <code>super.equals(other)</code> is <code>false</code>, the rest of the condition doesn't matter, so it just won't be checked.</p>
+<h3 id="square-equals"><a class="header" href="#square-equals"><code>Square</code> <code>equals</code></a></h3>
+<p>Similarly, the <code>Square</code>'s equals method can be simplified by re-using the <code>equals</code> method from the parent class.</p>
+<pre><code class="language-java">@Override
+public boolean equals(Object other){
+   return super.equals(other) &amp;&amp; this.side == ((Square) other).side;
+}
+</code></pre>
+<h2 id="some-examples"><a class="header" href="#some-examples">Some examples</a></h2>
+<p>Because the <code>ClosedFigure</code> equals method uses <code>getClass</code> for the type check, <a href="../05-method-dispatch/">dynamic dispatch</a> takes care of getting the right class name at run time.</p>
+<p>So even if you created an object like so:</p>
+<pre><code class="language-java">// Create a circle with location and radius
+ClosedFigure fig = new Circle(new Point(2, 2), 10);
+</code></pre>
+<p>If you called <code>fig.getClass()</code>, you would <code>Circle</code> in return, not <code>ClosedFigure</code>.</p>
+<h3 id="example-1"><a class="header" href="#example-1">Example 1</a></h3>
+<pre><code class="language-java">ClosedFigure fig = new Circle(new Point(2, 2), 10);
+Circle fig2 = new Circle(new Point(2, 2), 10);
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>What would <code>fig.equals(fig2)</code> return in the code above?</p>
+</blockquote>
+<p>Here is what happens:</p>
+<ol>
+<li>In the code above, dynamic dispatch would call <code>Circle'</code>s equals method, with <code>fig</code> as the calling object (i.e., <code>this</code>).</li>
+<li><code>Circle</code>'s equals method will in turn call <code>ClosedFigure</code>'s equals method.</li>
+<li>In <code>ClosedFigure</code>'s equals method, we move past the <code>null</code> check, since <code>fig2</code> is not null.</li>
+<li>We also move past the type check, because <code>this.getClass()</code> returns <code>Circle</code>, and <code>other.getClass()</code> also returns <code>Circle</code>, because of dynamic dispatch. Even though we are tracing code in the <code>ClosedFigure</code> class, the <em>calling object</em> is a <code>Circle</code> at run time.</li>
+<li>Since the type check passed, we cast <code>other</code> to a <code>ClosedFigure</code> and check its location. That check will pass, since both locations are <code>(2, 2)</code>.</li>
+<li>Finally, we come back to the <code>Circle</code> class, cast <code>other</code> to a <code>Circle</code> and compare radii.</li>
+</ol>
+<h3 id="example-2"><a class="header" href="#example-2">Example 2</a></h3>
+<p>Suppose in our <code>ClosedFigure</code> class, we had used <code>instanceof</code> instead of <code>getClass</code>. That is, the type check was carried out using <code>other instanceof ClosedFigure</code>.</p>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>Looking at the same example as above, what would the outcome of <code>fig.equals(fig2)</code> be?</p>
+</blockquote>
+<p><strong>There would be no change</strong>. At the moment of the type check, we would check if <code>other instanceof ClosedFigure</code>. <code>other</code> is a <code>Circle</code>, which <em>is a</em> <code>ClosedFigure</code>. So everything is okay, and our type casts go through without a problem.</p>
+<h3 id="example-3"><a class="header" href="#example-3">Example 3</a></h3>
+<p>Finally, think about the following example:</p>
+<pre><code class="language-java">Circle circle = new Circle(new Point(2, 2), 10);
+Square square = new Square(new Point(2, 2), 23);
+
+assertTrue(circle.equals(square));
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>What would outcome of <code>fig.equals(fig2)</code> be? Would it be different using <code>getClass</code> vs. <code>instanceof</code> in the <code>ClosedFigure</code> type check?</p>
+</blockquote>
+<p>Let's trace the call <code>circle.equals(square)</code>.</p>
+<ol>
+<li>First, we call the <code>Circle</code> <code>equals</code> method. That immediately calls the superclass's <code>equals</code> method.</li>
+<li>In the superclass equals method (<code>ClosedFigure::equals</code>), we first check if the argument is <code>null</code>. It is not (<code>square</code> was initialised in this example), so we move on.</li>
+<li>Next, we check the type. Let's think about what happens if we use <code>instanceof</code> here vs. <code>getClass</code>. If the check was <code>other instanceof ClosedFigure</code>: yes, <code>square</code> is an instance of <code>ClosedFigure</code>, because of the inheritance relationship between <code>Square</code> and <code>ClosedFigure</code>. So move past this check.</li>
+<li>Because the type check was good, we do the type-cast. This is also fine.</li>
+<li>The <code>location</code> check also passes, because <code>circle</code> and <code>square</code> are both at the location <code>(2, 2)</code> in this example.</li>
+<li>The <code>ClosedFigure</code> <code>equals</code> method returns <code>true</code>, because all the <code>ClosedFigure</code> stuff was equal! We bounce back to the rest of the <code>Circle</code> <code>equals</code> method.</li>
+<li>Because the <code>super.equals(other)</code> part passed, we check the right-hand-side of the compound <code>&amp;&amp;</code> expression.</li>
+<li><strong>At this point, our code will crash</strong>. We attempt to cast <code>other</code> to a <code>Circle</code>, but <code>other</code> is a <code>Square</code>!</li>
+</ol>
+<p>This mismatch only occurs if in the <code>ClosedFigure</code> equals method, we use <code>instanceof</code> to check the type. The <code>Square</code> <em>is</em> an instance of <code>ClosedFigure</code>, so even though the two objects are of different types, our equality check doesn't quit at that line.
+This is why we use <code>getClass</code> to perform the type check in an <code>equals</code> method.</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>In 99% of cases, you should use <code>instanceof</code> for type-checking in Java (though if you are doing a lot of type-checking yourself, you should step back and consider your object-oriented design). In <code>equals</code> methods, where we need an <em>exact accounting</em> of the differences between two objects, we need to use <code>getClass</code> if we want two objects with the same parent equals method to be treated differently.</p>
+<p>Of course, our other option is to perform the type checks in each subclass in addition to the superclass — if you do that, you can use <code>instanceof</code> as usual, because the equals method will appropriately fail at the subclass's type check.</p>
+<p>You might say that this code duplication is tiresome, but...so is the <code>equals</code> method.</p>
+<hr>
+<ol class="footnote-definition"><li id="footnote-polymorphism">
+<p>This is a good example of polymorphism. The <code>System.out.print</code> method asks for an <code>Object</code> as a parameter. The actual argument its given might be <em>any type</em>, as long as it's a subtype of <code>Object</code>. All the <code>print</code> method cares about is that its input can produce a string representation of itself, i.e., it can call <code>toString</code>. <a href="#fr-polymorphism-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../10_abstract_classes/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../12_hashCode/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../10_abstract_classes/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../12_hashCode/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

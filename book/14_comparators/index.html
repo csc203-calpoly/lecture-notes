@@ -1,0 +1,466 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Comparators - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="comparators"><a class="header" href="#comparators">Comparators</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>This lesson provides more information about <code>Comparator</code>s in Java.
+While conceptually simple, <code>Comparator</code>s are also used here as a vehicle to introduce a number of new concepts and syntaxes that may be unfamiliar.
+Specifically, in this lesson we will:</p>
+<ul>
+<li>Recap what we learned about <code>Comparator</code>s in the previous lesson.</li>
+<li>Learn about <em>lambdas</em>, using <code>Comparator</code>s as a concrete usage example.</li>
+<li>Learn about <em>method references</em>, using <code>Comparator</code>s as a concrete usage example.</li>
+</ul>
+<p>The next lesson will dive into lambdas more deeply and <em>functional interfaces</em> more generally.</p>
+<h2 id="recap"><a class="header" href="#recap">Recap</a></h2>
+<p>In the <a href="../13_comparables/">previous lesson</a>, we learned about the <code>Comparable</code> and <code>Comparator</code> interfaces.
+To recap the main difference between the two:</p>
+<ul>
+<li>The <code>Comparable</code> interface is used to define a "natural ordering" for objects of a given type. If you need to define an ordering for some data type (class) you have created, then you make that class implement the <code>Comparable</code> interface. This allows you to make instances of that class <em>comparable</em> to each other. A class that implements <code>Comparable</code> must implement a <code>compareTo</code> instance method.</li>
+<li>The <code>Comparator</code> interface is used to define orderings for classes that <em>don't</em> have a natural ordering, or to define orderings in addition to a class's natural ordering. This is useful when you are defining a comparison to help solve a particular problem. <code>Comparators</code> are usually not defined as instance methods for the objects being compared.</li>
+</ul>
+<p>We worked with an <code>Album</code> class that had the following fields.
+We'll continue with the same example in this lesson.</p>
+<ul>
+<li><code>String title</code></li>
+<li><code>String artist</code></li>
+<li><code>int year</code></li>
+<li><code>double price</code></li>
+</ul>
+<p>(Assume that we have defined getter methods for all the instance variables above.)</p>
+<p>There are many ways of defining <code>Comparator</code>s in Java.
+We will explore them in this lesson, starting with the most basic (repeated from the previous lesson), and then consider some more convenient alternatives.</p>
+<h2 id="defining-a-comparator-in-a-separate-class"><a class="header" href="#defining-a-comparator-in-a-separate-class">Defining a <code>Comparator</code> in a separate class</a></h2>
+<p>Recall that the <code>Comparator</code> interface defines one abstract method: <code>public int compare(Album a1, Album a2)</code>.</p>
+<p>The simplest way to create a <code>Comparator</code> for <code>Album</code> objects is to create a separate class that implements the <code>Comparator</code> interface.</p>
+<p>Let's consider a comparator that compares albums by their <code>title</code>.</p>
+<pre><code class="language-java">// The Comparator interface only has one abstract method
+public class AlbumTitleComparator implements Comparator&lt;Album&gt; {
+
+  public int compare(Album a1, Album a2) {
+    return a1.getTitle().compareTo(a2.getTitle());
+  }
+}
+</code></pre>
+<p>The <code>Comparator</code> above can be used in functions like <code>Collections.sort</code> like below.
+We create a new instance of the comparator object, and pass that object as a second parameter to the <code>sort</code> function.</p>
+<pre><code class="language-java">List&lt;Album&gt; albums = ...; // Assume this list is populated
+
+Comparator&lt;Album&gt; titleComp = new AlbumTitleComparator();
+Collections.sort(albums, titleComp);
+</code></pre>
+<p>This version of the <code>sort</code> function will now use the specified comparator for the pairwise comparisons during the sorting process.
+As a result, the list of albums will be sorted by the title name in ascending order.</p>
+<p>In essence, we have <em>parameterised</em> the comparison procedure in the <code>sort</code> function, thereby making the <code>sort</code> function more generally usable.
+Because we tell it what comparator to use, the same <code>sort</code> function can be used to sort objects using <em>any ordering we define</em>.
+We only need to define comparators and pass them to the function as parameters.</p>
+<h2 id="lambdas"><a class="header" href="#lambdas">Lambdas</a></h2>
+<p>In the example above, we created a whole new class (<code>AlbumTitleComparator</code>) just to define a single function (the <code>compare</code> function).
+What's more, we created a new instance of the comparator only to pass it to the <code>sort</code> function.
+We never called the <code>compare</code> function ourselves.</p>
+<p>All this to say: all we <em>really</em> care about in that comparator class is the <code>compare</code> function.
+Can we define it separately, instead of wrapping it in a class and creating a new object to hold the function?</p>
+<p>This is where the <em>lambda</em> syntax comes in. Lambdas have the following basic "anatomy":</p>
+<pre><code>(&lt;params&gt;) -&gt; &lt;lambda body&gt;;
+</code></pre>
+<p>{: .callout }
+A lambda is an anonymous function.</p>
+<p>Since the lambda is a function, it has inputs (<code>&lt;params&gt;</code>) and it has a body (<code>&lt;lambda body&gt;</code>).
+But, since it's anonymous, it doesn't have a name.
+And this is okay!
+The <em>writer</em> of a lambda is usually not the one who <em>calls</em> the lambda, so we often don't need to name the function.</p>
+<p>However, we <em>can</em> store the lambda in a variable that has a name, or we can pass lambdas to other functions as parameters.</p>
+<h3 id="writing-a-comparator-using-a-lambda"><a class="header" href="#writing-a-comparator-using-a-lambda">Writing a comparator using a lambda</a></h3>
+<p>With that in mind, let's take a look at what a comparator looks like expressed as a lambda.
+We'll start simple, by defining a comparator that only compares <code>Album</code>s by their <code>title</code>.</p>
+<p>When we create <code>Comparator</code>s, what we're <em>really</em> trying to create is a <code>compare</code> function.
+Lambdas allow us to do that without going through the steps of creating a new class that implements the <code>Comparator</code> interface.
+The key thing is that our compiler still thinks of the resulting comparator as a <code>Comparator</code> object.</p>
+<p>The code below defines a <code>Comparator</code> using the lambda syntax.
+This code is considerably more concise than the previous example — in particular, we don't need to create a new class.
+This <code>titleComp</code> comparator can be used in the same way as the previous example.</p>
+<pre><code class="language-java">Comparator&lt;Album&gt; titleComp = (a1, a2) -&gt; a1.getTitle().compareTo(a2.getTitle());
+</code></pre>
+<p>Let's break down the code above.</p>
+<ul>
+<li><strong><code>Comparator&lt;Album&gt; titleComp</code></strong> — Everything on the left-hand-side of the variable assignment should be familiar. We are declaring a variable of type <code>Comparator&lt;Album&gt;</code> called <code>titleComp</code>. This part is the same whether or not we use the lambda syntax.</li>
+<li>Everything on the right-hand-side of the variable assignment is the <em>lambda</em>. In particular, the lambda represents the <code>compare</code> function.
+<ul>
+<li><strong><code>(a1, a2)</code></strong> — These are the two parameters to the <code>compare</code> function. Observe that we don't need to specify the types of the parameters <code>a1</code> and <code>a2</code>. Because the lambda is being declared as a comparator of <code>Album</code>s, the compiler can infer these types.</li>
+<li><strong><code>-&gt;</code></strong> — This is the separator between the lambda's parameters and the function body.</li>
+<li><strong><code>a1.getTitle().compareTo(a2.getTitle())</code></strong> — This expression<sup class="footnote-reference" id="fr-expression-1"><a href="#footnote-expression">1</a></sup> is the body of the lambda. The expression as a whole evaluates to an <code>int</code>. Remember that the <code>compare</code> function <em>must</em> return an <code>int</code>, so if this expression evaluates to anything but an <code>int</code>, your program won't compile.</li>
+</ul>
+</li>
+</ul>
+<p>In most cases, lambdas are single-line functions that return values.
+If a lambda has only one line, and that line is an expression, there is no need to use the <code>return</code> keyword.
+The value of that expression is returned implicitly.</p>
+<p>We can write same lambda in "long form":</p>
+<pre><code class="language-java">Comparator&lt;Album&gt; titleComp = (Album a1, Album a2) -&gt; {
+  return a1.getTitle().compareTo(a2.getTitle());
+}
+</code></pre>
+<p>By using curly braces in the lambda, we can write functions that include multiple lines.
+This is sometimes necessary, e.g., if you need to write code that uses loops.
+At that point, the lambda starts to look like a "plain old function", and you need to explicitly use the <code>return</code> keyword to return a value.</p>
+<p>The lambdas above can be used in the same way we've already seen.
+For example, if we want to sort a list of albums by title:</p>
+<pre><code class="language-java">List&lt;Album&gt; albums = ...; // Assume this list is populated
+
+// Create the comparator using the lambda syntax
+Comparator&lt;Album&gt; titleComp = (a1, a2) -&gt; a1.getTitle().compareTo(a2.getTitle());
+
+// Pass the comparator to the sort function
+Collections.sort(albums, titleComp);
+</code></pre>
+<p>In the example above, the comparator is a <em>value</em> that is passed to the <code>sort</code> function as a parameter.
+You can write the function without first storing it in the <code>titleComp</code> variable.</p>
+<pre><code class="language-java">Collections.sort(albums, (Album a1, Album a2) -&gt; a1.getTitle().compareTo(a2.getTitle()));
+</code></pre>
+<p>This time we <em>do</em> need to specify the types of <code>a1</code> and <code>a2</code>, because this time the compiler doesn't have clues from which to infer the the types of those parameters.</p>
+<h3 id="more-lambda-examples"><a class="header" href="#more-lambda-examples">More lambda examples</a></h3>
+<h4 id="compare-albums-by-year-an-int"><a class="header" href="#compare-albums-by-year-an-int">Compare albums by year (an <code>int</code>)</a></h4>
+<p>Here is an example comparator that would compare two <code>Album</code>s by <code>year</code>.</p>
+<pre><code class="language-java">Comparator&lt;Album&gt; yearComp = (a1, a2) -&gt; a1.getYear() - a2.getYear();
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>Why does the code above work as a year comparator?</p>
+</blockquote>
+<details>
+<summary>Hint</summary>
+<p>The <code>compare</code> function needs to return a positive integer if <code>a1</code>'s <code>year</code> is greater than <code>a2</code>'s <code>year</code>; a negative number <code>a1</code>'s <code>year</code> is less than <code>a2</code>'s <code>year</code>; and 0 if they are equal. We don't care what the actual returned values are, as long as their signs are correct. Simply subtracting the two years successfully computes such an integer.</p>
+</details>
+<h4 id="compare-albums-by-price-a-double"><a class="header" href="#compare-albums-by-price-a-double">Compare albums by price (a <code>double</code>)</a></h4>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>If we need to compare <code>Album</code>s by <code>price</code>, which is declared as a <code>double</code>, we can't simply compute the difference between the two prices.
+Why do you think this is?</p>
+</blockquote>
+<details markdown="1">
+<summary>Hint</summary>
+[The result of this difference will be a `double`](../02-arithmetic-and-testing/), which does not match the required signature for the `compare` function.
+</details>
+So we _could_ write the function in "long form":
+<pre><code class="language-java">Comparator&lt;Album&gt; priceComp = (a1, a2) -&gt; {
+  if (a1.getPrice() &gt; a2.getPrice()) {
+    return 1; // or any positive integer
+  } else if (a1.getPrice() &lt; a2.getPrice()) {
+    return -1; // or any negative integer
+  } else {
+    return 0;
+  }
+}
+</code></pre>
+<p>Alternatively, the <a href="../03-lists-maps-existing-classes#boxed-primitives">boxed primitive types</a> provide a handy static function meant to do just this.
+The above comparator can be written as:</p>
+<pre><code class="language-java">Comparator&lt;Album&gt; priceComp = (a1, a2) -&gt; Double.compare(a1.getPrice(), a2.getPrice());
+</code></pre>
+<p>The <code>Double.compare</code> function returns a positive number, negative number, or 0, as appropriate for its two given parameters.
+Similarly, other primitive types provide similar static functions, e.g., <code>Long.compare</code>, <code>Float.compare</code>, etc.</p>
+<h2 id="method-references--key-extractors"><a class="header" href="#method-references--key-extractors">Method references / key extractors</a></h2>
+<p>Finally, we can use the <em>method reference</em> or <em>key extractor</em> syntax.</p>
+<p>You already know what <em>methods</em> are in Java.
+You can <em>call</em> or <em>invoke</em> or <em>apply</em> methods on objects.
+For example, <code>obj.someMethod()</code> will call <code>someMethod()</code> on the <code>obj</code> object.</p>
+<p>However, it is also possible to simply "refer to" instance methods in Java, <em>without</em> calling them.
+We do this using the method reference or "key extractor" syntax.</p>
+<p>For example,</p>
+<ul>
+<li>To refer to an instance method on a particular object, you would use: <code>obj::instanceMethodName</code>, where <code>obj</code> is some object you have created, and <code>instanceMethodName</code> is an instance method for that particular object.</li>
+<li>To refer to an instance method for any arbitrary object of a particular type, you would use <code>ClassName::instanceMethodName</code>, where <code>ClassName</code> is the name of a class, and <code>instanceMethodName</code> is an instance method in the class.</li>
+</ul>
+<p>These are useful because sometimes you end up creating lambdas that do nothing but call an existing method on an object.
+In these cases, it's easier and simpler to simply "point to" the method you want to call instead of creating a lambda that takes a parameter and calls an existing named method on that parameter.</p>
+<h3 id="creating-a-comparator-using-a-method-reference"><a class="header" href="#creating-a-comparator-using-a-method-reference">Creating a comparator using a method reference</a></h3>
+<p>The <code>Comparator</code> interface provides a <code>Comparator.comparing</code> static method.
+The <code>Comparator.comparing</code> method takes <strong>a lambda</strong> OR <strong>a method reference</strong> as a parameter.</p>
+<p>If you give it a lambda, you define the lambda to follow the <code>compare</code> function signature.
+You are more-or-less doing what we've already done above.</p>
+<p>If you give it a method reference, you "point to" the method in the class that you want the comparator to use in its comparison, and it uses that method to create a <code>compare</code> function.</p>
+<p>So here's the third and final way in which we can create comparators:</p>
+<pre><code class="language-java">Comparator&lt;Album&gt; titleComp = Comparator.comparing(Album::getTitle);
+</code></pre>
+<p>A few things to notice about the code above:</p>
+<ul>
+<li>There are no parentheses (<code>()</code>) after the <code>getTitle</code>, because we are not <em>calling</em> the method; we are only referring to it.</li>
+<li>We use the key extractor to tell the <code>Comparator.comparing</code> method to create a new <code>Comparator</code> that calls <code>getTitle</code> on each of its parameters, and compares the results.</li>
+<li>It's important that our method reference refers to a method that returns a <code>ComparABLE</code> value (e.g., a <code>String</code>, a primitive type, any class you create that implements <code>Comparable</code>). If the method we refer to returns some type that cannot be compared, then we can't rely on this shorthand, because Java won't know how to compare them.</li>
+</ul>
+<h2 id="chaining-comparators"><a class="header" href="#chaining-comparators">Chaining comparators</a></h2>
+<p>Remember <code>default</code> methods?
+The <code>Comparator</code> defines a bunch of really useful <code>default</code> methods.
+These methods are instance methods that exist on all <code>Comparator</code> objects (just like you've learned about <code>default</code> methods).</p>
+<p>We know that the <code>Comparator</code> interface only defines one abstract method: <code>compare</code>.</p>
+<h3 id="thencomparing"><a class="header" href="#thencomparing"><code>thenComparing</code></a></h3>
+<p>The <code>thenComparing</code> function lets us combine multiple comparators to create "composed" comparators.
+For example, to deal with tie-breakers.</p>
+<p>Suppose we want to compare <code>Album</code>s by <code>artist</code> name, and then for <code>Album</code>s with the same <code>artist</code> name, we want to compare them based on their <code>title</code>.
+We can use the <code>thenComparing</code> function to chain an <strong>artist comparator</strong> and a <strong>title comparator</strong>.
+The result will be a <em>third</em> comparator that is the combination of the previous two.</p>
+<p>Like <code>Comparator.comparing</code>, <code>thenComparing</code> can take either a <strong>lambda</strong> or a <strong>method reference</strong> as a parameter, and returns a <code>Comparator</code> instance.</p>
+<pre><code class="language-java">// Written step-by-step
+Comparator&lt;Album&gt; artistComp = Comparator.comparing(Album::getArtist);
+Comparator&lt;Album&gt; titleComp = Comparator.comparing(Album::getTitle);
+Comparator&lt;Album&gt; artistTitleComp = artistComp.thenComparing(titleComp);
+
+// Written in one statement
+Comparator&lt;Album&gt; artistTitleComp = Comparator.comparing(Album::getArtist).thenComparing(Album::getTitle);
+
+// Sort albums by artist name, and sort by title for albums by the same artist
+Collections.sort(albums, artistTitleComp);
+</code></pre>
+<p>This is a concise and convenient way to quickly chain together multiple comparisons to create complex comparison criteria.
+Because <code>thenComparing</code> returns a <code>Comparator</code>, you can chain together several <code>thenComparing</code> calls.</p>
+<h3 id="reversed"><a class="header" href="#reversed"><code>reversed</code></a></h3>
+<p>Another handy <code>default</code> method on <code>Comparator</code>s is the <code>reversed</code> method.
+It simply reverses the <code>Comparator</code> object on which it is called, and returns a new <code>Comparator</code>.</p>
+<pre><code class="language-java">// Written step-by-step
+Comparator&lt;Album&gt; titleComp = Comparator.comparing(Album::getTitle);
+Comparator&lt;Album&gt; reversed = titleComp.reversed();
+
+// Written in one statement
+Comparator&lt;Album&gt; reversed = Comparator.comparing(Album::getTitle).reversed();
+
+// Sort albums in DESCENDING ORDER of title
+Collections.sort(albums, reversed);
+</code></pre>
+<p>Like <code>thenComparing</code>, <code>reversed</code> also returns a <code>Comparator</code> object.
+This means that calls to <code>reversed</code> and <code>thenComparing</code> can be chained together to create various comparison combinations.</p>
+<blockquote>
+<p><strong>DISCUSS</strong></p>
+<p>How would you use method references, <code>thenComparing</code>, and <code>reversed</code> to sort <code>Album</code>s by <code>year</code> in DESCENDING order, sorting <code>Album</code>s within the same year by <code>artist</code> in ASCENDING order, followed by <code>title</code> in ASCENDING order?</p>
+</blockquote>
+<hr>
+<ol class="footnote-definition"><li id="footnote-expression">
+<p>Recall that an <em>expression</em> is anything that evaluates to a value. <a href="#fr-expression-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../13_comparables/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../15_lambdas/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../13_comparables/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../15_lambdas/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

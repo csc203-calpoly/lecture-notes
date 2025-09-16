@@ -1,0 +1,487 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Lists, maps, and existing classes - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="lists-maps-and-existing-classes"><a class="header" href="#lists-maps-and-existing-classes">Lists, maps, and existing classes</a></h1>
+<blockquote>
+<p>In this lecture we will get a first look at <em>Classes and objects</em> in Java. Following this we'll look at some classes that are available in the Java standard library, specifically <em>Lists</em> and <em>Maps</em>.</p>
+</blockquote>
+<h2 id="objects-and-classes"><a class="header" href="#objects-and-classes">Objects and classes</a></h2>
+<p>A <em>class</em> is the blueprint that defines data each object has and what behaviours it can perform.
+You can create many individual objects using the same class.
+These objects are called <em>instances</em> of the class.</p>
+<p><em>Objects</em> are "boxes" of related pieces of data and behaviours that use those bits of data.</p>
+<p>For example, consider the <a href="https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/String.java"><code>String</code> class</a> in Java.
+If you follow that link, you'll see a lot of comments and other things that will look unfamiliar (at least for these first few weeks).
+But fundamentally, the <code>String</code> class defines the following</p>
+<ul>
+<li>All <code>String</code>s have an array of characters (data).</li>
+<li>All <code>String</code>s have a bunch of actions they can perform using that array of characters (behaviours). For example, they can turn the characters to upper case or lower case, search the array for a specific sub-string of characters, or remove and replace specific characters with other ones.</li>
+</ul>
+<p>The <code>String</code> class, by defining the data and behaviours like the above, allows us to create <code>String</code> <em>objects</em>, each of which has its own array of characters, and its own behaviours it can perform using its array of characters.</p>
+<p>In the figure below, the (super-simplified) <code>String</code> class defines the data (<code>value</code>) and behaviours that all <code>String</code>s should have.
+Then we used that class to create two <em>instances</em> of <code>String</code>, i.e., two objects.
+Each of those objects have their own bit of data called <code>value</code> (in this case, an array of characters), and can perform actions using that <code>value</code>.</p>
+<p><img src="class-object.png" alt="A simplified String class and two example instances" /></p>
+<p>See the example in code:</p>
+<pre><code class="language-java">String firstString = "csc 203";
+String secondString = "Object-oriented Programming";
+</code></pre>
+<p>The two variables <code>firstString</code> and <code>secondString</code> are both made out of the same <code>String</code> class, but they are two different objects, i.e., two distinct <em>instances</em> of the <code>String</code> class.</p>
+<h3 id="instance-methods"><a class="header" href="#instance-methods">Instance methods</a></h3>
+<p>We can tell the objects to perform certain actions. This can be done by using the <em>dot operator</em> (<code>.</code>) and saying the name of the action we want to take.</p>
+<pre><code class="language-java">String firstString = "csc 203";
+String secondString = "Object-oriented Programming";
+
+String firstUpperCased = firstString.toUpperCase();
+</code></pre>
+<p>After the code above runs, the <code>firstUpperCased</code> variable will have the value <code>"CSC 203"</code>, because the <code>toUpperCase</code> action gives back the value of the <code>String</code> with its characters in upper-case.</p>
+<p>These actions can each object can perform are called <em>instance methods</em>.
+Instance methods act on particular objects, or <em>instances</em> of the class.
+Notice that the expression <code>firstString.toUpperCase()</code> is totally unaffected by the value of <code>secondString</code>.
+Hence the name.</p>
+<p><strong>What do you think would be the value of the following expressions?</strong></p>
+<ul>
+<li><code>secondString.toUpperCase()</code></li>
+<li><code>firstString.toUpperCase().toLowerCase()</code></li>
+</ul>
+<h2 id="a-code-example"><a class="header" href="#a-code-example">A code example</a></h2>
+<p>Consider the following class definition. It defines a class that holds data representing a cohort of CS students, and some behaviours that each cohort object can perform using its own data.</p>
+<p>Take some time to study the code below and its accompanying annotations.</p>
+<p>
+<div style="width: 100%; margin: auto;">
+  <small>
+    <a href="CsCohort.html" target="_blank">
+      View in new tab
+    </a>
+    &nbsp;and then click <b>Walkthrough</b>.
+  </small>
+  <br/>
+  <object data="CsCohort.html" width="100%" height="900px"></object>
+</div>
+</p>
+<h2 id="encapsulation-or-information-hiding"><a class="header" href="#encapsulation-or-information-hiding">Encapsulation, or information hiding</a></h2>
+<p>Consider the <code>getYear</code>, <code>setYear</code>, <code>getEnrolled</code>, <code>getRetainedPercent</code>, <code>setRetainedPercent</code> methods above.
+They don't do much beyond getting or setting the values of the appropriate variables.
+These are called <em>getter methods</em> (or <em>accessors</em>) and <em>setter methods</em> (or <em>mutators</em>).
+Because they are marked as <code>public</code> methods, they are visible to other classes, which means other classes can <em>get</em> or <em>set</em> the cohort's <code>year</code> and so on.</p>
+<p>This should raise the question: why did we make the <code>year</code> (and other instance variables) <code>private</code> if we were going to expose access to those variables via <code>public</code> instance methods?</p>
+<p>The answer is <em>encapsulation</em>. When we make our instance variables <code>private</code>, we hide them from the outside world. We gain the following benefits:</p>
+<ul>
+<li><strong>We can prevent mutations for some variables</strong>. For example, notice that <code>enrolled</code> does not have a setter method. We simply do not allow other classes to ever modify the <code>enrolled</code> value, which we could not have done if it was <code>public</code>.</li>
+<li><strong>We can control mutations for some variables.</strong> In the <code>setRetainedPercent</code> method, we are able to perform some validity checks before accepting a new value for the retained percent. Specifically, because this is a percentage, we check that the input value is within the range 0–1.</li>
+<li><strong>Finally, we <em>decouple</em> our class from other classes.</strong> By hiding these bits of information (as opposed to giving unfettered access to the internals of how our <code>CsCohort</code> works), we reduce the potential for <em>coupling</em> between our <code>CsCohort</code> class and other classes in our program.</li>
+</ul>
+<p><strong>What's coupling?</strong> If classes are <em>tightly coupled</em>, they have to change together. Each time one of the classes changes, it will force changes in other classes to accommodate the changes in the first class. When classes are <em>loosely coupled</em>, they are mostly independent. This does not mean they don't work together to make things happen; it just means that internals of the either of the classes can change without the other ever knowing about it.</p>
+<p>Encapsulation helps with this. By defaulting to making our instance variables <code>private</code>, we get a lot more control over the functionality that <code>CsCohort</code> presents to other classes.</p>
+<h2 id="using-existing-classes-in-java"><a class="header" href="#using-existing-classes-in-java">Using existing classes in Java</a></h2>
+<h3 id="using-the-class-that-we-just-created"><a class="header" href="#using-the-class-that-we-just-created">Using the class that we just created</a></h3>
+<p>We can create new instances of the <code>CsCohort</code> class like so:</p>
+<pre><code class="language-java">CsCohort year1 = new CsCohort(2012, 132, .932);
+CsCohort year2 = new CsCohort(2013, 172, .924);
+CsCohort year3 = new CsCohort(2014, 157, .936);
+CsCohort year4 = new CsCohort(2015, 172, .977);
+</code></pre>
+<p>Each of the variables above points to a different object.
+Each object has its own data and its own behaviours that operate on that data.</p>
+<p>Remember the Java memory model.
+Each of those <code>CsCohort</code> variables (<code>year1</code>, <code>year2</code>, <code>year3</code>, <code>year4</code>) are <em>pointing</em> to the objects sitting somewhere else in memory.</p>
+<h3 id="using-other-existing-classes-lists"><a class="header" href="#using-other-existing-classes-lists">Using other existing classes: Lists</a></h3>
+<p>Now that we know what <em>classes</em>, <em>objects</em>, and <em>instance methods</em> are, let's look at some existing classes that are provided by the Java standard library.</p>
+<p>We have already seen one super commonly used class: the <code>String</code> class, which can reasonably be thought of as a <em>data structure</em> whose job it is to store and manipulate sequences of characters.</p>
+<p>In the rest of this lesson, we'll talk about other data structures, specifically <em>lists</em> and <em>maps</em>.</p>
+<h4 id="lists"><a class="header" href="#lists">Lists</a></h4>
+<p>To talk about lists, we first need to talk about arrays.</p>
+<p>Recall from the first lesson that arrays are the most basic type of collection in Java.
+Its key difference from the <em>lists</em> you might be used to from Python is that arrays have <em>fixed sizes</em> and <em>fixed types</em>.</p>
+<p>The <em>fixed type</em> is due to Java's static type system and fondness for (some degree of) type safety. That won't change.</p>
+<p>However, we often do not know upfront how big we're going to need a sequence of data to be.
+Arrays can be limiting in that regard.</p>
+<p>So the Java standard library provides a couple of <em>list</em> implementations that we can use.</p>
+<p><strong><code>ArrayLists</code></strong></p>
+<p>The <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html">ArrayList</a> class is provided in the Java Standard library.
+It is, essentially, a resizable array implementation.
+This means you can dynamically grow and shrink the size of the list by adding items to it or removing items from it.</p>
+<p>See the <code>CompareCohorts</code> class below for examples about how to create and use <code>ArrayLists</code>.</p>
+<p><em>Why would we want to use an <code>ArrayList</code> instead of a regular old array?</em> Easy. Its size can be dynamically changed, which makes it much more flexible.</p>
+<p><em>How does it work?</em> An <code>ArrayList</code> works by keeping track of an array behind the scenes. We call this the <em>backing array</em>. So suppose we declare and initialize an empty <code>ArrayList</code>.
+According to the documentation, Java by default creates a backing array of size 10, even though we haven't added anything to the list as yet.</p>
+<p>For example, we declare the <code>ArrayList</code>:</p>
+<pre><code class="language-java">ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();
+</code></pre>
+<p>And this is our backing array to begin with:</p>
+<div class="table-wrapper"><table><thead><tr><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th></tr></thead><tbody>
+</tbody></table>
+</div>
+<p>Suppose we add ten items to the list.</p>
+<pre><code class="language-java">for (int i = 0: i &lt; 10; i++) {
+    list.add(i);
+}
+</code></pre>
+<p>Our list's backing array now looks like this:</p>
+<div class="table-wrapper"><table><thead><tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th></tr></thead><tbody>
+</tbody></table>
+</div>
+<p><em>What happens when we add an 11th item?</em> In a regular array, that wouldn't be possible. But an <code>ArrayList</code> allows us to do this. Here's how.</p>
+<p>When the backing array becomes full, the <code>ArrayList</code> does the following:</p>
+<ol>
+<li>It creates a <em>new</em> backing array that's double the size of the previous one.</li>
+<li>It transfers all the existing content from the old backing array into the new backing array.</li>
+<li>It then adds the new item that we tried to add, that triggered this process in the first place.</li>
+</ol>
+<p><strong>The backing array is full, and we want to add the number <code>10</code> to the <code>ArrayList</code>.</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th></tr></thead><tbody>
+</tbody></table>
+</div>
+<p><strong>We create a new backing array that's double the size of the old one.</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th></tr></thead><tbody>
+</tbody></table>
+</div>
+<p><strong>We copy the old contents into the new backing array.</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th></tr></thead><tbody>
+</tbody></table>
+</div>
+<p><strong>Finally, we add the newest bit of data to the backing array.</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th><strong>10</strong></th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th><th>\</th></tr></thead><tbody>
+</tbody></table>
+</div>
+<p>The <code>ArrayList</code> abstracts away all of these gory details, allowing us to deal with the list as simply a dynamically sizeable linear sequence of data.</p>
+<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> ($$\theta(1)$$), i.e., it takes the same amount of time no matter how large the list is.</p>
+<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> ($$\theta(n)$$) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
+<p><code>LinkedLists</code></p>
+<p>The other type of list that Java provides is the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html"><code>LinkedList</code></a>. We won't belabour the point here, since you likely studied <code>LinkedLists</code> in the previous class.</p>
+<p>Unlike the <code>ArrayList</code>, the <code>LinkedList</code> is made up of a sequence of objects connected ("linked") by pointers.
+Each item points to the next item, forming a chain of items, i.e., the linked list.</p>
+<p>The <code>LinkedList</code> is used very similarly:</p>
+<pre><code class="language-java">LinkedList&lt;String&gt; list = new LinkedList&lt;&gt;();
+</code></pre>
+<p>It even has mostly the same methods as the <code>ArrayList</code>:</p>
+<ul>
+<li>You can append items to the end of the list using <code>add</code>.</li>
+<li>You can remove items from specified locations using <code>remove(i)</code> (where <code>i</code> is an index number).</li>
+<li>You can get the <code>size</code> of the list, i.e., the number of items in the list.</li>
+<li>You can check if the list contains an item using the <code>contains</code> method.</li>
+<li>You can check if the list is empty by using the <code>isEmpty</code> method.</li>
+</ul>
+<p>So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the worst case for various tasks.</p>
+<div class="table-wrapper"><table><thead><tr><th>Operation</th><th><code>ArrayList</code></th><th><code>LinkedList</code></th></tr></thead><tbody>
+<tr><td>Random access</td><td>$$\theta(1)$$</td><td>$$\theta(n)$$</td></tr>
+<tr><td>Add to end (append)</td><td>$$\theta(n)$$</td><td>$$\theta(1)$$</td></tr>
+<tr><td>Add to arbitrary position</td><td>$$\theta(n)$$</td><td>$$\theta(n)$$ to get to the position<br>$$\theta(1)$$ to add the item</td></tr>
+<tr><td>Remove (from a given position)</td><td>$$\theta(1)$$ to get to the position<br/>$$\theta(n)$$ to remove the item and shift items in the list as appropriate</td><td>$$\theta(n)$$ to get to the position<br/>$$\theta(1)$$ to perform the removal</td></tr>
+<tr><td>Contains</td><td>$$\theta(n)$$</td><td>$$\theta(n)$$</td></tr>
+</tbody></table>
+</div>
+<h3 id="a-note-about-boxed-primitive-types"><a class="header" href="#a-note-about-boxed-primitive-types">A note about "boxed" primitive types</a></h3>
+<p>Creating an <code>ArrayList</code> of integers or floating point values looks like this:</p>
+<pre><code class="language-java">ArrayList&lt;Integer&gt; intList = new ArrayList&lt;&gt;();
+</code></pre>
+<p>What's up with the <code>Integer</code> in the code above? Wasn't the primitive integer type in Java called <code>int</code>?</p>
+<p>In Java, all the primitive types have "boxed" versions of those types.
+I.e., versions in which they masquerade as reference types.
+That is, you will sometimes see:</p>
+<ul>
+<li><code>short</code> referred to as <code>Short</code></li>
+<li><code>int</code> referred to as <code>Integer</code></li>
+<li><code>long</code> referred to as <code>Long</code></li>
+<li><code>double</code> referred to as <code>Double</code></li>
+<li><code>float</code> referred to as <code>Float</code></li>
+<li><code>char</code> referred to as <code>Character</code></li>
+<li><code>boolean</code> referred to as <code>Boolean</code></li>
+<li><code>byte</code> referred to as <code>Byte</code></li>
+</ul>
+<p>Virtually the <em>only</em> use of these "boxed" type names is in data structures like the <code>ArrayList</code> or <code>LinkedList</code>.<sup class="footnote-reference" id="fr-generics-1"><a href="#footnote-generics">1</a></sup>
+But, since they exist, they also hold some useful utility functions for doing things like parsing <code>String</code>s into <code>int</code>s, etc.
+For example, see some of these on the documentation page for <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html"><code>Integer</code></a>.</p>
+<p>So, while code like the following will compile successfully, you will get warnings telling you to use the primitive versions of those type names.</p>
+<pre><code class="language-java">// Do this
+int num = 23;
+
+// Not these
+int num1 = new Integer(23);
+Integer num2 = new Integer(23);
+Integer num3 = 23;
+</code></pre>
+<h2 id="maps"><a class="header" href="#maps">Maps</a></h2>
+<p>Next, we consider <em>maps</em>.
+A <em>map</em> in Java is an object that maps keys to values.
+Each key can map to at most one value, i.e., each key must be unique.</p>
+<p>The map is not unlike the <em>dict</em> structure you may be used to in Python.</p>
+<p>The commonly used map implementation in Java is the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HashMap.html"><code>HashMap</code></a>.</p>
+<p>The <code>HashMap</code> creates a pairing from keys to values, and allows fast (constant time) access to values, provided you have the key.
+This is useful when you need to quickly access individual records in a very large dataset.</p>
+<p>For example, suppose you have a <code>HashMap</code> where the <em>keys</em> are social security numbers (<code>long</code>) and the <em>values</em> are <code>Person</code> objects (assuming we, at some point, created a <code>Person</code> class).</p>
+<p>You can initialise the map like so (notice the use of the "boxed" form of <code>Long</code> below):</p>
+<pre><code class="language-java">HashMap&lt;Long, Person&gt; mapOfPeople = new HashMap&lt;&gt;();
+</code></pre>
+<p>You add records into a map using the <code>put</code> method.</p>
+<pre><code class="language-java">mapOfPeople.put(123, new Person("Joe", "Bro"));
+mapOfPeople.put(987, new Person("Pooja", "Ahuja"));
+</code></pre>
+<p>Assuming you have the <em>key</em>, you can get the <em>value</em> from map using the <code>get</code> method. If the key does not exist in the map, you will get <code>null</code> in return.</p>
+<pre><code class="language-java">mapOfPeople.get(123); // will return Joe Bro
+mapOfPeople.get(987); // will return Pooja Ahuja
+mapOfPeople.get(192); // will return null,
+</code></pre>
+<p>If you try to re-enter the same key, the map will <em>replace</em> whatever was there previously with the new item.</p>
+<pre><code class="language-java">mapOfPeople.put(123, new Person("Joe", "Bro"));
+mapOfPeople.put(987, new Person("Pooja", "Ahuja"));
+
+// Adding using a duplicate key
+// Joe Bro is now replaced by Cody Coderson
+mapOfPeople.put(123, new Person("Cody", "Coderson"));
+</code></pre>
+<p>The <code>HashMap</code> provides the following functionality:</p>
+<ul>
+<li><code>put(key, value)</code></li>
+<li><code>get(key)</code></li>
+<li><code>getOrDefault(key, default)</code> — returns the specified <code>default</code> value instead of <code>null</code> if the <code>key</code> is not in the map</li>
+<li><code>entrySet()</code> — obtains the entire set of entries from the map; this is useful if you need to do things like loop over all the map entries</li>
+<li><code>isEmpty</code> — checks if the map is empty</li>
+<li><code>containsKey(key)</code> — checks if the map contains the specified <code>key</code></li>
+</ul>
+<p>All of the concepts in this section are demonstrated in the <code>CompareCohorts</code> class below:</p>
+<p>
+<div style="width: 100%; margin: auto;">
+  <small>
+    <a href="CompareCohorts.html" target="_blank">
+      View in new tab
+    </a>
+    &nbsp;and then click <b>Walkthrough</b>.
+  </small>
+  <br/>
+  <object data="CompareCohorts.html" style="width: 100%; height: 1000px;"></object>
+</div>
+</p>
+<hr>
+<ol class="footnote-definition"><li id="footnote-generics">
+<p>Or, more generally, in Generic types, which we will get to later this quarter. That is also when we'll talk about <em>why</em> these exist. <a href="#fr-generics-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../02_arithmetic_and_testing/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../04_oop_and_procedural/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../02_arithmetic_and_testing/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../04_oop_and_procedural/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Interfaces - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="interfaces"><a class="header" href="#interfaces">Interfaces</a></h1>
+<blockquote>
+<p>In this lesson, we'll learn:</p>
+<ul>
+<li>About interfaces, the general concept.</li>
+<li>About <code>interface</code>s, the embodiment of that concept in the Java language.</li>
+<li>About how they are useful, using lists as an example.</li>
+<li>About the meaning of <strong>polymorphism</strong>.</li>
+</ul>
+</blockquote>
+<h2 id="what-is-an-interface"><a class="header" href="#what-is-an-interface">What is an interface?</a></h2>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>What does the word "interface" mean to you?</p>
+</blockquote>
+<p>You may have heard the term in various contexts.
+For example, a graphical user interface (GUI) is the "frontend" that a computer application presents to the user, usually with buttons to click, text or images on screen, and information dialogues to convey information.</p>
+<p>An <em>interface</em> is the surface at which two systems interact.
+A <em>system</em> here can be a person, an organization, a computer systems, etc.</p>
+<p>For example, consider the file system on your computer.
+You have data on your computer organised into a hierarchy of files and folders.
+You can interact with this file system using your operating system's file explorer GUI, e.g., the <strong>Finder</strong> app in macOS.
+What you can do is dictated by the behaviours exposed by the interface.
+That is, you can drag-and-drop files to move them, you can right-click on files or folders to copy, paste, rename, or delete them, and so on.</p>
+<p><img src="finder.png" alt="A screenshot of the Finder app in macOS, depicting a home folder." /></p>
+<p>You can also interact with the <em>same</em> underlying system using another interface: the command line.
+The command line exposes the same behaviours and more — again, what you can accomplish is determined by the behaviours exposed by the interface.</p>
+<p><img src="cli.png" alt="A screenshot of the iTerm app in macOS, depicting the contents of a home folder." /></p>
+<p>In both cases, the interfaces above hide many details from you, the user, like the actual organisation of bits and bytes on disk, the permissions system that dictates who can see or use what files, etc.</p>
+<p>Those interfaces are the <em>surface</em> at which the two systems—the user and the file system—interact with each other. Similarly, classes in Java (or, more generally, modules in software systems) expose behaviours that other classes or modules can use to interact with them.</p>
+<h3 id="weve-already-seen-interfaces-in-action"><a class="header" href="#weve-already-seen-interfaces-in-action">We've already seen interfaces in action</a></h3>
+<p>Though there is an <code>interface</code> keyword and program construct in Java, we aren't talking about that just yet.</p>
+<p>Even though we haven't used that word explicitly, we've already been thinking about interfaces.
+When we create classes in Java, we tend to make our instance variables <code>private</code> and we make most of our instance methods <code>public</code>.
+This is us defining the "public surface" of our class, or the "public surface" that instances of that class will expose to other classes that want to interact with them.</p>
+<p>The "public surface" here would include:</p>
+<ul>
+<li><strong>Method signatures for the public instance methods</strong>. I.e., their names, return types, and parameter types. These three give a sense of what the method does, what inputs it expects, and what outputs it will give back.</li>
+<li><strong>Documentation</strong>. Often, there is more detail needed to describe a method's purpose. E.g., simply knowing that a method returns an <code>int</code> doesn't necessarily tell us much about what that <code>int</code> means. There may be preconditions without which the method would not work as expected. There may be postconditions, i.e., effects that method will have that are not necessarily reflected in the returned value (for example, a setter method that mutates an object's state). So we also write documentation that accompanies every public method.<sup class="footnote-reference" id="fr-javadoc-1"><a href="#footnote-javadoc">1</a></sup></li>
+</ul>
+<p>In sum:</p>
+<blockquote>
+<p>The interface of a class exposes <em>what</em> the class does, but not <em>how</em> it does it.</p>
+</blockquote>
+<h2 id="interfaces-in-java"><a class="header" href="#interfaces-in-java">Interfaces in Java</a></h2>
+<p>The <code>interface</code> keyword in Java takes this principle and makes it a language-level construct.
+An <code>interface</code> is a type of limited <code>class</code>. Unlike a class,</p>
+<ul>
+<li>An <code>interface</code> <strong>declares</strong> instance methods, but does not <strong>define</strong> them. That is, it only specifies method signatures, and nothing else.<sup class="footnote-reference" id="fr-default-1"><a href="#footnote-default">2</a></sup></li>
+<li>An <code>interface</code> cannot declare instance variables. This makes sense from two perspectives.
+<ul>
+<li>First, if the <code>interface</code> dictated the available instance variables, it's straying closer to saying <em>how</em> things should be done, i.e., implementation details. This is not the goal of interfaces.</li>
+<li>Second, with no method definitions, there wouldn't be much use for those instance variables.</li>
+</ul>
+</li>
+<li>An <code>interface</code> cannot have constructors, nor can it have any data or behaviour. So, unlike a <code>class</code>, an <code>interface</code> cannot be used as a blueprint from which to create objects.</li>
+<li>An <code>interface</code> <strong><em>can</em></strong> have <code>static</code> variables and <code>static</code> methods.</li>
+</ul>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>Why do you think it's okay for <code>interface</code>s to have <code>static</code> members? Why do you suppose that would be useful?</p>
+</blockquote>
+<p>By omitting all implementation details—like instance variables, and the bodies (definitions) of instance methods—the <code>interface</code> takes the "skeleton" of what a class should be able to do, and places that in a separate Java file.</p>
+<p>Then, you can write a separate Java class that <em>implements</em> an interface by providing implementations for the methods that the <code>interface</code> declared.
+That class can have whatever instance variables it needs for its implementations.</p>
+<blockquote>
+<p>Just like a <code>class</code> can be used as a blueprint from which to create objects, and <code>interface</code> is a blueprint for a <code>class</code>.</p>
+</blockquote>
+<p>Let's look at some examples!</p>
+<h3 id="a-data-structures-example-lists"><a class="header" href="#a-data-structures-example-lists">A data structures example: Lists</a></h3>
+<p>Consider the <strong>List</strong> data structure.
+I don't mean lists in any particular programming language—I just mean the <a href="https://opendsa-server.cs.vt.edu/ODSA/Books/Everything/html/ADT.html">abstract notion</a> of a list.
+Abstractly, we expect lists to support the following basic operations:</p>
+<ul>
+<li><code>get(index): Object</code>: We should be able to get the item at the specified index.</li>
+<li><code>add(item)</code>: We should be able to add an item to the back of the list.</li>
+<li><code>add(index, item)</code>: We should be able to add an item to the specified index in the list.</li>
+<li><code>remove(item): boolean</code>: We should be able to remove the specified item from the list, and tell the user if something was removed or not.</li>
+<li><code>remove(index): Object</code>: We should be able to remove an item from a specified index in the list, and return the item that was removed.</li>
+<li><code>contains(item): boolean</code>: We should be able to check if the list contains the specified item.</li>
+<li><code>size()</code>: We should be able to get the number of items in the list.</li>
+</ul>
+<p>In most cases, we don't actually care <em>how</em> those operations are defined, as long as they accomplish their goals.
+A list is a list regardless of how the operations above are implemented.</p>
+<p>The Java standard library provides the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html"><code>List</code> interface</a> to capture these expected behaviours.
+The Java <code>List</code> declares many more behaviours than what I've said above, but the idea remains the same: it <em>declares</em> the signatures for those methods, and provides documentation describing what the methods should accomplish, but gives no restrictions on how those tasks should be implemented.
+The <code>List</code> interface does this through the use of <em>abstract methods</em>.</p>
+<blockquote>
+<p><strong>Abstract methods</strong> are method declarations without definitions. I.e., they only declare the method signature, but do not include a method body.
+To put it in terms we've been talking about, abstract methods dictate <em>what</em> a <code>List</code> should do, but not <em>how</em> it should do it.</p>
+</blockquote>
+<p>Below is a super-pared-down example of what the <code>List</code> interface might look like.</p>
+<p>
+<div style="width: 100%; margin: auto;">
+  <small>
+    <a href="List.html" target="_blank">
+      View in new tab
+    </a>
+    &nbsp;and then click <b>Walkthrough</b>.
+  </small>
+  <br/>
+  <object data="List.html" width="100%" height="600px"></object>
+</div>
+</p>
+<p>Because the interface contains no data and no behaviour, it cannot be initialised. That is, you cannot do the following:</p>
+<pre><code class="language-java">List myList = new List(); // This will not compile
+</code></pre>
+<p>The left-hand-side of the above statement is okay.
+The right-hand-side will cause a compiler error—you cannot use <code>new</code> to create an instance of an <code>interface</code>, because the interface is just "meta-data". There's nothing there to initialise.</p>
+<h3 id="using-the-list-interface"><a class="header" href="#using-the-list-interface">Using the List interface</a></h3>
+<p>Armed with the interface above, we can create list <em>implementations</em>.
+You have already seen two of them: <code>ArrayList</code> and <code>LinkedList</code>.</p>
+<p>Both those data structures implement the behaviours required by the <code>List</code> interface. The <code>ArrayList</code> uses a backing array to keep track of the list's contents, and the <code>LinkedList</code> uses a chain of nodes and pointers.
+But the "contracts" for the <code>add</code>, <code>remove</code>, <code>contains</code>, and <code>size</code> methods are fulfilled by both implementations.</p>
+<p>A class can use the <code>implements</code> keyword to declare that it is an implementation of an interface.
+The class <em>must</em> contain implementations for all the abstract methods that were declared in the interface.</p>
+<p>For example, here is what the <code>ArrayList</code> class might look like. It declares that it <code>implements</code> the <code>List</code> interface, and once it does so, it <em>must</em> include implementations (i.e., <em>non</em>-abstract, or "concrete" methods) for all the abstract methods that were declared in the interface.</p>
+<pre><code class="language-java">/**
+* This is (clearly) not the actual ArrayList implementation.
+* Just an illustration of what it might look like.
+*/
+public class ArrayList implements List {
+
+  private E[] backingArray;
+  private int size;
+
+  /**
+  * Initialise an empty ArrayList with a capacity for 10 items.
+  */
+  public ArrayList() {
+    this.size = 0;
+    this.backingArray = new E[10];
+  }
+
+  public E get(int index) {
+    return this.backingArray[index];
+  }
+
+  public void add(E e) {
+    // If the list is at capacity, move its contents to a new, bigger
+    // backing array.
+    if (this.size == this.backingArray.length) {
+      E[] newBackingArray = new E[this.backingArray.length * 2];
+
+      // Transfer over all current list items to the new backing array.
+      for (int i = 0; i &lt; this.size; i++) {
+        newBackingArray[i] = this.backingArray[i];
+      }
+      this.backingArray = newBackingArray;
+    }
+
+    // Add the new item to the end of the list.
+    this.backingArray[this.size] = e;
+    this.size++;
+  }
+
+  public void add(int index, E e) {
+    // omitted for brevity
+  }
+
+  public boolean remove(E e) {
+    // omitted for brevity
+  }
+
+  public E remove(int index) {
+    // omitted for brevity
+  }
+
+  public boolean contains(E e) {
+    // omitted for brevity
+  }
+}
+</code></pre>
+<p>The <code>ArrayList</code> and <code>LinkedList</code> classes <em>must</em> contain implementations for all the abstract methods declared in the <code>List</code> interface.
+These implementations can be different from each other.
+In the example above, the <code>ArrayList</code>'s <code>add</code> method contains logic for making sure we stay within the capacity of our backing array.
+The <code>LinkedList</code>'s <code>add</code> method will include a different set of rules for appending to a <code>LinkedList</code>.</p>
+<p>What's important is that all the methods exist and contain the required signatures.
+If any of the methods are omitted (or if the names are misspelled, parameter lists are different, etc.) you will get a compiler error that won't go away until you implement all of the methods.</p>
+<p>The two list implementations <em>can</em> contain:</p>
+<ul>
+<li>Instance variables — these can be different for each class.</li>
+<li>Additional methods — they can (and do) specify additional behaviours in addition to what is required by the <code>List</code> interface.</li>
+</ul>
+<h2 id="the-relationship-between-an-interface-and-its-implementing-subclasses"><a class="header" href="#the-relationship-between-an-interface-and-its-implementing-subclasses">The relationship between an interface and its implementing subclasses</a></h2>
+<p>When a <code>class</code> <code>implements</code> an <code>interface</code>, the class is said to be an <em>implementing subclass</em> of the interface.
+Recall from our lesson on <a href="../05-method-dispatch/">method dispatch</a> that the <code>Object</code> class is the root of the Java type hierarchy.
+All reference types in Java are <em>subtypes</em> or <em>child types</em> of the <code>Object</code> class.</p>
+<p>When we create an <code>interface</code> (say, the <code>List</code> interface), we are introducing that interface into the type hierarchy.
+And when we create implementations of the <code>List</code> interface, we are saying that <code>ArrayList</code> and <code>LinkedList</code> are subtypes of <code>List</code>.</p>
+<blockquote>
+<p>A <code>List</code> <em>is an</em> <code>Object</code>. An <code>ArrayList</code> <em>is a</em> <code>List</code>, and a <code>LinkedList</code> <em>is a</em> <code>List</code>.</p>
+</blockquote>
+<p>Our updated Java type hierarchy now looks like this:<sup class="footnote-reference" id="fr-hierarchy-1"><a href="#footnote-hierarchy">3</a></sup></p>
+<pre class="mermaid">flowchart BT
+  Other[All reference types in Java, including...]
+  Other &amp; Point &amp; String &amp; List --is a--&gt; Object
+  ArrayList &amp; LinkedList --is a--&gt; List
+</pre>
+<p>This means that we can declare and initialise lists like this:</p>
+<pre><code class="language-java">// For example, say we are working with a list of Points
+List&lt;Point&gt; points = new ArrayList&lt;&gt;();
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>What's the <strong>static type</strong> of the <code>points</code> variable above? What's its <strong>dynamic type</strong>? When might we be faced with a situation where its useful or necessary to have these be different?</p>
+</blockquote>
+<h2 id="why-is-this-useful"><a class="header" href="#why-is-this-useful">Why is this useful?</a></h2>
+<p>Recall our <a href="../06-class-design-process/">discussion on coupling and cohesion</a>.
+Our goal is to write <em>cohesive</em> classes that are <em>loosely coupled</em> with each other.
+If classes are tightly coupled, they have to change together, because they depend on each other's implementation details.
+When classes are loosely coupled, they are mostly independent.
+They still work together to enable the system as a whole to function, but it means that a class in a larger system can be modified without other classes noticing, as long as its public interface stays the same.</p>
+<p>Usually, we achieve this by making all the data inside a class <code>private</code>.
+The idea is simple: if we hide internal implementation details (like the instance variables and methods that are only used internally), then other classes <em>can't</em> depend on those implementation details.</p>
+<p>The <code>interface</code> construct in Java codifies this by creating a whole new "type", just for the public interface.</p>
+<p>So for example, suppose you are writing a function in a statistics package that computes a mean from a collection of data.
+You would ideally make your function take a <code>List</code> as a parameter, instead of the more specific <code>ArrayList</code> or <code>LinkedList</code>.</p>
+<pre><code class="language-java">public static double mean(List&lt;Integer&gt; data) {
+  if (data.size() == 0) {
+    return 0.0;
+  }
+
+  int sum = 0;
+  for (int current : data) {
+    sum = sum + current;
+  }
+
+  return sum / data.size();
+}
+</code></pre>
+<p>Some other module that is using this function is now free to use whatever list implementation it wants — the <code>ArrayList</code> or the <code>LinkedList</code>.
+When that module calls your <code>mean</code> function, the input will be a <code>List</code> at compile time, but will be the specific list subtype at run tme.
+Dynamic dispatch will help the runtime figure out whether to call <code>ArrayList</code> methods or <code>LinkedList</code> methods while the program runs.</p>
+<p>This is an example of <strong>polymorphism</strong>. Polymorphism literally means "many forms" — the <code>data</code> variable in the function above can take (one of) many forms at run time.</p>
+<p>Your <code>mean</code> function is <em>decoupled</em> from the specifics of how the other module is handling its data. It can use a <code>LinkedList</code>, an <code>ArrayList</code>, or some newfangled list type that we haven't heard of, as long as it exposes a <code>List</code>-like interface; your function would never know the difference.</p>
+<hr>
+<ol class="footnote-definition"><li id="footnote-javadoc">
+<p>The exact format of that documentation is quite simple and beyond the scope of this lesson. Documentation in Java is written in a format that can be understood by a tool called JavaDoc. JavaDoc can read your comments and generate a web-page containing documentation. For example, <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html">this ArrayList documentation</a> was generated by JavaDoc based on the comments in <a href="https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/ArrayList.java">this Java file</a>. Here is a <a href="https://www.baeldung.com/javadoc">nice concise overview of the JavaDoc format</a> <a href="#fr-javadoc-1">↩</a></p>
+</li>
+<li id="footnote-default">
+<p>This is a temporary simplification. We'll talk about <code>default</code> methods in the next lesson. If you already know about them, allow me this sin of omission for the time being. <a href="#fr-default-1">↩</a></p>
+</li>
+<li id="footnote-hierarchy">
+<p>In reality, there are a few more "intermediate" layers between <code>Object</code> and <code>List</code> — but this gets the point across. We will talk in the next couple of lessons about interfaces that are subtypes of other interfaces. <a href="#fr-hierarchy-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../06_class_design_process/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../08_interfaces_part_2/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../06_class_design_process/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../08_interfaces_part_2/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

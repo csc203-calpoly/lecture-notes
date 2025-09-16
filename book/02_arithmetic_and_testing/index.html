@@ -1,0 +1,366 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Arithmetic and testing - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="arithmetic-and-testing"><a class="header" href="#arithmetic-and-testing">Arithmetic and testing</a></h1>
+<blockquote>
+<p>This brief lesson is about arithmetic in Java.
+In the <a href="../01-intro-to-java/README.html">previous lesson</a>, we learned the different <em>primitive data types</em> in Java, including the numerical data types <code>short</code>, <code>int</code>, <code>long</code>, <code>float</code>, and <code>double</code>.</p>
+</blockquote>
+<p>In this lesson we'll establish some rules of evaluation for expressions involving these types.</p>
+<p>By <em>expression</em>, I mean anything that evaluates to a value. For example <code>3 + 5</code> is an expression that evaluates to the value <code>8</code>. <code>"why are you yelling".toUpperCase()</code> is an expression that evaluates to the value <code>"WHY ARE YOU YELLING"</code>.</p>
+<h2 id="arithmetic-operators"><a class="header" href="#arithmetic-operators">Arithmetic operators</a></h2>
+<p>Ok, so. Arithmetic. We already know a few arithmetic operators:</p>
+<ul>
+<li><code>+</code> for addition</li>
+<li><code>-</code> for subtraction</li>
+<li><code>*</code> for multiplication</li>
+<li><code>/</code> for division</li>
+<li><code>%</code> for modulo division (to obtain the remainder from a division operation)</li>
+</ul>
+<p>All of these are <em>binary operators</em>. This means that each operator works on two <em>operands</em>. So in the expression <code>3 + 5</code>, <code>3</code> and <code>5</code> are operands, and <code>+</code> is the operator.</p>
+<p>Unlike Python, which you learned in CSC 101 and 202, there is no <code>**</code> (exponentiation) or <code>//</code> (floor division) operator.
+The two slashes (<code>//</code>) are reserved for inline comments in Java.</p>
+<h2 id="arithmetic-involving-operands-of-the-same-type"><a class="header" href="#arithmetic-involving-operands-of-the-same-type">Arithmetic involving operands of the same type</a></h2>
+<p><strong>When both operands in a binary expression are of the same type, then the result will also be of that type.</strong></p>
+<p>In the examples below, remember from the <a href="../01_intro_to_java/index.html">previous lesson</a> that when you simply use the literal values <code>5</code> and <code>2</code>, Java treats them as the <code>int</code> type (as opposed to the <code>short</code> or <code>long</code> type).
+So the expressions below are all using <code>int</code> operands.</p>
+<pre><code class="language-java">int addResult = 5 + 2; // 7
+int subResult = 5 - 2; // 3
+int multResult = 5 * 2; // 10
+int modResult = 5 % 2; // 1
+</code></pre>
+<p>So far so good.</p>
+<p>But what if we start playing with division? Consider the expression <code>5 / 2</code>. If we were in a math class, the answer would be <code>2.5</code>, which is certainly not an integer.</p>
+<pre><code class="language-java">int divResult = 5 / 2; // What's the value of divResult?
+</code></pre>
+<p>Open up a terminal window and type <code>jshell</code> and hit enter.</p>
+<p>This will place you in a Java shell, a place where you can run small Java programs, including testing out individual expressions.</p>
+<p>Use <code>jshell</code> to evaluate the expression <code>5 / 2</code>.</p>
+<pre><code class="language-bash">jshell
+jshell&gt; 5 / 2
+$1 ==&gt; 2
+</code></pre>
+<p>You got the result 2!</p>
+<p>However, if we were to divide <code>5.0 / 2.0</code>, we'd get the expected answer.</p>
+<pre><code class="language-bash">jshell&gt; 5.0 / 2.0
+$2 ==&gt; 2.5
+</code></pre>
+<p>Remember that <code>5 / 2</code> is an <code>int / int</code> expression.
+Per our rule above, Java is going to therefore produce an <code>int</code> in return.
+A <code>double / double</code> expression, on the other hand, will result in a value of type <code>double</code>.</p>
+<p>When the result of an integer division in Java is a fractional number (i.e., it has a decimal point), Java simply omits or <em>truncates</em> everything after the decimal point.</p>
+<p>So the value of the expression <code>5 / 2</code> is <code>2</code>.</p>
+<p>Note that simply changing the type of our result variable won't help.</p>
+<pre><code class="language-java">double divResult = 5 / 2; // Answer 2.0
+</code></pre>
+<p>Tracing the code above, it does the following:</p>
+<ul>
+<li>Evaluate <code>5 / 2</code> using the rules we talked about, getting the <code>int</code> result <code>2</code>.</li>
+<li>See that <code>divResult</code> is declared as a <code>double</code>, which means it cannot store the <code>int</code> value <code>2</code>.</li>
+<li><em>Implicitly convert</em> the result <code>2</code> into a <code>double</code>, getting the value <code>2.0</code>, and store that instead.</li>
+</ul>
+<p>So how would we get the answer <code>2.5</code> by dividing <code>5</code> and <code>2</code>?</p>
+<h2 id="arithmetic-involving-operands-of-different-types"><a class="header" href="#arithmetic-involving-operands-of-different-types">Arithmetic involving operands of different types</a></h2>
+<p>If you used two different types in an arithmetic expression, the result takes the "more precise" type.</p>
+<p>If, instead of dividing two <code>ints</code>, you divided an <code>int</code> and a <code>double</code>, you would get a <code>double</code> in return.
+Because at least one operand is using the <em>more precise</em> type, the result will default to that more precise type.</p>
+<p>The expression below, <code>5 / 2.0</code> is a <code>int / double</code> expression.
+So the result will be a <code>double</code>, which is the more precise data type of the two.</p>
+<pre><code class="language-java">double mixedDiv = 5 / 2.0; // Answer: 2.5
+</code></pre>
+<p>The same goes for using the different <em>integer types</em>.</p>
+<p>Remember that both <code>int</code> and <code>long</code> are integer data types.
+If you add an <code>int</code> and a <code>long</code> (or perform any operation between an <code>int</code> and a <code>long</code>), you'll get a <code>long</code> in return.
+This is because the <code>long</code> is the more precise type (it takes up more memory, allowing for a larger range of numbers).</p>
+<pre><code class="language-java">long longAdd = 5 + 8L; // Will get the value 13 as a long
+</code></pre>
+<p>Attempting to store the result above in an <code>int</code> will result in a compiler error.</p>
+<pre><code class="language-java">int add = 5 + 8L; // Error: incompatible types: possible lossy conversion from long to int
+</code></pre>
+<p>And this makes sense. Suppose we evaluated the expression <code>5 + 2147483647L</code> (5 plus the maximum possible <code>int</code> value). We cannot possibly the store result in an <code>int</code> variable—it's too big!</p>
+<h2 id="type-casting"><a class="header" href="#type-casting">Type casting</a></h2>
+<p>Finally, you can tell your compiler to treat certain values as other types instead of their own types.
+This is known as <em>type-casting</em>.
+You are "casting" or converting a specific value into another type.</p>
+<p>A type-cast is performed by typing the name of the type you want to convert <em>to</em> in parentheses before the value you want to convert.</p>
+<pre><code class="language-java">int basicInt = 5;
+double nowItsADouble = (double) basicInt; // becomes 5.0
+</code></pre>
+<p>You can also lose data this way!</p>
+<pre><code class="language-java">double basicDouble = 5.2;
+int nowItsAnInt = (int) basicDouble; // becomes 5; you lost the .2
+</code></pre>
+<p>Type-casting can be used when you have two integer values that you need to divide, but you need a precise result.</p>
+<pre><code class="language-java">int a = 132;
+int b = 25;
+
+double result = (double) a / b; // The result is 5.28
+</code></pre>
+<p>Tracing the code above, the following takes place:</p>
+<ul>
+<li>First, the expression <code>(double) a / b</code> needs to be evaluated. It is made up of two sub-expressions: <code>(double) a</code> and <code>b</code>.</li>
+<li>We evaluate the expression <code>(double) a</code>. The value of <code>a</code> is <code>132</code>, so applying the type-cast to 132, we get <code>132.0</code>.</li>
+<li>The sub-expression <code>b</code> evaluates to <code>25</code>.</li>
+<li>We are now ready to evaluate the overall expression <code>132.0 / 25</code>, and we get the value <code>5.28</code>.</li>
+</ul>
+<p>In the example above, <code>a</code> was cast to a <code>double</code> before performing the division.
+So it became a <code>double / int</code> operation, giving a <code>double</code> back as a result.</p>
+<p><strong>Type-casting is a unary operation.</strong></p>
+<p>Unlike the arithmetic operators we saw earlier, which were <em>binary operators</em> (i.e., they applied to 2 operands), type-casting is a <em>unary operator</em>. It applies to <em>only one operand</em>.</p>
+<p>The type-cast will be applied to the value on the right of the type-cast operator (i.e., the data type you want to convert to).</p>
+<p>Consider the following expressions and the steps involved in evaluating them:</p>
+<ul>
+<li>
+<p><code>(double) 132 / 25</code></p>
+<ul>
+<li>The steps of evaluation are described above</li>
+</ul>
+</li>
+<li>
+<p><code>(double) (132 / 25)</code></p>
+<ul>
+<li>Here, because we've enclosed the division expression in parentheses, it takes precedence. <code>(132 / 25)</code> is evaluated first.</li>
+<li>So as an intermediate expression we get <code>(double) (5)</code>. <strong>Can you think why this is?</strong></li>
+<li>The final value of the expression above will then be <code>5.0</code>, because the type-cast was applied to the value <code>5</code>.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Finally, type-casting applies only to values, not to variables.</strong></p>
+<p>Since Java is a statically-typed language, <em>you can never change the data type of a variable</em>.
+You can only change the type of a value for use in a particular statement or expression.</p>
+<p>Consider the same example from above.</p>
+<pre><code class="language-java">int a = 132;
+int b = 25;
+
+double result = (double) a / b;
+</code></pre>
+<p>In the code above, the type-cast only applies to the <em>value</em> <code>132</code> within the expression. The data type of <code>a</code> has not changed, and future uses of <code>a</code> will still evaluate to <code>132</code>, <em><strong>not</strong></em> <code>132.0</code>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../01_intro_to_java/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../03_lists_maps_existing_classes/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../01_intro_to_java/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../03_lists_maps_existing_classes/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

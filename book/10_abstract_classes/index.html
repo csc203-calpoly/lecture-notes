@@ -1,0 +1,454 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Abstract classes - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="abstract-classes"><a class="header" href="#abstract-classes">Abstract classes</a></h1>
+<p>We learned about interfaces in Java in the previous lessons.
+For a recap, please take a look at the <a href="../09-interfaces-part-3#summary">Summary</a> from the previous lesson.</p>
+<p>Interfaces come with numerous benefits:</p>
+<ol>
+<li>They let us introduce a degree of separation between implementation details of different classes in a larger Object-oriented system.</li>
+<li><code>default</code> methods in interfaces let us "pull up" common method implementations into the interface, allowing implementing subclasses to inherit those methods. This saves us from having to duplicate code.</li>
+</ol>
+<p>However, interfaces are just one way to achieve <em>polymorphism</em> in Java.</p>
+<blockquote>
+<p>In this lesson, we will learn about a related Java construct called <em>abstract classes</em>.
+Abstract classes are just like regular classes in Java, except they can have <em>abstract methods.</em> There are a few similarities and differences between abstract classes and interfaces in Java.</p>
+</blockquote>
+<p><strong>Differences between interfaces and abstract classes</strong></p>
+<ul>
+<li>Abstract methods in abstract classes must be marked using the <code>abstract</code> keyword. (In interfaces, there is no keyword used for abstract methods.)</li>
+<li>Abstract classes <em>can</em> have instance variables, while interfaces cannot.</li>
+<li>A class <code>extends</code> an abstract class, while it <code>implements</code> an interface.</li>
+<li>Classes can extend <em>at most one</em> abstract class, but it can implement more than one interface.</li>
+</ul>
+<p><strong>Similarities between interfaces and abstract classes</strong></p>
+<ul>
+<li>Both abstract classes and interfaces are forms of polymorphism in Java.</li>
+<li>Like an interface, an abstract class can have both abstract and concrete methods.</li>
+<li>Concrete methods in interfaces must be marked using the <code>default</code> keyword. (In abstract classes, there is no keyword used for concrete methods.)</li>
+<li>Just like an interface, you <em>cannot</em> use an abstract class to initialise an object. The abstract class might have abstract methods, so this makes sense. (We don't want to create objects with "gaps" in their functionality.)</li>
+</ul>
+<p>We'll motivate the use of abstract classes by first looking at a disadvantage of using interfaces.</p>
+<h2 id="a-disadvantage-of-using-interfaces"><a class="header" href="#a-disadvantage-of-using-interfaces">A disadvantage of using interfaces</a></h2>
+<p>Consider the following interface-based type hierarchy.</p>
+<p>In the <code>Shape</code> interface below, we have five abstract methods, each of which needs to be implemented by the four subtypes.</p>
+<pre class="mermaid">classDiagram
+  direction TD
+  `interface Shape` &lt;|-- Square : implements
+  `interface Shape` &lt;|-- Rectangle : implements
+  `interface Shape` &lt;|-- Circle : implements
+  `interface Shape` &lt;|-- Triangle : implements
+
+  class `interface Shape` {
+    getColor() Color*
+    setColor(Color newColor) Color*
+    getArea() double*
+    getPerimeter() double*
+    translate(Point point) void*
+  }
+
+  class Square {
+    -double sideLength
+    -Point center
+    -Color color
+
+    getColor() Color
+    setColor(Color newColor) Color
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+
+  class Rectangle {
+    -double width
+    -double height
+    -Point center
+    -Color color
+    getColor() Color
+    setColor(Color newColor) Color
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+
+  class Circle {
+    -double radius
+    -Point center
+    -Color color
+    getColor() Color
+    setColor(Color newColor) Color
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+
+  class Triangle {
+    -Point a
+    -Point b
+    -Point c
+    -Color color
+    getColor() Color
+    setColor(Color newColor) Color
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+</pre>
+<p>Implementations for <code>getArea</code>, <code>getPerimeter</code>, and <code>translate</code> would likely be different for each subclass, and need to implemented on a per-class basis.
+For example, calculating the area for a square is different from that of a circle, which is different from that of a triangle, etc.</p>
+<p>However, implementations for <code>getColor</code> and <code>setColor</code> are likely be <em>identical</em> for all the subclasses—chances are they have a <code>private Color color</code> instance variable, and they are pretty standard getters and setters.</p>
+<blockquote>
+<p>Because interfaces cannot have instance variables, any code that directly touches those instance variables <em>must</em> be written in the implementing subclasses, even if is the same for all subclasses.</p>
+</blockquote>
+<h2 id="abstract-classes-1"><a class="header" href="#abstract-classes-1">Abstract classes</a></h2>
+<p>Abstract classes can help us in these types of situations.
+Specifically, they are useful when:</p>
+<ul>
+<li>We want a set of classes to adhere to a common public interface.</li>
+<li>The implementing classes share both data and behaviour. That is, they have shared methods and instance variables.</li>
+</ul>
+<p>Right now, the <code>color</code> instance variable and its getter and setter methods are all being duplicated in the four child classes.
+If we instead write <code>Shape</code> as an abstract class, we can "pull up" that data and behaviour into a common parent, thereby allowing all the subclasses to re-use that code.</p>
+<p>In the new hierarchy below, which uses an abstract class, we can see that the subclasses have reduced in size because they now do not duplicate the shared behaviour.</p>
+<pre class="mermaid">classDiagram
+  direction TD
+  `abstract Shape` &lt;|-- Square : extends
+  `abstract Shape` &lt;|-- Rectangle : extends
+  `abstract Shape` &lt;|-- Circle : extends
+  `abstract Shape` &lt;|-- Triangle : extends
+
+  class `abstract Shape` {
+    +Color color
+    getColor() Color
+    setColor(Color newColor) Color
+
+    getArea() double*
+    getPerimeter() double*
+    translate(Point point) void*
+  }
+
+  class Square {
+    -double sideLength
+    -Point center
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+
+  class Rectangle {
+    -double width
+    -double height
+    -Point center
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+
+  class Circle {
+    -double radius
+    -Point center
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+
+  class Triangle {
+    -Point a
+    -Point b
+    -Point c
+    getArea() double
+    getPerimeter() double
+    translate(Point point) void
+  }
+</pre>
+<blockquote>
+<p><strong>DISCUSS</strong></p>
+<p>Do you see further opportunities for improvement to the structure above? Is there any other duplicated data that can be "moved upward" to reduce code duplication?</p>
+</blockquote>
+<h3 id="code-for-the-example-above"><a class="header" href="#code-for-the-example-above">Code for the example above</a></h3>
+<h4 id="the-shape-abstract-class"><a class="header" href="#the-shape-abstract-class">The Shape abstract class</a></h4>
+<p>See the <code>Shape</code> abstract class below. Please use the "Walkthrough" button to see notes about important parts of the code below.
+In particular, there are two new keywords introduced in the code below: <code>abstract</code> and <code>protected</code>.</p>
+<!--{% include casdocs.html url="Shape.html" height="800px" %}-->
+<p>
+<div style="width: 100%; margin: auto;">
+  <small>
+    <a href="Shape.html" target="_blank">
+      View in new tab
+    </a>
+    &nbsp;and then click <b>Walkthrough</b>.
+  </small>
+  <br/>
+  <object data="Shape.html" width="100%" height="800px"></object>
+</div>
+</p>
+<p>Since the <code>Shape</code> is abstract, you can't do this:</p>
+<pre><code class="language-java">// This code won't compile
+Shape myShape = new Shape(new Color(255, 0, 0)); // A red....shape?
+</code></pre>
+<p>Just like an interface, an abstract class is a skeleton for its subclasses — it can't be used to create objects. It's a convenient construct for placing common code in one place so that subclasses don't have to duplicate it.</p>
+<h4 id="the-triangle-class"><a class="header" href="#the-triangle-class">The Triangle class</a></h4>
+<p>Code for the <code>Triangle</code> class is below. Please use the "Walkthrough" button to step through the accompanying notes. Here are some key features to note:</p>
+<ul>
+<li><strong><code>extends</code></strong>: We use the <code>extends</code> keyword to extend an abstract class. A class can extend <em>at most one</em> abstract class. But it can implement as many interfaces as needed.</li>
+<li><strong><code>super</code></strong>: In the <code>Triangle</code> constructor, we use the <code>super</code> keyword to invoke the "super constructor". This is used to initialise the parent class's instance variables. In this case, when the <code>Triangle</code> is created using the <code>Triangle</code> constructor, it needs to tell the parent class (<code>Shape</code>) to also initialise <em>its</em> instance variables.</li>
+</ul>
+<!--{% include casdocs.html url="Triangle.html" height="1500px" %}-->
+<p>
+<div style="width: 100%; margin: auto;">
+  <small>
+    <a href="Triangle.html" target="_blank">
+      View in new tab
+    </a>
+    &nbsp;and then click <b>Walkthrough</b>.
+  </small>
+  <br/>
+  <object data="Triangle.html" width="100%" height="1500px"></object>
+</div>
+</p>
+<h2 id="interfaces-or-abstract-classes"><a class="header" href="#interfaces-or-abstract-classes">Interfaces or abstract classes?</a></h2>
+<p>The key consideration is that a class can implement <em>at most one</em> abstract class.</p>
+<p>If your class hierarchy is designed using only abstract classes, you are necessarily going to end up with a tree-like structure, where very child type has exactly one parent type.
+Sometimes this simplicity is desirable, and sometimes it is too restrictive.</p>
+<p>On the other hand, if you create a class hierarchy only interfaces, you end up with a "flatter" hierarchy that is much more flexible, since classes and implement multiple interfaces.
+This allows you to "mix in" different parent types for individual subclasses, as needed.
+This flexibility can be a blessing, but can also become difficult to reason about as your project grows.</p>
+<p>Or, more likely, you will use some combination of abstract classes and interfaces.</p>
+<p>Suppose you have a bunch of interfaces <code>A</code>, <code>B</code>, <code>C</code>, and <code>D</code>.
+You have created a number of subclasses that implement various combinations of these interfaces, but you find yourself creating some combinations more often than others.
+For example, you find yourself creating many classes that implement both <code>B</code> and <code>C</code>, and end up duplicating instance variables and methods in those classes.
+In this case, it may make sense to create an abstract class that <code>implements B, C</code>, and root all of that common data and behaviour in the abstract class.</p>
+<p>Yet another possibility is to use <em>neither</em>, at least when you're working on a smaller system.
+Sometimes too much polymorphism can be a bad thing.
+If it's a simple function and you only do it once, perhaps you don't need to create a whole type hierarchy to do what you could have done with a "type" variable and an <code>if</code> condition. If you find yourself frequently checking this "type" variable before performing tasks, <em>that's</em> when you could consider using polymorphism.</p>
+<p>Like many problems in software design, there is no "silver bullet" that solves all your problems.
+You will face tradeoffs and make choices about how to design your systems.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../09_interfaces_part_3/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../11_inheritance_equality/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../09_interfaces_part_3/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../11_inheritance_equality/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

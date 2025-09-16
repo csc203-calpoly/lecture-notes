@@ -1,0 +1,602 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Interfaces, part 3 - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="interfaces-part-3"><a class="header" href="#interfaces-part-3">Interfaces Part 3</a></h1>
+<h2 id="objectives"><a class="header" href="#objectives">Objectives</a></h2>
+<blockquote>
+<p>In this lesson you will learn:</p>
+<ul>
+<li>About hierarchical relationships between interfaces, i.e., <code>public interface &gt; InterfaceA extends InterfaceB</code>.</li>
+<li>About how a class can implement multiple interfaces, i.e., <code>public class MyClass &gt; implements InterfaceA, InterfaceB</code>.</li>
+<li>About <code>default</code> methods in interfaces.</li>
+<li>About "the diamond" problem, i.e., what happens when a class inherits two implementations of the same method.</li>
+</ul>
+</blockquote>
+<h2 id="recap"><a class="header" href="#recap">Recap</a></h2>
+<ul>
+<li><strong>Interfaces</strong> allow us to define <em>what</em> a type should be able to do, but not <em>how</em> it should do it.</li>
+<li>We do this through the use of <strong>abstract methods</strong> that define a method signature, but no method body.</li>
+<li>Implementing subclasses must including implementations for those methods, and can include additional methods if needed.</li>
+</ul>
+<p>In the previous lessons we learned about <em>interfaces</em>—both the general idea, as well as the embodiment of that idea in the form of the <code>interface</code> construct in the Java language.</p>
+<p>Continuing with our running example of the Nim game, we came up with the following class design for the game.</p>
+<ul>
+<li>The <code>Game</code> class has two <code>Player</code>s and a <code>Pile</code> of sticks.</li>
+<li>The <code>Player</code> is an interface, which means that at run time the <code>Player</code> might be any kind of available <code>Player</code> subtype, and the <code>Game</code> doesn't know or care which.</li>
+<li>The <code>Player</code> interface, in other words, sits between the <code>Game</code> and the different player implementations, hiding those implementation details from other parts of the system.</li>
+</ul>
+<pre class="mermaid">classDiagram
+  direction LR
+  note for Game &quot;Underlined members are static.&quot;
+  Game --&gt; `interface Player` : has two
+  Game --&gt; Pile : has a
+  `interface Player` &lt;|-- TimidPlayer : is a
+  `interface Player` &lt;|-- GreedyPlayer : is a
+  `interface Player` &lt;|-- RandomPlayer : is a
+
+  class Game {
+    +Player p1
+    +Player p2
+    +Pile pile
+    playGame() void$
+  }
+
+  class `interface Player` {
+    +getName() String*
+    +takeTurn(Pile) int*
+  }
+
+  namespace PlayerSubtypes {
+    class TimidPlayer { }
+
+    class GreedyPlayer {
+      +String jeer
+      +jeer() String
+    }
+
+    class RandomPlayer { }
+  }
+
+  class Pile {
+    +int numSticks
+    +remove(int) void
+    +getSticks() int
+  }
+</pre>
+<p>For the rest of this lesson, for the sake brevity, we will only include the <code>Player</code> and its subtypes when we consider a diagrammatic view of the class structure.</p>
+<h2 id="interfaces-can-extend-interfaces"><a class="header" href="#interfaces-can-extend-interfaces">Interfaces can extend interfaces</a></h2>
+<p>In this lesson, we are going to consider how to incorporate yet more features into our Nim game.</p>
+<p>In the design above, we have included support for the <code>GreedyPlayer</code> to <code>jeer</code> at their opponent each time they take a turn.</p>
+<p>Let's suppose want to add support for multiple types of "chatty" players in our system.
+That is, we don't want <em>only</em> our <code>GreedyPlayer</code> to be able to print a message each time they take a turn—we want to allow <em>any</em> new <code>Player</code> type to optionally have this ability.</p>
+<p>Let's consider some options to accomplish this.</p>
+<p><strong>Option 1 — Give all players the ability to print a message</strong></p>
+<p>We could give all of our <code>Player</code> subtypes a <code>makeComment()</code> method that prints the <code>Player</code>'s comment to the screen.
+We can also give them a <code>makeComment(String)</code> overload that prints the specified message to the screen, instead of the <code>Player</code>'s pre-defined message.</p>
+<p>An advantage of this approach is that it's <em>simple</em>.
+We can stick a <em><code>makeComment</code></em> overloaded abstract methods in the <code>Player</code> interface, and all implementing subclasses can print their chosen message.</p>
+<p>A disadvantage is that this would reduce the <em>cohesiveness</em> of our <code>Player</code> type.
+For example, the <code>TimidPlayer</code> has no intention of presenting a message each time they take a turn — what should the <code>TimidPlayer</code>'s <code>makeComment()</code> method return? An empty string (<code>""</code>)? <code>null</code>? Some string that will never be used?</p>
+<p>The <code>Player</code> interface is now less cohesive because it includes behaviour (<code>message()</code>) that is not relevant to <em>all</em> <code>Player</code> instances.</p>
+<p><strong>Option 2 — Break out the chatty behaviour into another type</strong></p>
+<p>Option 2 is to separate the behaviour of playing games and "socializing" — they are separate concerns that don't need to be implemented together.</p>
+<p>We can do this by creating a separate <code>interface</code> for <code>SocialPlayer</code>s.
+The <code>SocialPlayer</code> interface will <em>extend</em> the <code>Player</code> interface.</p>
+<p>The <code>SocialPlayer</code> interface looks like the following:</p>
+<pre><code class="language-java">interface SocialPlayer extends Player {
+  void makeComment(); // prints some pre-defined comment
+  void makeComment(String message); // prints the specified message
+}
+</code></pre>
+<blockquote>
+<p>In the code above, we use the <strong><code>extends</code></strong> keyword to declare that the <code>SocialPlayer</code> <code>interface</code> is a subtype of the <code>Player</code> <code>interface</code>. That is, all <code>SocialPlayer</code>s are <code>Player</code>s.</p>
+</blockquote>
+<p>The <code>SocialPlayer</code> only declares one (overloaded) behaviour—the <code>makeComment</code> methods.
+Any class that <code>implements SocialPlayer</code> must now include implementations of <code>Player</code> methods <em>and</em> implementations of <code>SocialPlayer</code> methods.</p>
+<p>In our updated Nim game, our <code>GreedyPlayer</code> is a <code>SocialPlayer</code>, which means it can take turns in the game like all <code>Player</code>s, but can also send <code>message</code>s.</p>
+<p>Here is what the <code>Player</code> type hierarchy looks like now. In the diagram below, we use <code>implements</code> or <code>extends</code> to show the specific keyword used to define the "is a" relationship between a child type and its parent type.</p>
+<pre class="mermaid">classDiagram
+  direction TB
+  `interface Player` &lt;|-- `interface SocialPlayer` : extends
+  `interface Player` &lt;|-- TimidPlayer : implements
+  `interface Player` &lt;|-- RandomPlayer : implements
+  `interface SocialPlayer` &lt;|-- GreedyPlayer : implements
+
+  class `interface Player` {
+    +getName() String*
+    +takeTurn(Pile) int*
+  }
+
+  class `interface SocialPlayer` {
+    +makeComment() void*
+    +makeComment(String message) void*
+  }
+
+  namespace PlayerSubtypes {
+    class TimidPlayer { }
+
+    class GreedyPlayer { }
+
+    class RandomPlayer { }
+  }
+</pre>
+<p>Our <code>GreedyPlayer</code> implementation would look the same as before (except instead of <code>jeer</code> we now use the more general <code>makeComment</code> methods to chat).
+But now we can incorporate additional player types that have social behaviours, and treat them all as <code>SocialPlayer</code>s in other parts of the system.</p>
+<pre><code class="language-java">public class GreedyPlayer implements SocialPlayer {
+  private String name;
+  private String jeer; // This player talks smack
+
+  public GreedyPlayer(String name, String jeer) {
+    this.name = name;
+    this.jeer = jeer;
+  }
+
+  @Override
+  public void makeComment() {
+    System.out.println(this.jeer);
+  }
+
+  @Override
+  public void makeComment(String message) {
+    System.out.println(message);
+  }
+
+  @Override
+  public String getName() {
+    return this.name;
+  }
+
+  @Override
+  public int takeTurn(Pile pile) {
+    int toRemove = 0;
+    if (pile.getSticks() &gt;= 3) {
+      toRemove = 3;
+    } else {
+      toRemove = pile.getSticks();
+    }
+    return toRemove;
+  }
+}
+</code></pre>
+<h3 id="whats-the-benefit-of-doing-this"><a class="header" href="#whats-the-benefit-of-doing-this">What's the benefit of doing this?</a></h3>
+<p>The <code>Player</code> interface introduced a uniform set of behaviours that the <code>Game</code> could rely on; i.e., it could expect all <code>Player</code> objects to be able to do things like taking a turn, no matter what kind of player subtype they were.</p>
+<p>Similarly, the <code>SocialPlayer</code> interface introduces a uniform set of <em>additional</em> behaviours that some players can perform—they can make comments.
+This opens up an avenue for a version of the <code>Game</code> that allows some players (those that support social behaviours) to make comments during game play.</p>
+<p>Consider this updated <code>play</code> method for the <code>Game</code> class.
+In the code below, each time a <code>Player</code> takes a turn, we give the <code>opponent</code> the opportunity to print a message.</p>
+<p>We use the <code>instanceof</code> operator to check if the <code>opponent</code> is an instance of the <code>SocialPlayer</code> type, and if so, we print the message.
+The <code>SocialPlayer</code> interface allows us to change our "view" of the <code>opponent</code> object, deciding whether to see it as simply a <code>Player</code>, or as a <code>SocialPlayer</code>, depending on what set of behaviours we mean to invoke.</p>
+<pre><code class="language-java">public static boolean play(Player p, Pile pile, Player opponent) {
+  int sticksTaken = p.takeTurn(pile);
+  System.out.println("\n" + p.getName() + " takes " + sticksTaken + " sticks.\n" +
+    "There are " + pile.getSticks() + " left in the pile.");
+
+  // Each time a player takes a turn, if the opponent is a social player,
+  // print a vaguely threatening message.
+  if (opponent instanceof SocialPlayer) {
+    ((SocialPlayer) opponent).makeComment("Bad move, " + p.getName() + "!");
+  }
+
+  if (pile.getSticks() &lt;= 0) {
+      return true;
+  }
+
+  return false;
+}
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>Do you think this is a reasonable use of the <code>instanceof</code> operator? Is there any way to print the opponent's message from the <code>SocialPlayer</code> implementing subclasses directly?</p>
+</blockquote>
+<p>In the example, we are dealing with both "views" of the <code>opponent</code> in the same method.</p>
+<p>As a larger example, consider if we wrote a separate, feature-rich "chatroom" module for this Nim game.
+We can make that module <em>only</em> view players as <code>SocialPlayer</code>s, since it is only interested in the behaviours relevant to social interactions, and not game play.</p>
+<h2 id="classes-can-implement-multiple-interfaces"><a class="header" href="#classes-can-implement-multiple-interfaces">Classes can implement multiple interfaces</a></h2>
+<p>What if, as part of our expanded Nim application, we wanted to also support general "socializers"? That is, users who are not players in the Nim game, but are still able to make comments that other users can see?</p>
+<p>As things currently stand, to create "socializers"—users that can make comments—we would need to implement the <code>SocialPlayer</code> interface.
+Unfortunately, this brings with it a fair bit of baggage — if you implement the commenting behaviour from the <code>SocialPlayer</code>, you need to also implement the game play behaviour from the <code>Player</code> interface.
+This is due to the hierarchical relationship between <code>SocialPlayer</code> and <code>Player</code>: all <code>SocialPlayer</code>s are <code>Player</code>s.</p>
+<p>We can decouple the socializing functionality from the gameplay functionality by removing the hierarchical relationship between those interfaces.
+That is, instead of wrapping social behaviours into a <code>SocialPlayer</code> interface that is a child type of <code>Player</code>, we can create two separate, unrelated interfaces:</p>
+<ul>
+<li>The <code>Player</code> interface for gameplay behaviours, unchanged from what we have seen so far.</li>
+<li>The <code>Socializer</code> interface for social behaviours, like making comments.</li>
+</ul>
+<blockquote>
+<p>In Java, classes can implement multiple interfaces. These interfaces provide different "views" to the class, or different, well, interfaces through which to interact with the class.</p>
+</blockquote>
+<p>The player subtypes that only support gameplay functionality (like <code>TimidPlayer</code> and <code>RandomPlayer</code>) will implement only the <code>Player</code> interface.
+The player subtypes that want to support both gameplay functionality <em>and</em> socializing functionality (like <code>GreedyPlayer</code>) will implement <em>both</em> the <code>Player</code> and <code>Socializer</code> interfaces.
+Finally, the users that want to only support socializing functionality (say, <code>Spectator</code> or <code>Referee</code> objects) will only implement the <code>Socializer</code> interfaces.</p>
+<p>Here is what our new class structure would look like.
+By separating the <code>Player</code> and <code>Socializer</code> interfaces (instead of having them have a hierarchical relationship), we have allowed classes to more flexibly combine or not combine those behaviours.</p>
+<pre class="mermaid">classDiagram
+  direction TB
+  `interface Player` &lt;|-- TimidPlayer : implements
+  `interface Player` &lt;|-- RandomPlayer : implements
+  `interface Player` &lt;|-- GreedyPlayer : implements
+  `interface Socializer` &lt;|-- GreedyPlayer : implements
+  `interface Socializer` &lt;|-- Spectator : implements
+  `interface Socializer` &lt;|-- Referee : implements
+
+  class `interface Player` {
+    +getName() String*
+    +takeTurn(Pile) int*
+  }
+
+  class `interface Socializer` {
+    +makeComment() void*
+    +makeComment(String message) void*
+  }
+
+  class TimidPlayer { }
+
+  class GreedyPlayer { }
+
+  class RandomPlayer { }
+</pre>
+<p>To support the structure above, our <code>GreedyPlayer</code> only needs to change its signature to implement the two interfaces.
+Everything else in the class would remain the same: it still needs to implement all <code>Player</code> behaviours, and it still needs to implement all <code>Socializer</code> behaviours.</p>
+<pre><code class="language-java">public class GreedyPlayer implements Player, Socializer {
+  // Rest of the GreedyPlayer class remains the same
+}
+</code></pre>
+<h2 id="default-methods"><a class="header" href="#default-methods"><code>default</code> methods</a></h2>
+<p>The <code>GreedyPlayer</code>, <code>Spectator</code>, and <code>Referee</code> objects all have to include implementations for the two <code>makeComment</code> methods from the <code>Socializer</code> interface.
+The overload that has no parameters, i.e., <code>makeComment()</code>, will be different for each implementation.</p>
+<p>It makes sense for those three classes to implement their own versions of <code>makeComment()</code>.</p>
+<ul>
+<li>The <code>GreedyPlayer</code> prints its <code>jeer</code>.</li>
+<li>The <code>Spectator</code> might print support a message of support for the player that has their allegiance.</li>
+<li>The <code>Referee</code> might print a message after conducting some checks concerning game rules.</li>
+</ul>
+<p>However, consider that second overload: <code>makeComment(String)</code>.
+In most cases, the job of that method is to simply print the input it has been given.</p>
+<p><strong>Do we really want to duplicate that code in each of those three classes?</strong></p>
+<p><strong>Enter <code>default</code> methods</strong>. So far, we have only seen <em>abstract methods</em> in interfaces: methods with <em>declarations</em>, but no <em>definitions</em>. Method <em>signatures</em>, but no <em>bodies</em>.
+These methods must be implemented by a subclass, because otherwise the object cannot actually perform that behaviour.</p>
+<p>However, interfaces also allow us to define <code>default</code> methods: these are methods in interfaces that <em>do</em> have implementations.
+These implementations are inherited by all implementing subclasses, unless the subclass overrides it.<sup class="footnote-reference" id="fr-override-1"><a href="#footnote-override">1</a></sup></p>
+<p>Let us consider the <code>Socializer</code> interface as our illustrative example.</p>
+<pre><code class="language-java">public interface Socializer {
+  void makeComment();
+
+  default void makeComment(String message) {
+    System.out.println(message);
+  }
+}
+</code></pre>
+<p>Each of the implementing subclasses (<code>GreedyPlayer</code>, <code>Spectator</code>, and <code>Referee</code>) will inherit the existing <code>default</code> implementation of the second <code>makeComment</code> method above.
+This means that they only need to implement the first <code>makeComment()</code> in order to "fully implement" the <code>Socializer</code> interface.
+This is great! It saves us from having to duplicate the second <code>makeComment(String)</code> method three times.</p>
+<p>Of course, they are free to <em>override</em> the <code>makeComment(String)</code> method if they want to do something different from inherited <code>default</code> method.</p>
+<p>For example, suppose the <code>Referee</code> wants to print the word <code>"WHISTLE!"</code> before each comment they print.</p>
+<p>In the code below, the <code>Referee</code> class implements one <code>makeComment()</code> method because that <em>has to</em> be implemented — it's abstract in the <code>Socializer</code> interface.
+It also implements the <code>makeComment(String)</code> method, this time overriding the default behaviour that was inherited from the <code>Socializer</code> interface.</p>
+<p>It prints the word <code>"WHISTLE!"</code> first.
+Then it uses the <code>super</code> keyword to invoke the parent implementation of the <code>makeComment(String)</code> method.</p>
+<blockquote>
+<p>The <code>super</code> keyword is like the <code>this</code> keyword, except the object refers to itself <em>as its parent type</em> instead of its own type.</p>
+</blockquote>
+<p>In the example below, the <code>super.makeComment(message)</code> invokes the <code>makeComment(String)</code> method from the parent type, i.e., the <code>Socializer</code> interface.</p>
+<pre><code class="language-java">public class Referee implements Socializer {
+  // Referee's instance variables
+  private Game game; // The Game that is currently being refereed
+
+  public Referee(Game game) {
+    this.game = game;
+  }
+
+  @Override
+  public void makeComment() {
+    System.out.println(game); // The referee just reports the Game state
+  }
+
+  @Override
+  public void makeComment(String message) {
+    System.out.print("WHISTLE! "); // Referee adds its own behaviour here
+    super.makeComment(message); // Referee invokes the Socializer's default behaviour
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>In the <code>makeComment(String)</code> method above, what do you think would happen if we called <code>this.makeComment(message)</code> instead of <code>super.makeComment(message)</code>?</p>
+</blockquote>
+<h3 id="the-diamond-problem"><a class="header" href="#the-diamond-problem">The "diamond problem"</a></h3>
+<p>So far, we have learned the following facts about interfaces in Java:</p>
+<ul>
+<li>Interfaces can define abstract methods that <em>must</em> be implemented by subclasses.</li>
+<li>Interfaces can also define "concrete" methods using the <code>default</code> keyword — these <em>can</em> be overridden by implementing subclasses, or they can be inherited.</li>
+<li>Classes can implement multiple interfaces.</li>
+</ul>
+<p>With the facts above in mind, consider the following example.</p>
+<p>Class <code>C</code> <code>implements</code> both interfaces <code>A</code> and <code>B</code>.
+Interfaces <code>A</code> and <code>B</code> both define the method <code>doStuff</code> as a <code>default</code> method, but both do different things.</p>
+<pre class="mermaid">classDiagram
+  direction TD
+
+  note &quot;Interfaces &lt;code&gt;A&lt;/code&gt; and &lt;code&gt;B&lt;/code&gt; both define &lt;code&gt;doStuff&lt;/code&gt; as a &lt;code&gt;default&lt;/code&gt; method.&quot;
+
+  `interface A` &lt;|-- C : implements
+  `interface B` &lt;|-- C : implements
+
+  class `interface A` {
+    +doStuff() void
+  }
+
+  class `interface B` {
+    +doStuff() void
+  }
+</pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>Which of the two <code>doStuff</code> behaviours should class <code>C</code> inherit?</p>
+</blockquote>
+<h3 id="java-doesnt-support-multiple-inheritance"><a class="header" href="#java-doesnt-support-multiple-inheritance">Java doesn't support multiple inheritance</a></h3>
+<p>In a situation like the above, there is simply no way for the compiler to know <em>which</em> <code>doStuff</code> method you want to inherit.
+So the compiler will show you an error until you give class <code>C</code> its own implementation of <code>doStuff</code>.
+By implementing its version of the method, there is no ambiguity about which one to inherit—<code>C</code> inherits neither of the parent interface's <code>doStuff</code> implementations.</p>
+<p>What if you <em>wanted</em> one of the specific implementations? Do you just duplicate that code? <strong>No.</strong></p>
+<p>In that case, you still need to write your own <code>doStuff</code> method, but in the body of the method, you can invoke the specific parent <code>doStuff</code> that you want.</p>
+<p>So suppose you want the class <code>C</code>'s <code>doStuff</code> method to do whatever was defined in <code>interface A</code>. You do the following:</p>
+<pre><code class="language-java">public class C implements A, B {
+  @Override
+  public void doStuff() {
+    A.super.doStuff(); // Invoke the interface A's version of the method
+  }
+}
+</code></pre>
+<h2 id="extends-or-implements"><a class="header" href="#extends-or-implements"><code>extends</code> or <code>implements</code>?</a></h2>
+<p>So we've seen two ways of creating fairly complex class structures. We can either create a "tree like" structure, where one interface <code>extends</code> another interface in order to allow classes to combine those behaviours.
+Or we can create a "flatter" structure by creating multiple interfaces; classes that want to combine those behaviours simply need to implement both interfaces.
+And <code>default</code> methods allow us to also introduce some code reuse into this picture.</p>
+<p><strong>Interfaces let you create non-hierarchical type frameworks.</strong> Not all class organisations lend themselves to tree structures. That is, you may want different combinations of types "mixed together" for specific subclasses. To achieve this flexibly with <code>extends</code> relationships, you would end up with many more "intermediate" layers in your type hierarchy, creating a separate type for each combination of functionality you want to support. With interfaces you have infinite flexibility to enhance class behaviours as needed.</p>
+<p>However, it is often easier to reason about tree-like structures, because there is less ambiguity about what classes can perform what behaviours.
+This "straightline" flow of inherited behaviours can often be a blessing in a large, complex class structure.
+If you know you're not likely to add new classes that support some behaviours but not others, it may be worthwhile to commit to a tree-like structure using <code>extends</code> for the time being.</p>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>To sum up, here are some facts about interfaces:</p>
+<ul>
+<li>Interfaces can have abstract methods. These only have method signatures, but not method bodies. There is no special keyword for abstract methods in interfaces.</li>
+<li>A class that <code>implements</code> an interface <em>must</em> include implementations for all abstract methods in a parent interface.</li>
+<li>Interfaces can also have methods that <em>do</em> have implementations. These are created using the <code>default</code> keyword.</li>
+<li>Implementing subclasses <em>can</em> include implementations for the <code>default</code> methods from the parent interface; this will override the interface's <code>default</code> behaviour for that method.</li>
+<li>Interfaces can have <code>static</code> variables and <code>static</code> methods.</li>
+<li>Interfaces <strong>cannot</strong> have instance variables.</li>
+<li>Interfaces can extend other interfaces using the <code>extends</code> keyword. If a class declares that it <code>implements</code> an interface, and that interface has "parent" interfaces, the class must implement all abstract methods from the immediate parent as well as all the "grand parent" interfaces.</li>
+<li>Classes can implement more than one interface.</li>
+</ul>
+<hr>
+<ol class="footnote-definition"><li id="footnote-override">
+<p>See the lesson on <a href="../05_method_dispatch/">method dispatch</a> for a review of what is meant by "overriding". <a href="#fr-override-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../08_interfaces_part_2/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../10_abstract_classes/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../08_interfaces_part_2/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../10_abstract_classes/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

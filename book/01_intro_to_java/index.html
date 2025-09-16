@@ -1,0 +1,579 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<blockquote>
+<p>This introduction covers some Java language syntax relatively quickly, assuming programming proficiency at the level one would expect after an introductory college programming class.</p>
+</blockquote>
+<h2 id="data-types-in-java"><a class="header" href="#data-types-in-java">Data types in Java</a></h2>
+<p>Since many of you are likely coming from a Python background, some of this discussion will refer back to commonalities and differences between Java and Python. If you have no Python experiences, that is fine. We do not assume Python knowledge.</p>
+<p>We'll work through the <code>JavaSample.java</code> file in this lecture.
+Due to some language features in Java, I will sometimes ask you to ignore certain keywords for the time being.
+I only do this because I will explain what those mean later when we get to those topics.
+By the end of the quarter, there won't be keywords we see in class that I'll ask you to ignore.</p>
+<h3 id="static-typing"><a class="header" href="#static-typing">Static typing</a></h3>
+<p><strong>Java is a <em>statically typed</em> language.</strong> What does this mean? It means that before you can <em>run</em> Java code, a <em>compiler</em> checks that variables and values are used in ways that are consistent with their data types.</p>
+<p>For example, consider the following expression:</p>
+<pre><code class="language-java">"foobar" / 10
+</code></pre>
+<p>It attempts to divide the text <code>"foobar"</code> by the number <code>10</code>, which is a meaningless operation.
+The above expression would result in errors in statically-typed languages (like Java) as well as in dynamically-typed languages (like Python).
+But exactly <em>when</em> those errors occur is different between the two languages.</p>
+<p>In a dynamically-typed language like Python, the program would begin to run, encounter the expression above, and then crash with an error message.
+That is, the error appears <em>at run time</em>.</p>
+<p>In a statically-typed language like Java, before the program runs, the <strong>compiler</strong> checks the program for erroneous uses of values like we see above.
+If the compiler finds any errors, you must fix them before you're able to run the program.</p>
+<p>If the code has type errors like this, the code will not execute at all.</p>
+<p>A statically-typed language like Java helps us catch these errors at <em>compile time</em> instead of at <em>run time</em>.
+There is ongoing debate about whether statically-typed languages are better than dynamically-typed languages, and also what "better" means.</p>
+<p>Proponents of statically-typed languages argue that programming is less error-prone with static typing, particularly in large codebases or in codebases where the developer is unfamiliar with the code (i.e., they didn't write it themselves).</p>
+<p>Proponents of dynamically-typed languages argue that programming becomes less verbose and more flexible, and that a good test suite can catch most of the type-related errors that a compiler would flag.<sup class="footnote-reference" id="fr-compiler-test-suite-1"><a href="#footnote-compiler-test-suite">1</a></sup></p>
+<h3 id="declaring-and-initialising-variables"><a class="header" href="#declaring-and-initialising-variables">Declaring and initialising variables</a></h3>
+<p>You may already know what it means to <em>declare</em> and <em>initialise</em> variables using whatever language you're coming from, but we will revisit this vocabulary briefly.</p>
+<ul>
+<li>When you <strong>declare</strong> a variable, you are creating it, i.e., you are saying that there is now a variable with the given name.</li>
+<li>When you <strong>initialise</strong> a variable, you are giving that variable an initial value.</li>
+<li>When you <strong>assign</strong> a value to a variable, you are giving it a value, potentially replacing its previous value.</li>
+</ul>
+<p>When you declare a variable in Java, you must also say what its <em>data type</em> is.</p>
+<p>A <em>data type</em> defines two things:</p>
+<ul>
+<li>A set of allowed values</li>
+<li>A set of allowed operations on those values</li>
+</ul>
+<p>For example:</p>
+<pre><code class="language-java">int z;
+</code></pre>
+<p>The variable <code>z</code> above can now <em>only</em> hold integer values.
+Its set of allowed values are all the integers (<a href="#primitive-types-and-reference-types">up to certain minimum and maximum values</a>).
+Its type also dictates that we can only perform "integer-friendly" operations using its value, like math operations or printing.
+We can't do things like turn it to "upper case", because that doesn't make sense for an integer.</p>
+<pre><code class="language-java">z = "this isn't a number!"; // this code will not compile
+z = 10; // this will be fine
+</code></pre>
+<p>You can also declare and initialize a variable in the same line (and will usually do this).</p>
+<pre><code class="language-java">int z = 10;
+int y = -12;
+
+z = 12; // you can update z's value
+</code></pre>
+<h3 id="primitive-types-and-reference-types"><a class="header" href="#primitive-types-and-reference-types">Primitive types and reference types</a></h3>
+<p>There are eight basic or <em>primitive</em> data types in Java:</p>
+<div class="table-wrapper"><table><thead><tr><th>Data type</th><th>Description</th><th>Allowed values</th></tr></thead><tbody>
+<tr><td><code>byte</code></td><td>A 1-byte integer.<br>We will not use this type in this course.</td><td>-128 to 127 (inclusive)</td></tr>
+<tr><td><code>short</code></td><td>A 2-byte integer.<br>Use this when you are working in limited memory environments and or you aren't working with huge numbers.</td><td>-32,768 to 32,767 (inclusive)</td></tr>
+<tr><td><code>int</code></td><td>A 4-byte integer.<br>An integer literal (e.g., directly typing <code>12</code> or <code>4305</code>) will default to using the <code>int</code> type.</td><td>$$-2^{31}$$ to $$2^{31}-1$$ (inclusive)</td></tr>
+<tr><td><code>long</code></td><td>An 8-byte integer.<br>Use this when you need larger numbers than <code>int</code> can support.<br>An an <code>L</code> after a number to indicate that you mean for it to be a <code>long</code>, i.e., <code>256L</code> will be a <code>long</code> value and not an <code>int</code> value.</td><td>$$-2^{63}$$ to $$2^{63}-1$$ (inclusive)</td></tr>
+<tr><td><code>float</code></td><td>A 4-byte floating point number.<br>To indicate that a decimal value is a <code>float</code>, add an <code>F</code> after it, i.e., <code>12.5F</code>.</td><td>Beyond the scope of this course.</td></tr>
+<tr><td><code>double</code></td><td>An 8-byte floating point number.<br>Simply using a decimal value (e.g, <code>12.5</code>) will default to using the <code>double</code> type.</td><td>Beyond the scope of this course.</td></tr>
+<tr><td><code>boolean</code></td><td>Track true/false conditions.</td><td><code>true</code> or <code>false</code></td></tr>
+<tr><td><code>char</code></td><td>A single 2-byte character.<br>For example, <code>'A'</code> or <code>'#'</code> (single-quotes must be used).</td><td><code>\u0000</code> (or 0) to <code>\uffff</code> (or 65535)</td></tr>
+</tbody></table>
+</div>
+<p>There are also <em>reference</em> types, for example the <code>String</code> type.</p>
+<blockquote>
+<p>Reference types are abstractions created for programming convenience.
+They are built using primitive types or other reference types as building blocks.</p>
+</blockquote>
+<p>The most commonly used reference type in Java is the <code>String</code> type.
+It stores <em>text</em>.
+The <code>String</code> type "strings together" a bunch of characters to make a longer piece of text.</p>
+<p>You can declare and initialise a <code>String</code> variable like below.
+Notice the double-quotes!
+In Java, single-quotes are reserved for the <code>char</code> type. You must use double-quotes for <code>String</code>s.</p>
+<pre><code class="language-java">String course = "CSC 203";
+</code></pre>
+<p>The "value" of a variable that is declared as a reference type is a <em>reference</em> to the data stored somewhere in memory.
+Hence the name.
+You can have multiple references to the same data.</p>
+<p>Consider the following code:</p>
+<pre><code class="language-java">String course = "CSC 203";
+String courseAgain = course;
+</code></pre>
+<p>When the program runs, you have now a <code>course</code> variable that points to the value <code>"CSC 203"</code>, and another variable <code>courseAgain</code> that points to the <em>same</em> value.</p>
+<pre class="mermaid">flowchart LR
+    course --&gt; v[&quot;CSC 203&quot;]
+    courseAgain --&gt; v
+</pre>
+<h3 id="reference-types-and-equality"><a class="header" href="#reference-types-and-equality">Reference types and equality</a></h3>
+<p>There are implications to this.</p>
+<p>Consider the <code>==</code> operator ("double equals").</p>
+<p>For the 8 primitive types mentioned above, the behaviour of the <code>==</code> operator is pretty much what you'd expect.</p>
+<pre><code class="language-java">int a = 10;
+int b = 12;
+
+System.out.println(a == b); // This will print false.
+System.out.println(a == 10); // This will print true.
+
+char theLetterA = 'a';
+chat theLetterAAgain = 'a';
+
+System.out.println(theLetterA == theLetterAAgain); // This will print true.
+</code></pre>
+<p><em>However, for reference types, this operator's behaviour differs between Java and Python.</em></p>
+<p>For reference types, the <code>==</code> operator checks whether the two operands are the <em>same</em> (as in, physically the same item in memory), and not whether they are <em>equal</em> according to some logical rule for equality.</p>
+<p><strong>Example</strong>. Suppose we have two <code>Point</code> objects, representing points in 2-dimensional space.</p>
+<p>(We will talk more about <code>Point</code>s later—those details are less relevant for this example.)</p>
+<p>In the example below, we use the <code>new</code> keyword to create two new <code>Point</code> objects.</p>
+<pre><code class="language-java">Point p1 = new Point(1, 2); // A point at coordinates (1, 2).
+Point p2 = new Point(1, 2); // Another point at coordinates (1, 2).
+</code></pre>
+<p>Here is a figure depicting the above situation:</p>
+<pre class="mermaid">flowchart LR
+p1 --&gt; v1[&quot;(1, 2)&quot;]
+p2 --&gt; v2[&quot;(1, 2)&quot;]
+</pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>What would the expression <code>p1 == p2</code> result in? <code>true</code> or <code>false</code>?</p>
+</blockquote>
+<details markdown="1">
+<summary>Answer</summary>
+The answer is `false`, because the `==` operator checks *sameness*, not *equality*.
+Because `p1` and `p2` are *reference types*, each of those variables is pointing to a different location in memory.
+</details>
+<p>Now, you and me and everyone else understands that if two points have the same <code>x</code> and <code>y</code> coordinates, they should probably be considered equal.</p>
+<p>That is why all reference types provide an <code>equals</code> function, which checks <em>equality</em> (using some logical definition of equality) rather than <em>sameness</em>.</p>
+<p>We can use it as follows:</p>
+<pre><code class="language-java">Point p1 = new Point(1, 2);
+Point p2 = new Point(1, 2);
+
+Point p1Again = p1; // p1Again and p1 are both pointing to the same Point.
+</code></pre>
+<p>Here's a figure depicting the above situation:</p>
+<pre class="mermaid">flowchart LR
+p1 --&gt; v1[&quot;(1, 2)&quot;]
+p2 --&gt; v2[&quot;(1, 2)&quot;]
+p1Again --&gt; v1
+</pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>Considering the variable assignments above, what do you think would be the values of the following expressions?</p>
+<ul>
+<li><code>p1 == p2</code></li>
+<li><code>p1 == p1Again</code></li>
+<li><code>p1.equals(p2)</code></li>
+</ul>
+</blockquote>
+<p>Consider the expressions above and check your answers below.</p>
+<details>
+<summary>Answers</summary>
+<ul>
+<li><code>p1 == p2</code> is <code>false</code>, because <code>p1</code> and <code>p2</code> are not pointing to the same object.</li>
+<li><code>p1 == p1Again</code> is <code>true</code>, because <code>p1</code> and <code>p1Again</code> <em>are</em> pointing to the same object.</li>
+<li><code>p1.equals(p2)</code> is <code>true</code>, because <code>p1</code> and <code>p2</code> are logically equal objects (they have equal <code>x</code> and <code>y</code> coordinates)</li>
+</ul>
+</details>
+<h4 id="string-equality"><a class="header" href="#string-equality">String equality</a></h4>
+<p>Strings are special type of reference type.
+They are so commonly used that Java provides a specialized syntax for creating a new String without using the <code>new</code> keyword.</p>
+<pre><code class="language-java">String make = "Santa Cruz";
+String model = "Bronson";
+</code></pre>
+<p>Since they are reference types, you should compare Strings for equality using the <code>equals</code> function, and <em>not</em> the <code>==</code> operator.</p>
+<p>However, the Java compiler is smart enough to SOMETIMES recognise when multiple <code>String</code> variables hold the same <code>String</code> value.
+It will therefore <em>intern</em> or cache the String value.
+Each additional <code>String</code> variable with the same value will point to the same <code>String</code> in memory.</p>
+<p>This means that, sometimes, the <code>equals</code> function and the <code>==</code> operator will have similar behaviour for <code>String</code>s, even though <code>String</code> is a reference type.</p>
+<pre><code class="language-java">String csc203 = "CSC 203";
+String csc203Again = "CSC 203";
+
+System.out.println(csc203.equals(csc203Again)); // This will print true, as expected.
+System.out.println(csc203 == csc203Again); // This will also print true.
+</code></pre>
+<p>However, this is a compiler optimisation, and you should not rely upon it.
+You can't predict when <code>==</code> and <code>equals</code> will behave the same for <code>String</code>s, so you should still use <code>equals</code> to compare <code>String</code>s for equality.</p>
+<h2 id="arrays"><a class="header" href="#arrays">Arrays</a></h2>
+<p>To store a collection of items in Java, the simplest collection you can use is an <em>array</em>.
+Two things are important to know about arrays:</p>
+<ul>
+<li>Their types are fixed. You can't mix types in an array.</li>
+<li>Their sizes are fixed. An array can't grow or shrink after its initial creation.</li>
+</ul>
+<p>Here is how to declare and initialize an integer array with some data:</p>
+<pre><code class="language-java">int[] scores = {83, 43, 77, 92, 73, 95, 81, 42};
+</code></pre>
+<p>Arrays are <em>0-indexed</em>, which means that the first item in the array is at position 0, the second is at position 1, etc.</p>
+<p>You can use box brackets (<code>[</code> and <code>]</code>) to <em>index into</em> an array, i.e., access a particular position in an array.
+You can use this syntax to <em>read</em> data from an array, or <em>write</em> data to the array.</p>
+<pre><code class="language-java">int[] scores = {83, 43, 77, 92, 73, 95, 81, 42};
+
+// Reading data
+System.out.println(scores[0]); // This will print the value 83
+System.out.println(scores[7]); // This will print the value 42
+
+// Writing data
+System.out.println(scores[1]); // This will print the value 43.
+scores[1] = 37;
+System.out.println(scores[1]); // This will now print 37.
+</code></pre>
+<p>If you try to look at a position that's beyond the bounds of the array's size, your program will crash (i.e., there will be an error at run time).</p>
+<pre><code class="language-java">int[] scores = {83, 42, 77, 92, 73, 95, 81, 42};
+
+System.out.println(scores[11]); // There is no position 11. This program will crash.
+</code></pre>
+<p>Remember that arrays sizes are fixed! You can't grow the array beyond its initial size.</p>
+<pre><code class="language-java">int[] scores = {83, 42, 77, 92, 73, 95, 81, 42};
+scores[8] = 78; // There is no position 8. This program will crash.
+</code></pre>
+<p>Similar to variables, you can also declare an array without initializing it.</p>
+<pre><code class="language-java">int[] scores; // without initialization
+</code></pre>
+<p>You can also declare an array and <em>fix its size</em>, but not specify its contents.</p>
+<pre><code class="language-java">int[] scores = new int[4]; // A new array of size 4
+</code></pre>
+<p>The above line created an array <code>scores</code> of size 4. But we didn't specify the contents of this array.
+However, the array is not "empty"—there is no such thing as an empty array in Java.</p>
+<p>When you create an array, you're allocating that amount of contiguous space for its contents.
+So, whether or not you declare the contents of the array, that space is allocated.</p>
+<p>What's sitting in that space?</p>
+<h3 id="default-values"><a class="header" href="#default-values">Default values</a></h3>
+<p>Java has sort of "placeholder" values for all data types. They are referred to as their <em>default</em> values. So if you create an array but don't declare its contents, Java places the default values for that type in the array.</p>
+<p>Here are the default values for all the primitive types:</p>
+<div class="table-wrapper"><table><thead><tr><th>Data type</th><th>Default value</th></tr></thead><tbody>
+<tr><td><code>byte</code></td><td><code>0</code></td></tr>
+<tr><td><code>short</code></td><td><code>0</code></td></tr>
+<tr><td><code>int</code></td><td><code>0</code></td></tr>
+<tr><td><code>long</code></td><td><code>0L</code></td></tr>
+<tr><td><code>float</code></td><td><code>0.0F</code></td></tr>
+<tr><td><code>double</code></td><td><code>0.0</code></td></tr>
+<tr><td><code>boolean</code></td><td><code>false</code></td></tr>
+<tr><td><code>char</code></td><td><code>\u000</code> (or 0)</td></tr>
+</tbody></table>
+</div>
+<p>All reference types like <code>String</code> or <code>Point</code> or others we learn about have the same default value.
+It is a special value in Java called <code>null</code>.
+When a variable's "value" is <code>null</code>, it means that the variable is "pointing to nothing".</p>
+<h2 id="control-flow"><a class="header" href="#control-flow">Control flow</a></h2>
+<h3 id="conditionals"><a class="header" href="#conditionals">Conditionals</a></h3>
+<p>Java uses <code>if</code>, <code>else if</code>, and <code>else</code> for conditional logic.</p>
+<p>Unlike Python, Java does not use indentation to denote <em>scope</em>. We use curly braces to denote what happens inside each clause of the "if-else ladder" below.</p>
+<p>However, you should still use appropriate indentation to improve readability.</p>
+<pre><code class="language-java">Point p1 = new Point(1, 2);
+Point p2 = new Point(1, 2);
+
+if (p1 == p2) {
+    // The above condition is false, so this line will not execute.
+    System.out.println("Condition 1");
+} else if (p1 == new Point(1, 2)) {
+    // The above condition is also false, so this line will not execute, either.
+    System.out.println("Condition 2");
+} else {
+    // This is the "otherwise" clause.
+    System.out.println("Condition 3");
+}
+</code></pre>
+<h3 id="repetition-looping"><a class="header" href="#repetition-looping">Repetition ("looping")</a></h3>
+<p>There are 4 looping constructs in Java.</p>
+<p>In most cases, any looping construct can be used to perform any task involving repetition.
+But the different types of loops are provided as "syntactic sugar"—each loop type is "nicer" (more intuitive, less error-prone, etc.) to use for some tasks than others.</p>
+<h4 id="the-for-loop"><a class="header" href="#the-for-loop">The <code>for</code> loop</a></h4>
+<p>Use this when you want to do something repeatedly a certain number of times.</p>
+<p>The <code>for</code> loop has 3 main pieces:</p>
+<ul>
+<li>The counter variable: <code>int i = 0</code>  in the example below. This statement runs once <em>before</em> the entire loop.</li>
+<li>The looping condition: <code>i &lt; 10</code> in the example below. The loop will keep repeating as long as this condition is <code>true</code>.</li>
+<li>The counting step: <code>i++</code> in the example below. This is shorthand for <code>i = i + 1</code>. This statement runs <em>after</em> each iteration of the loop.</li>
+</ul>
+<pre><code class="language-java">for (int i = 0; i &lt; 5; i++) {
+    System.out.println(i);
+}
+</code></pre>
+<p>The code above will print</p>
+<pre><code>0
+1
+2
+3
+4
+</code></pre>
+<p>You can use the <code>for</code> loop to step through (or <em>iterate over</em>) an array.</p>
+<pre><code class="language-java">int[] scores = {83, 43, 77, 92, 73, 95, 81, 42};
+
+for (int i = 0; i &lt; scores.length; i++) {
+    System.out.println(scores[i]);
+}
+</code></pre>
+<p>Because <code>i</code> runs through the values <code>0</code> through <code>7</code>, we can use <code>i</code> to access elements from the <code>scores</code> array.
+The code above would print</p>
+<pre><code>83
+43
+77
+92
+73
+95
+81
+42
+</code></pre>
+<p>There is a lot of "surface area" for potential errors in these kinds of loops.
+For example, you could mess up the starting value of <code>i</code> (should it be <code>0</code> or <code>1</code>?) or the looping condition (should it be <code>i &lt; scores.length</code>, <code>i &lt;= scores.length</code>?).</p>
+<p>So for iteration, we use another looping construct: the <code>for-each</code> loop.</p>
+<h4 id="the-for-each-loop"><a class="header" href="#the-for-each-loop">The <code>for-each</code> loop</a></h4>
+<p>The <code>for-each</code> loop takes care of the details of stepping through a collection for us.</p>
+<pre><code class="language-java">int[] scores = {83, 43, 77, 92, 73, 95, 81, 42};
+
+for (int item : scores) {
+    System.out.println(item);
+}
+</code></pre>
+<p>In the loop above, the <code>item</code> variable steps through the <code>scores</code>  array and updates in each step, stopping when you run out of items.</p>
+<p>You can read the loop above as "for each item in scores".</p>
+<p>It'll print:</p>
+<pre><code>83
+43
+77
+92
+73
+95
+81
+42
+</code></pre>
+<h4 id="the-while-loop"><a class="header" href="#the-while-loop">The <code>while</code> loop</a></h4>
+<p>The "simplest" kind of loop. It simply keeps on running as long as the given condition is <code>true</code>.</p>
+<p>You typically use this loop when you don't know how many times the loop is going to run beforehand.
+For example, if you are reading lines from a file, and you want to keep reading it line-by-line as long as there are more lines to be read.</p>
+<pre><code class="language-java">while (fileStillHasLines) {
+    // Get the next line. Assume this function exists for this example.
+    String line = nextLine();
+    System.out.println(line);
+}
+</code></pre>
+<p>It's important to know that the looping condition will <em>eventually</em> be <code>false</code>, otherwise your code will go into an infinite loop and the program will never progress or end.</p>
+<p>This is useful when you want to perform an action 0-to-many times, depending on some condition.</p>
+<h4 id="the-do-while-loop"><a class="header" href="#the-do-while-loop">The <code>do-while</code> loop</a></h4>
+<p>This loop functions just like the <code>while</code> loop, except for one difference.
+The <code>while</code> loop checks the looping condition <em>before</em> each iteration.
+The <code>do-while</code> loop checks the looping condition <em>after</em> each iteration.</p>
+<pre><code class="language-java">do {
+    // Suppose, for example, our file is guaranteed to have at least one line.
+    String line = nextLine();
+    System.out.println(line);
+} while (fileStillHasLines);
+</code></pre>
+<p>This can be a useful loop to use in cases where you want to perform an action <em>at least once</em>, and then repeat based on some condition.</p>
+<hr>
+<ol class="footnote-definition"><li id="footnote-compiler-test-suite">
+<p>You can think of the compiler as a type of limited test suite. Instead of checking functional correctness, it checks for syntax and, in statically-typed languages, type-related correctness. <a href="#fr-compiler-test-suite-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="../02_arithmetic_and_testing/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="../02_arithmetic_and_testing/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
