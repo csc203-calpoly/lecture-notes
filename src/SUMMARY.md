@@ -17,3 +17,7 @@
   - [Comparators](14_comparators/index.md)
 - [Lambdas and functional interfaces](15_lambdas/index.md)
 - [Streams](16_streams/index.md)
+
+---
+
+[Contributors](./contributors.md)
