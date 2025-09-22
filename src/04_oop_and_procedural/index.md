@@ -54,7 +54,6 @@ The `Pitcher` class above *only* has data, and has no behaviours.
 Unlike the `CsCohort` that we looked at in the previous lesson, the `Pitcher` cannot perform any actions itself, it cannot do anything using its data.
 Any behaviours we want to perform must be written as separate functions — those functions will take the `Pitcher` object as a parameter, and perform actions using the `Pitcher`'s data.
 
-{% include casdocs.html url="./PitcherProc.html" height="500px" %}
 <p>
 <div style="width: 100%; margin: auto;">
   <small>

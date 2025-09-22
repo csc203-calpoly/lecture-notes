@@ -149,7 +149,7 @@ System.out.println(a == b); // This will print false.
 System.out.println(a == 10); // This will print true.
 
 char theLetterA = 'a';
-chat theLetterAAgain = 'a';
+char theLetterAAgain = 'a';
 
 System.out.println(theLetterA == theLetterAAgain); // This will print true.
 ```
