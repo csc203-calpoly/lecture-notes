@@ -1,7 +1,7 @@
 # Arithmetic and testing
 
 > This brief lesson is about arithmetic in Java.
-> In the [previous lesson](../01-intro-to-java/README.md), we learned the different *primitive data types* in Java, including the numerical data types `short`, `int`, `long`, `float`, and `double`.
+> In the [previous lesson](../01_intro_to_java/), we learned the different *primitive data types* in Java, including the numerical data types `short`, `int`, `long`, `float`, and `double`.
 
 In this lesson we'll establish some rules of evaluation for expressions involving these types.
 
