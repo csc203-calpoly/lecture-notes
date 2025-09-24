@@ -31,6 +31,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
@@ -807,8 +809,8 @@ According to the documentation, Java by default creates a backing array of size 
 </tbody></table>
 </div>
 <p>The <code>ArrayList</code> abstracts away all of these gory details, allowing us to deal with the list as simply a dynamically sizeable linear sequence of data.</p>
-<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> ($$\theta(1)$$), i.e., it takes the same amount of time no matter how large the list is.</p>
-<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> ($$\theta(n)$$) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
+<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> (\( \theta(1) \)), i.e., it takes the same amount of time no matter how large the list is.</p>
+<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> (\( \theta(n) \)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
 <p><code>LinkedLists</code></p>
 <p>The other type of list that Java provides is the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html"><code>LinkedList</code></a>. We won't belabour the point here, since you likely studied <code>LinkedLists</code> in the previous class.</p>
 <p>Unlike the <code>ArrayList</code>, the <code>LinkedList</code> is made up of a sequence of objects connected ("linked") by pointers.
@@ -826,11 +828,11 @@ Each item points to the next item, forming a chain of items, i.e., the linked li
 </ul>
 <p>So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the worst case for various tasks.</p>
 <div class="table-wrapper"><table><thead><tr><th>Operation</th><th><code>ArrayList</code></th><th><code>LinkedList</code></th></tr></thead><tbody>
-<tr><td>Random access</td><td>$$\theta(1)$$</td><td>$$\theta(n)$$</td></tr>
-<tr><td>Add to end (append)</td><td>$$\theta(n)$$</td><td>$$\theta(1)$$</td></tr>
-<tr><td>Add to arbitrary position</td><td>$$\theta(n)$$</td><td>$$\theta(n)$$ to get to the position<br>$$\theta(1)$$ to add the item</td></tr>
-<tr><td>Remove (from a given position)</td><td>$$\theta(1)$$ to get to the position<br/>$$\theta(n)$$ to remove the item and shift items in the list as appropriate</td><td>$$\theta(n)$$ to get to the position<br/>$$\theta(1)$$ to perform the removal</td></tr>
-<tr><td>Contains</td><td>$$\theta(n)$$</td><td>$$\theta(n)$$</td></tr>
+<tr><td>Random access</td><td>\( \theta(1) \)</td><td>\( \theta(n) \)</td></tr>
+<tr><td>Add to end (append)</td><td>\( \theta(n) \)</td><td>\( \theta(1) \)</td></tr>
+<tr><td>Add to arbitrary position</td><td>\( \theta(n) \)</td><td>\( \theta(n) \) to get to the position<br>\( \theta(1) \) to add the item</td></tr>
+<tr><td>Remove (from a given position)</td><td>\( \theta(1) \) to get to the position<br/>\( \theta(n) \) to remove the item and shift items in the list as appropriate</td><td>\( \theta(n) \) to get to the position<br/>\( \theta(1) \) to perform the removal</td></tr>
+<tr><td>Contains</td><td>\( \theta(n) \)</td><td>\( \theta(n) \)</td></tr>
 </tbody></table>
 </div>
 <h3 id="a-note-about-boxed-primitive-types"><a class="header" href="#a-note-about-boxed-primitive-types">A note about "boxed" primitive types</a></h3>
@@ -4014,7 +4016,9 @@ while (scanner.hasNext()) {
 
         <script>
         window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
         });
         </script>
 

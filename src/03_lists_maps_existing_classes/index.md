@@ -204,9 +204,9 @@ When the backing array becomes full, the `ArrayList` does the following:
 
 The `ArrayList` abstracts away all of these gory details, allowing us to deal with the list as simply a dynamically sizeable linear sequence of data.
 
-Because the backing data structure is an array, the `ArrayList` lets us access any arbitrary item in the list in *constant time* ($$\theta(1)$$), i.e., it takes the same amount of time no matter how large the list is.
+Because the backing data structure is an array, the `ArrayList` lets us access any arbitrary item in the list in *constant time* (\\( \theta(1) \\)), i.e., it takes the same amount of time no matter how large the list is.
 
-However, this comes with a cost: removing or adding items to the list can take *linear time* ($$\theta(n)$$) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).
+However, this comes with a cost: removing or adding items to the list can take *linear time* (\\( \theta(n) \\)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).
 
 `LinkedLists`
 
@@ -233,11 +233,11 @@ So when should you use one vs. the other? Each one is better for certain kinds o
 
 |Operation | `ArrayList` | `LinkedList` |
 | -- | -- | -- |
-| Random access | $$\theta(1)$$ | $$\theta(n)$$ |
-| Add to end (append) | $$\theta(n)$$ | $$\theta(1)$$ |
-| Add to arbitrary position | $$\theta(n)$$ | $$\theta(n)$$ to get to the position<br>$$\theta(1)$$ to add the item|
-| Remove (from a given position) | $$\theta(1)$$ to get to the position<br/>$$\theta(n)$$ to remove the item and shift items in the list as appropriate | $$\theta(n)$$ to get to the position<br/>$$\theta(1)$$ to perform the removal |
-| Contains | $$\theta(n)$$ | $$\theta(n)$$ |
+| Random access | \\( \theta(1) \\) | \\( \theta(n) \\) |
+| Add to end (append) | \\( \theta(n) \\) | \\( \theta(1) \\) |
+| Add to arbitrary position | \\( \theta(n) \\) | \\( \theta(n) \\) to get to the position<br>\\( \theta(1) \\) to add the item|
+| Remove (from a given position) | \\( \theta(1) \\) to get to the position<br/>\\( \theta(n) \\) to remove the item and shift items in the list as appropriate | \\( \theta(n) \\) to get to the position<br/>\\( \theta(1) \\) to perform the removal |
+| Contains | \\( \theta(n) \\) | \\( \theta(n) \\) |
 
 ### A note about "boxed" primitive types
 
