@@ -184,10 +184,10 @@ In this lesson, we'll walk through an example of creating and using interfaces i
 We'll see how interfaces can help reduce coupling and introduce separation of concerns.</p>
 </blockquote>
 <h2 id="updating-the-nim-game"><a class="header" href="#updating-the-nim-game">Updating the Nim Game</a></h2>
-<p>Will work with the Nim game example that we talked about in the lesson on <a href="../06-class-design-process/">a class design process</a>.
+<p>Will work with the Nim game example that we talked about in the lesson on <a href="../06_class_design_process/">a class design process</a>.
 So far, we have a game that only supports human players, i.e., at each turn our <code>Game</code> class will pause and wait for a <code>Player</code> to manually enter the number of sticks they want to pick up.</p>
 <p>In this lesson we'll add support for more kinds of automated players, i.e., bots that the human player can play with.</p>
-<p>Please take a minute to go look at the <a href="../06-class-design-process/">current implementation of our Nim game</a>.
+<p>Please take a minute to go look at the <a href="../06_class_design_process/">current implementation of our Nim game</a>.
 We have the following class structure that accomplish the following tasks.
 The relationship between the classes here is a <em>has a</em> relationship. I.e., the <code>Game</code> class <em>has two</em> <code>Player</code>s, and it <em>has a</em> <code>Pile</code> as global members (instance variables, or tantamount to instance variables).</p>
 <pre class="mermaid">classDiagram
@@ -353,7 +353,7 @@ public class RandomPlayer implements Player {
 </p>
 <h3 id="the-human-player"><a class="header" href="#the-human-player">The Human Player</a></h3>
 <p>Finally, let's look at the <code>HumanPlayer</code>. We're going to do this bit as an in-class discussion.</p>
-<p>In the <a href="../06-class-design-process#the-game-class">previous implementation of the Game</a>, the <code>Game</code> was responsible for deciding how many sticks to pick up, and then giving that information to the <code>Player</code> object by calling the <code>takeTurn</code> method.
+<p>In the <a href="../06_class_design_process#the-game-class">previous implementation of the Game</a>, the <code>Game</code> was responsible for deciding how many sticks to pick up, and then giving that information to the <code>Player</code> object by calling the <code>takeTurn</code> method.
 However, that meant that the <code>Game</code> logic was <em>coupled with</em> the <code>Player</code> logic — it knew about the player's strategy for choosing a number of sticks to pick up (i.e., ask the user and wait for input).</p>
 <p>In our current implementation, we've introduced a degree of separation between <code>Game</code> logic and <code>Player</code> logic, setting things up so the <code>Game</code> can be totally unaware of how the <code>Player</code> takes their turn.
 This allowed us to incorporate three different types of <code>Players</code>, each with their own turn taking strategies.</p>
@@ -402,7 +402,7 @@ That is, even though the <strong>static type</strong> of <code>p1</code> and <co
 </p>
 <h4 id="2-make-the-greedyplayer-do-it"><a class="header" href="#2-make-the-greedyplayer-do-it">#2 Make the GreedyPlayer do it</a></h4>
 <p>Strategy 2 is to make the <code>GreedyPlayer</code> handle this behaviour.</p>
-<p>The <code>GreedyPlayer</code> already knows what kind of player it is—<a href="../05-method-dispatch/">dynamic dispatch</a> is already taking care of calling the right <code>takeTurn</code> method depending on the player type.
+<p>The <code>GreedyPlayer</code> already knows what kind of player it is—<a href="../05_method_dispatch/">dynamic dispatch</a> is already taking care of calling the right <code>takeTurn</code> method depending on the player type.
 So since we want this behaviour to take place each time the <code>GreedyPlayer</code> takes a turn, we could change our <code>GreedyPlayer</code>'s <code>takeTurn</code> method to the following.</p>
 <pre><code class="language-java">public class GreedyPlayer implements Player {
   // Rest of the class stays the same...

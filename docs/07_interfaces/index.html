@@ -363,7 +363,7 @@ If any of the methods are omitted (or if the names are misspelled, parameter lis
 </ul>
 <h2 id="the-relationship-between-an-interface-and-its-implementing-subclasses"><a class="header" href="#the-relationship-between-an-interface-and-its-implementing-subclasses">The relationship between an interface and its implementing subclasses</a></h2>
 <p>When a <code>class</code> <code>implements</code> an <code>interface</code>, the class is said to be an <em>implementing subclass</em> of the interface.
-Recall from our lesson on <a href="../05-method-dispatch/">method dispatch</a> that the <code>Object</code> class is the root of the Java type hierarchy.
+Recall from our lesson on <a href="../05_method_dispatch/">method dispatch</a> that the <code>Object</code> class is the root of the Java type hierarchy.
 All reference types in Java are <em>subtypes</em> or <em>child types</em> of the <code>Object</code> class.</p>
 <p>When we create an <code>interface</code> (say, the <code>List</code> interface), we are introducing that interface into the type hierarchy.
 And when we create implementations of the <code>List</code> interface, we are saying that <code>ArrayList</code> and <code>LinkedList</code> are subtypes of <code>List</code>.</p>
@@ -385,7 +385,7 @@ List&lt;Point&gt; points = new ArrayList&lt;&gt;();
 <p>What's the <strong>static type</strong> of the <code>points</code> variable above? What's its <strong>dynamic type</strong>? When might we be faced with a situation where its useful or necessary to have these be different?</p>
 </blockquote>
 <h2 id="why-is-this-useful"><a class="header" href="#why-is-this-useful">Why is this useful?</a></h2>
-<p>Recall our <a href="../06-class-design-process/">discussion on coupling and cohesion</a>.
+<p>Recall our <a href="../06_class_design_process/">discussion on coupling and cohesion</a>.
 Our goal is to write <em>cohesive</em> classes that are <em>loosely coupled</em> with each other.
 If classes are tightly coupled, they have to change together, because they depend on each other's implementation details.
 When classes are loosely coupled, they are mostly independent.

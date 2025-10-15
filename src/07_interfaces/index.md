@@ -218,7 +218,7 @@ The two list implementations _can_ contain:
 ## The relationship between an interface and its implementing subclasses
 
 When a `class` `implements` an `interface`, the class is said to be an _implementing subclass_ of the interface.
-Recall from our lesson on [method dispatch](../05-method-dispatch/) that the `Object` class is the root of the Java type hierarchy.
+Recall from our lesson on [method dispatch](../05_method_dispatch/) that the `Object` class is the root of the Java type hierarchy.
 All reference types in Java are _subtypes_ or _child types_ of the `Object` class.
 
 When we create an `interface` (say, the `List` interface), we are introducing that interface into the type hierarchy.
@@ -250,7 +250,7 @@ List<Point> points = new ArrayList<>();
 
 ## Why is this useful?
 
-Recall our [discussion on coupling and cohesion](../06-class-design-process/).
+Recall our [discussion on coupling and cohesion](../06_class_design_process/).
 Our goal is to write _cohesive_ classes that are _loosely coupled_ with each other.
 If classes are tightly coupled, they have to change together, because they depend on each other's implementation details.
 When classes are loosely coupled, they are mostly independent.

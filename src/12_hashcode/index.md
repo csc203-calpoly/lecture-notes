@@ -10,7 +10,7 @@ That is, the produced integer should not change unless the object itself is chan
 
 ## What's `hashCode` used for?
 
-Think about the `HashMap` data structure, discussed [in a previous lesson](../03-lists-maps-existing-classes/).
+Think about the `HashMap` data structure, discussed [in a previous lesson](../03_lists_maps_existing_classes/).
 The `HashMap` supports these fundamental operations:
 
 - `put` entries (key-value pairs) into the map
@@ -95,7 +95,7 @@ Here's an example.
 
 - In the code below, we start with the number `1`.
 - Then we multiply by `37` — multiplying by a prime number like `37` makes it more likely for us to produce a number that other objects _won't_ produce. You can use any prime number you want.
-- Then we add the `name`'s `hashCode` value. The `String` class already has a `hashCode` function, so we don't need to re-invent that. Note that we are assuming here that the `name` is not `null`! We can do this because we [included code to guarantee this in the previous lesson](../11-inheritance-equality#equals) If it's possible for `name` to be `null`, then you need to check that first.
+- Then we add the `name`'s `hashCode` value. The `String` class already has a `hashCode` function, so we don't need to re-invent that. Note that we are assuming here that the `name` is not `null`! We can do this because we [included code to guarantee this in the previous lesson](../11_inheritance_equality#equals) If it's possible for `name` to be `null`, then you need to check that first.
 - We multiply this result again by `37`, then add the `age`.
 
 ```java
