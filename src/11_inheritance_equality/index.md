@@ -40,7 +40,7 @@ public class LineNumberTextArea extends TextArea {
 
 **You've already seen plain old inheritance through the `Object` class.**
 
-In the lesson on [method dispatch](../05-method-dispatch/), we saw the following line of code.
+In the lesson on [method dispatch](../05_method_dispatch/), we saw the following line of code.
 
 ```java
 Object obj = new Object();
@@ -57,7 +57,7 @@ Below are two methods defined in the `Object` class that are commonly overridden
 ## `toString`
 
 The `Object` class defines a `toString` method whose job it is to return a short, human friendly string representation of the object.
-For a plain old `Object` which is almost never used directly by developers, this `toString` method simply returns the object's hash code, which itself is simply an integer representation of the object's memory address, unless you override it yourself, [which you should](../12-hashcode/).
+For a plain old `Object` which is almost never used directly by developers, this `toString` method simply returns the object's hash code, which itself is simply an integer representation of the object's memory address, unless you override it yourself, [which you should](../12_hashcode/).
 The `Object` has no other distinguishing features, so there's not much more to say about it.
 
 **You should always override `toString` when you write your own classes.** It's often useful to have a `toString` method for your own classes.
@@ -129,7 +129,7 @@ The act of using the debugger was itself manifesting the bug the student was try
 ## `equals`
 
 Next up, we will talk about the `equals` method in Java.
-All the way in the [first lesson](../01-intro-java/), we talked about how reference types (i.e., objects) must *not* be checked for equality using the `==` operator.
+All the way in the [first lesson](../01_intro_to_java/), we talked about how reference types (i.e., objects) must *not* be checked for equality using the `==` operator.
 We must instead use the `.equals` method.
 
 The `Object` class provides an `equals` method that all classes inherit, unless they write their own `equals` method.
@@ -329,7 +329,7 @@ public boolean equals(Object other){
 
 ## Some examples
 
-Because the `ClosedFigure` equals method uses `getClass` for the type check, [dynamic dispatch](../05-method-dispatch/) takes care of getting the right class name at run time.
+Because the `ClosedFigure` equals method uses `getClass` for the type check, [dynamic dispatch](../05_method_dispatch/) takes care of getting the right class name at run time.
 
 So even if you created an object like so:
 

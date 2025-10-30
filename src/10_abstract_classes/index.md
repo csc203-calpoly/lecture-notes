@@ -1,7 +1,7 @@
 # Abstract classes
 
 We learned about interfaces in Java in the previous lessons.
-For a recap, please take a look at the [Summary](../09-interfaces-part-3#summary) from the previous lesson.
+For a recap, please take a look at the [Summary](../09_interfaces_part_3#summary) from the previous lesson.
 
 Interfaces come with numerous benefits:
 

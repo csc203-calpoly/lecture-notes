@@ -30,6 +30,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
@@ -204,7 +206,7 @@ To do that, they might create a class like:</p>
 }
 </code></pre>
 <p><strong>You've already seen plain old inheritance through the <code>Object</code> class.</strong></p>
-<p>In the lesson on <a href="../05-method-dispatch/">method dispatch</a>, we saw the following line of code.</p>
+<p>In the lesson on <a href="../05_method_dispatch/">method dispatch</a>, we saw the following line of code.</p>
 <pre><code class="language-java">Object obj = new Object();
 </code></pre>
 <p>The fact that we were able to initialise the <code>obj</code> variable using the <code>Object</code> constructor should tell you that <code>Object</code> is <em>not</em> an abstract class.
@@ -216,7 +218,7 @@ And, as we know, all reference types <code>extend</code> the <code>Object</code>
 </ul>
 <h2 id="tostring"><a class="header" href="#tostring"><code>toString</code></a></h2>
 <p>The <code>Object</code> class defines a <code>toString</code> method whose job it is to return a short, human friendly string representation of the object.
-For a plain old <code>Object</code> which is almost never used directly by developers, this <code>toString</code> method simply returns the object's hash code, which itself is simply an integer representation of the object's memory address, unless you override it yourself, <a href="../12-hashcode/">which you should</a>.
+For a plain old <code>Object</code> which is almost never used directly by developers, this <code>toString</code> method simply returns the object's hash code, which itself is simply an integer representation of the object's memory address, unless you override it yourself, <a href="../12_hashcode/">which you should</a>.
 The <code>Object</code> has no other distinguishing features, so there's not much more to say about it.</p>
 <p><strong>You should always override <code>toString</code> when you write your own classes.</strong> It's often useful to have a <code>toString</code> method for your own classes.
 It brings a number of conveniences.</p>
@@ -264,7 +266,7 @@ Each use of <code>toString</code> (whether the student called it themselves or n
 <p>The act of using the debugger was itself manifesting the bug the student was trying to track down. What a nightmare!</p>
 <h2 id="equals"><a class="header" href="#equals"><code>equals</code></a></h2>
 <p>Next up, we will talk about the <code>equals</code> method in Java.
-All the way in the <a href="../01-intro-java/">first lesson</a>, we talked about how reference types (i.e., objects) must <em>not</em> be checked for equality using the <code>==</code> operator.
+All the way in the <a href="../01_intro_to_java/">first lesson</a>, we talked about how reference types (i.e., objects) must <em>not</em> be checked for equality using the <code>==</code> operator.
 We must instead use the <code>.equals</code> method.</p>
 <p>The <code>Object</code> class provides an <code>equals</code> method that all classes inherit, unless they write their own <code>equals</code> method.
 This "fallback" <code>equals</code> method does the same check as <code>==</code> — it checks if two variables' memory addresses are the same.
@@ -431,7 +433,7 @@ public boolean equals(Object other){
 }
 </code></pre>
 <h2 id="some-examples"><a class="header" href="#some-examples">Some examples</a></h2>
-<p>Because the <code>ClosedFigure</code> equals method uses <code>getClass</code> for the type check, <a href="../05-method-dispatch/">dynamic dispatch</a> takes care of getting the right class name at run time.</p>
+<p>Because the <code>ClosedFigure</code> equals method uses <code>getClass</code> for the type check, <a href="../05_method_dispatch/">dynamic dispatch</a> takes care of getting the right class name at run time.</p>
 <p>So even if you created an object like so:</p>
 <pre><code class="language-java">// Create a circle with location and radius
 ClosedFigure fig = new Circle(new Point(2, 2), 10);

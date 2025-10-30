@@ -31,6 +31,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
@@ -807,8 +809,8 @@ According to the documentation, Java by default creates a backing array of size 
 </tbody></table>
 </div>
 <p>The <code>ArrayList</code> abstracts away all of these gory details, allowing us to deal with the list as simply a dynamically sizeable linear sequence of data.</p>
-<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> ($$\theta(1)$$), i.e., it takes the same amount of time no matter how large the list is.</p>
-<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> ($$\theta(n)$$) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
+<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> (\( \theta(1) \)), i.e., it takes the same amount of time no matter how large the list is.</p>
+<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> (\( \theta(n) \)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
 <p><code>LinkedLists</code></p>
 <p>The other type of list that Java provides is the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html"><code>LinkedList</code></a>. We won't belabour the point here, since you likely studied <code>LinkedLists</code> in the previous class.</p>
 <p>Unlike the <code>ArrayList</code>, the <code>LinkedList</code> is made up of a sequence of objects connected ("linked") by pointers.
@@ -826,11 +828,11 @@ Each item points to the next item, forming a chain of items, i.e., the linked li
 </ul>
 <p>So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the worst case for various tasks.</p>
 <div class="table-wrapper"><table><thead><tr><th>Operation</th><th><code>ArrayList</code></th><th><code>LinkedList</code></th></tr></thead><tbody>
-<tr><td>Random access</td><td>$$\theta(1)$$</td><td>$$\theta(n)$$</td></tr>
-<tr><td>Add to end (append)</td><td>$$\theta(n)$$</td><td>$$\theta(1)$$</td></tr>
-<tr><td>Add to arbitrary position</td><td>$$\theta(n)$$</td><td>$$\theta(n)$$ to get to the position<br>$$\theta(1)$$ to add the item</td></tr>
-<tr><td>Remove (from a given position)</td><td>$$\theta(1)$$ to get to the position<br/>$$\theta(n)$$ to remove the item and shift items in the list as appropriate</td><td>$$\theta(n)$$ to get to the position<br/>$$\theta(1)$$ to perform the removal</td></tr>
-<tr><td>Contains</td><td>$$\theta(n)$$</td><td>$$\theta(n)$$</td></tr>
+<tr><td>Random access</td><td>\( \theta(1) \)</td><td>\( \theta(n) \)</td></tr>
+<tr><td>Add to end (append)</td><td>\( \theta(n) \)</td><td>\( \theta(1) \)</td></tr>
+<tr><td>Add to arbitrary position</td><td>\( \theta(n) \)</td><td>\( \theta(n) \) to get to the position<br>\( \theta(1) \) to add the item</td></tr>
+<tr><td>Remove (from a given position)</td><td>\( \theta(1) \) to get to the position<br/>\( \theta(n) \) to remove the item and shift items in the list as appropriate</td><td>\( \theta(n) \) to get to the position<br/>\( \theta(1) \) to perform the removal</td></tr>
+<tr><td>Contains</td><td>\( \theta(n) \)</td><td>\( \theta(n) \)</td></tr>
 </tbody></table>
 </div>
 <h3 id="a-note-about-boxed-primitive-types"><a class="header" href="#a-note-about-boxed-primitive-types">A note about "boxed" primitive types</a></h3>
@@ -1633,7 +1635,7 @@ If any of the methods are omitted (or if the names are misspelled, parameter lis
 </ul>
 <h2 id="the-relationship-between-an-interface-and-its-implementing-subclasses"><a class="header" href="#the-relationship-between-an-interface-and-its-implementing-subclasses">The relationship between an interface and its implementing subclasses</a></h2>
 <p>When a <code>class</code> <code>implements</code> an <code>interface</code>, the class is said to be an <em>implementing subclass</em> of the interface.
-Recall from our lesson on <a href="07_interfaces/../05-method-dispatch/">method dispatch</a> that the <code>Object</code> class is the root of the Java type hierarchy.
+Recall from our lesson on <a href="07_interfaces/../05_method_dispatch/">method dispatch</a> that the <code>Object</code> class is the root of the Java type hierarchy.
 All reference types in Java are <em>subtypes</em> or <em>child types</em> of the <code>Object</code> class.</p>
 <p>When we create an <code>interface</code> (say, the <code>List</code> interface), we are introducing that interface into the type hierarchy.
 And when we create implementations of the <code>List</code> interface, we are saying that <code>ArrayList</code> and <code>LinkedList</code> are subtypes of <code>List</code>.</p>
@@ -1655,7 +1657,7 @@ List&lt;Point&gt; points = new ArrayList&lt;&gt;();
 <p>What's the <strong>static type</strong> of the <code>points</code> variable above? What's its <strong>dynamic type</strong>? When might we be faced with a situation where its useful or necessary to have these be different?</p>
 </blockquote>
 <h2 id="why-is-this-useful"><a class="header" href="#why-is-this-useful">Why is this useful?</a></h2>
-<p>Recall our <a href="07_interfaces/../06-class-design-process/">discussion on coupling and cohesion</a>.
+<p>Recall our <a href="07_interfaces/../06_class_design_process/">discussion on coupling and cohesion</a>.
 Our goal is to write <em>cohesive</em> classes that are <em>loosely coupled</em> with each other.
 If classes are tightly coupled, they have to change together, because they depend on each other's implementation details.
 When classes are loosely coupled, they are mostly independent.
@@ -1700,10 +1702,10 @@ In this lesson, we'll walk through an example of creating and using interfaces i
 We'll see how interfaces can help reduce coupling and introduce separation of concerns.</p>
 </blockquote>
 <h2 id="updating-the-nim-game"><a class="header" href="#updating-the-nim-game">Updating the Nim Game</a></h2>
-<p>Will work with the Nim game example that we talked about in the lesson on <a href="08_interfaces_part_2/../06-class-design-process/">a class design process</a>.
+<p>Will work with the Nim game example that we talked about in the lesson on <a href="08_interfaces_part_2/../06_class_design_process/">a class design process</a>.
 So far, we have a game that only supports human players, i.e., at each turn our <code>Game</code> class will pause and wait for a <code>Player</code> to manually enter the number of sticks they want to pick up.</p>
 <p>In this lesson we'll add support for more kinds of automated players, i.e., bots that the human player can play with.</p>
-<p>Please take a minute to go look at the <a href="08_interfaces_part_2/../06-class-design-process/">current implementation of our Nim game</a>.
+<p>Please take a minute to go look at the <a href="08_interfaces_part_2/../06_class_design_process/">current implementation of our Nim game</a>.
 We have the following class structure that accomplish the following tasks.
 The relationship between the classes here is a <em>has a</em> relationship. I.e., the <code>Game</code> class <em>has two</em> <code>Player</code>s, and it <em>has a</em> <code>Pile</code> as global members (instance variables, or tantamount to instance variables).</p>
 <pre class="mermaid">classDiagram
@@ -1869,7 +1871,7 @@ public class RandomPlayer implements Player {
 </p>
 <h3 id="the-human-player"><a class="header" href="#the-human-player">The Human Player</a></h3>
 <p>Finally, let's look at the <code>HumanPlayer</code>. We're going to do this bit as an in-class discussion.</p>
-<p>In the <a href="08_interfaces_part_2/../06-class-design-process#the-game-class">previous implementation of the Game</a>, the <code>Game</code> was responsible for deciding how many sticks to pick up, and then giving that information to the <code>Player</code> object by calling the <code>takeTurn</code> method.
+<p>In the <a href="08_interfaces_part_2/../06_class_design_process#the-game-class">previous implementation of the Game</a>, the <code>Game</code> was responsible for deciding how many sticks to pick up, and then giving that information to the <code>Player</code> object by calling the <code>takeTurn</code> method.
 However, that meant that the <code>Game</code> logic was <em>coupled with</em> the <code>Player</code> logic — it knew about the player's strategy for choosing a number of sticks to pick up (i.e., ask the user and wait for input).</p>
 <p>In our current implementation, we've introduced a degree of separation between <code>Game</code> logic and <code>Player</code> logic, setting things up so the <code>Game</code> can be totally unaware of how the <code>Player</code> takes their turn.
 This allowed us to incorporate three different types of <code>Players</code>, each with their own turn taking strategies.</p>
@@ -1918,7 +1920,7 @@ That is, even though the <strong>static type</strong> of <code>p1</code> and <co
 </p>
 <h4 id="2-make-the-greedyplayer-do-it"><a class="header" href="#2-make-the-greedyplayer-do-it">#2 Make the GreedyPlayer do it</a></h4>
 <p>Strategy 2 is to make the <code>GreedyPlayer</code> handle this behaviour.</p>
-<p>The <code>GreedyPlayer</code> already knows what kind of player it is—<a href="08_interfaces_part_2/../05-method-dispatch/">dynamic dispatch</a> is already taking care of calling the right <code>takeTurn</code> method depending on the player type.
+<p>The <code>GreedyPlayer</code> already knows what kind of player it is—<a href="08_interfaces_part_2/../05_method_dispatch/">dynamic dispatch</a> is already taking care of calling the right <code>takeTurn</code> method depending on the player type.
 So since we want this behaviour to take place each time the <code>GreedyPlayer</code> takes a turn, we could change our <code>GreedyPlayer</code>'s <code>takeTurn</code> method to the following.</p>
 <pre><code class="language-java">public class GreedyPlayer implements Player {
   // Rest of the class stays the same...
@@ -2360,7 +2362,7 @@ If you know you're not likely to add new classes that support some behaviours bu
 </li>
 </ol><div style="break-before: page; page-break-before: always;"></div><h1 id="abstract-classes"><a class="header" href="#abstract-classes">Abstract classes</a></h1>
 <p>We learned about interfaces in Java in the previous lessons.
-For a recap, please take a look at the <a href="10_abstract_classes/../09-interfaces-part-3#summary">Summary</a> from the previous lesson.</p>
+For a recap, please take a look at the <a href="10_abstract_classes/../09_interfaces_part_3#summary">Summary</a> from the previous lesson.</p>
 <p>Interfaces come with numerous benefits:</p>
 <ol>
 <li>They let us introduce a degree of separation between implementation details of different classes in a larger Object-oriented system.</li>
@@ -2609,7 +2611,7 @@ To do that, they might create a class like:</p>
 }
 </code></pre>
 <p><strong>You've already seen plain old inheritance through the <code>Object</code> class.</strong></p>
-<p>In the lesson on <a href="11_inheritance_equality/../05-method-dispatch/">method dispatch</a>, we saw the following line of code.</p>
+<p>In the lesson on <a href="11_inheritance_equality/../05_method_dispatch/">method dispatch</a>, we saw the following line of code.</p>
 <pre><code class="language-java">Object obj = new Object();
 </code></pre>
 <p>The fact that we were able to initialise the <code>obj</code> variable using the <code>Object</code> constructor should tell you that <code>Object</code> is <em>not</em> an abstract class.
@@ -2621,7 +2623,7 @@ And, as we know, all reference types <code>extend</code> the <code>Object</code>
 </ul>
 <h2 id="tostring"><a class="header" href="#tostring"><code>toString</code></a></h2>
 <p>The <code>Object</code> class defines a <code>toString</code> method whose job it is to return a short, human friendly string representation of the object.
-For a plain old <code>Object</code> which is almost never used directly by developers, this <code>toString</code> method simply returns the object's hash code, which itself is simply an integer representation of the object's memory address, unless you override it yourself, <a href="11_inheritance_equality/../12-hashcode/">which you should</a>.
+For a plain old <code>Object</code> which is almost never used directly by developers, this <code>toString</code> method simply returns the object's hash code, which itself is simply an integer representation of the object's memory address, unless you override it yourself, <a href="11_inheritance_equality/../12_hashcode/">which you should</a>.
 The <code>Object</code> has no other distinguishing features, so there's not much more to say about it.</p>
 <p><strong>You should always override <code>toString</code> when you write your own classes.</strong> It's often useful to have a <code>toString</code> method for your own classes.
 It brings a number of conveniences.</p>
@@ -2669,7 +2671,7 @@ Each use of <code>toString</code> (whether the student called it themselves or n
 <p>The act of using the debugger was itself manifesting the bug the student was trying to track down. What a nightmare!</p>
 <h2 id="equals"><a class="header" href="#equals"><code>equals</code></a></h2>
 <p>Next up, we will talk about the <code>equals</code> method in Java.
-All the way in the <a href="11_inheritance_equality/../01-intro-java/">first lesson</a>, we talked about how reference types (i.e., objects) must <em>not</em> be checked for equality using the <code>==</code> operator.
+All the way in the <a href="11_inheritance_equality/../01_intro_to_java/">first lesson</a>, we talked about how reference types (i.e., objects) must <em>not</em> be checked for equality using the <code>==</code> operator.
 We must instead use the <code>.equals</code> method.</p>
 <p>The <code>Object</code> class provides an <code>equals</code> method that all classes inherit, unless they write their own <code>equals</code> method.
 This "fallback" <code>equals</code> method does the same check as <code>==</code> — it checks if two variables' memory addresses are the same.
@@ -2836,7 +2838,7 @@ public boolean equals(Object other){
 }
 </code></pre>
 <h2 id="some-examples"><a class="header" href="#some-examples">Some examples</a></h2>
-<p>Because the <code>ClosedFigure</code> equals method uses <code>getClass</code> for the type check, <a href="11_inheritance_equality/../05-method-dispatch/">dynamic dispatch</a> takes care of getting the right class name at run time.</p>
+<p>Because the <code>ClosedFigure</code> equals method uses <code>getClass</code> for the type check, <a href="11_inheritance_equality/../05_method_dispatch/">dynamic dispatch</a> takes care of getting the right class name at run time.</p>
 <p>So even if you created an object like so:</p>
 <pre><code class="language-java">// Create a circle with location and radius
 ClosedFigure fig = new Circle(new Point(2, 2), 10);
@@ -2910,7 +2912,7 @@ This is why we use <code>getClass</code> to perform the type check in an <code>e
 The produced integer should be consistent for the object.
 That is, the produced integer should not change unless the object itself is changed in some way.</p>
 <h2 id="whats-hashcode-used-for"><a class="header" href="#whats-hashcode-used-for">What's <code>hashCode</code> used for?</a></h2>
-<p>Think about the <code>HashMap</code> data structure, discussed <a href="12_hashCode/../03-lists-maps-existing-classes/">in a previous lesson</a>.
+<p>Think about the <code>HashMap</code> data structure, discussed <a href="12_hashCode/../03_lists_maps_existing_classes/">in a previous lesson</a>.
 The <code>HashMap</code> supports these fundamental operations:</p>
 <ul>
 <li><code>put</code> entries (key-value pairs) into the map</li>
@@ -2978,7 +2980,7 @@ We should make use of all instance variables that factor into the <code>equals</
 <ul>
 <li>In the code below, we start with the number <code>1</code>.</li>
 <li>Then we multiply by <code>37</code> — multiplying by a prime number like <code>37</code> makes it more likely for us to produce a number that other objects <em>won't</em> produce. You can use any prime number you want.</li>
-<li>Then we add the <code>name</code>'s <code>hashCode</code> value. The <code>String</code> class already has a <code>hashCode</code> function, so we don't need to re-invent that. Note that we are assuming here that the <code>name</code> is not <code>null</code>! We can do this because we <a href="12_hashCode/../11-inheritance-equality#equals">included code to guarantee this in the previous lesson</a> If it's possible for <code>name</code> to be <code>null</code>, then you need to check that first.</li>
+<li>Then we add the <code>name</code>'s <code>hashCode</code> value. The <code>String</code> class already has a <code>hashCode</code> function, so we don't need to re-invent that. Note that we are assuming here that the <code>name</code> is not <code>null</code>! We can do this because we <a href="12_hashCode/../11_inheritance_equality#equals">included code to guarantee this in the previous lesson</a> If it's possible for <code>name</code> to be <code>null</code>, then you need to check that first.</li>
 <li>We multiply this result again by <code>37</code>, then add the <code>age</code>.</li>
 </ul>
 <pre><code class="language-java">@Override
@@ -3360,7 +3362,7 @@ Why do you think this is?</p>
 </blockquote>
 <details markdown="1">
 <summary>Hint</summary>
-[The result of this difference will be a `double`](../02-arithmetic-and-testing/), which does not match the required signature for the `compare` function.
+[The result of this difference will be a `double`](../02_arithmetic_and_testing/), which does not match the required signature for the `compare` function.
 </details>
 So we _could_ write the function in "long form":
 <pre><code class="language-java">Comparator&lt;Album&gt; priceComp = (a1, a2) -&gt; {
@@ -3373,7 +3375,7 @@ So we _could_ write the function in "long form":
   }
 }
 </code></pre>
-<p>Alternatively, the <a href="14_comparators/../03-lists-maps-existing-classes#boxed-primitives">boxed primitive types</a> provide a handy static function meant to do just this.
+<p>Alternatively, the <a href="14_comparators/../03_lists_maps_existing_classes#boxed-primitives">boxed primitive types</a> provide a handy static function meant to do just this.
 The above comparator can be written as:</p>
 <pre><code class="language-java">Comparator&lt;Album&gt; priceComp = (a1, a2) -&gt; Double.compare(a1.getPrice(), a2.getPrice());
 </code></pre>
@@ -3972,6 +3974,7 @@ while (scanner.hasNext()) {
 <li>Aaron Keen</li>
 <li>Julie Workman</li>
 <li>Paul Hatalsky</li>
+<li>Alex Bisberg</li>
 </ul>
 
                     </main>
@@ -4013,7 +4016,9 @@ while (scanner.hasNext()) {
 
         <script>
         window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
         });
         </script>
 

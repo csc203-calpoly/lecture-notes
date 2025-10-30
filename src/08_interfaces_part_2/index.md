@@ -6,12 +6,12 @@
 
 ## Updating the Nim Game
 
-Will work with the Nim game example that we talked about in the lesson on [a class design process](../06-class-design-process/).
+Will work with the Nim game example that we talked about in the lesson on [a class design process](../06_class_design_process/).
 So far, we have a game that only supports human players, i.e., at each turn our `Game` class will pause and wait for a `Player` to manually enter the number of sticks they want to pick up.
 
 In this lesson we'll add support for more kinds of automated players, i.e., bots that the human player can play with.
 
-Please take a minute to go look at the [current implementation of our Nim game](../06-class-design-process/).
+Please take a minute to go look at the [current implementation of our Nim game](../06_class_design_process/).
 We have the following class structure that accomplish the following tasks.
 The relationship between the classes here is a _has a_ relationship. I.e., the `Game` class _has two_ `Player`s, and it _has a_ `Pile` as global members (instance variables, or tantamount to instance variables).
 
@@ -215,7 +215,7 @@ The key thing to note here is that the `Game` functions the same way no matter h
 
 Finally, let's look at the `HumanPlayer`. We're going to do this bit as an in-class discussion.
 
-In the [previous implementation of the Game](../06-class-design-process#the-game-class), the `Game` was responsible for deciding how many sticks to pick up, and then giving that information to the `Player` object by calling the `takeTurn` method.
+In the [previous implementation of the Game](../06_class_design_process#the-game-class), the `Game` was responsible for deciding how many sticks to pick up, and then giving that information to the `Player` object by calling the `takeTurn` method.
 However, that meant that the `Game` logic was _coupled with_ the `Player` logic — it knew about the player's strategy for choosing a number of sticks to pick up (i.e., ask the user and wait for input).
 
 In our current implementation, we've introduced a degree of separation between `Game` logic and `Player` logic, setting things up so the `Game` can be totally unaware of how the `Player` takes their turn.
@@ -286,7 +286,7 @@ Below is the `play` method of the `Game` class, reproduced with a few added line
 
 Strategy 2 is to make the `GreedyPlayer` handle this behaviour.
 
-The `GreedyPlayer` already knows what kind of player it is—[dynamic dispatch](../05-method-dispatch/) is already taking care of calling the right `takeTurn` method depending on the player type.
+The `GreedyPlayer` already knows what kind of player it is—[dynamic dispatch](../05_method_dispatch/) is already taking care of calling the right `takeTurn` method depending on the player type.
 So since we want this behaviour to take place each time the `GreedyPlayer` takes a turn, we could change our `GreedyPlayer`'s `takeTurn` method to the following.
 
 ```java

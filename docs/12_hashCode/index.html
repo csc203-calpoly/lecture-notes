@@ -30,6 +30,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
@@ -187,7 +189,7 @@
 The produced integer should be consistent for the object.
 That is, the produced integer should not change unless the object itself is changed in some way.</p>
 <h2 id="whats-hashcode-used-for"><a class="header" href="#whats-hashcode-used-for">What's <code>hashCode</code> used for?</a></h2>
-<p>Think about the <code>HashMap</code> data structure, discussed <a href="../03-lists-maps-existing-classes/">in a previous lesson</a>.
+<p>Think about the <code>HashMap</code> data structure, discussed <a href="../03_lists_maps_existing_classes/">in a previous lesson</a>.
 The <code>HashMap</code> supports these fundamental operations:</p>
 <ul>
 <li><code>put</code> entries (key-value pairs) into the map</li>
@@ -255,7 +257,7 @@ We should make use of all instance variables that factor into the <code>equals</
 <ul>
 <li>In the code below, we start with the number <code>1</code>.</li>
 <li>Then we multiply by <code>37</code> — multiplying by a prime number like <code>37</code> makes it more likely for us to produce a number that other objects <em>won't</em> produce. You can use any prime number you want.</li>
-<li>Then we add the <code>name</code>'s <code>hashCode</code> value. The <code>String</code> class already has a <code>hashCode</code> function, so we don't need to re-invent that. Note that we are assuming here that the <code>name</code> is not <code>null</code>! We can do this because we <a href="../11-inheritance-equality#equals">included code to guarantee this in the previous lesson</a> If it's possible for <code>name</code> to be <code>null</code>, then you need to check that first.</li>
+<li>Then we add the <code>name</code>'s <code>hashCode</code> value. The <code>String</code> class already has a <code>hashCode</code> function, so we don't need to re-invent that. Note that we are assuming here that the <code>name</code> is not <code>null</code>! We can do this because we <a href="../11_inheritance_equality#equals">included code to guarantee this in the previous lesson</a> If it's possible for <code>name</code> to be <code>null</code>, then you need to check that first.</li>
 <li>We multiply this result again by <code>37</code>, then add the <code>age</code>.</li>
 </ul>
 <pre><code class="language-java">@Override

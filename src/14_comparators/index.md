@@ -188,7 +188,7 @@ The `compare` function needs to return a positive integer if `a1`'s `year` is gr
 
 <details markdown="1">
 <summary>Hint</summary>
-[The result of this difference will be a `double`](../02-arithmetic-and-testing/), which does not match the required signature for the `compare` function.
+[The result of this difference will be a `double`](../02_arithmetic_and_testing/), which does not match the required signature for the `compare` function.
 </details>
 So we _could_ write the function in "long form":
 
@@ -204,7 +204,7 @@ Comparator<Album> priceComp = (a1, a2) -> {
 }
 ```
 
-Alternatively, the [boxed primitive types](../03-lists-maps-existing-classes#boxed-primitives) provide a handy static function meant to do just this.
+Alternatively, the [boxed primitive types](../03_lists_maps_existing_classes#boxed-primitives) provide a handy static function meant to do just this.
 The above comparator can be written as:
 
 ```java

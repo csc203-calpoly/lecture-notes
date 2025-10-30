@@ -30,6 +30,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
@@ -313,7 +315,7 @@ Why do you think this is?</p>
 </blockquote>
 <details markdown="1">
 <summary>Hint</summary>
-[The result of this difference will be a `double`](../02-arithmetic-and-testing/), which does not match the required signature for the `compare` function.
+[The result of this difference will be a `double`](../02_arithmetic_and_testing/), which does not match the required signature for the `compare` function.
 </details>
 So we _could_ write the function in "long form":
 <pre><code class="language-java">Comparator&lt;Album&gt; priceComp = (a1, a2) -&gt; {
@@ -326,7 +328,7 @@ So we _could_ write the function in "long form":
   }
 }
 </code></pre>
-<p>Alternatively, the <a href="../03-lists-maps-existing-classes#boxed-primitives">boxed primitive types</a> provide a handy static function meant to do just this.
+<p>Alternatively, the <a href="../03_lists_maps_existing_classes#boxed-primitives">boxed primitive types</a> provide a handy static function meant to do just this.
 The above comparator can be written as:</p>
 <pre><code class="language-java">Comparator&lt;Album&gt; priceComp = (a1, a2) -&gt; Double.compare(a1.getPrice(), a2.getPrice());
 </code></pre>
