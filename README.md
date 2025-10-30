@@ -68,5 +68,5 @@ mdbook build -d docs
 ```
 
 > [!NOTE]
-> **Only build to the `docs/` folder if you want your changes when they pushed to the main repository.**
+> **Only build to the `docs/` folder if you want your changes visible when they are pushed to the main repository.**
 > This `docs/` folder is where GitHub Pages looks for the book to serve it at [https://csc203-calpoly.github.io/lecture-notes/](https://csc203-calpoly.github.io/lecture-notes/).
