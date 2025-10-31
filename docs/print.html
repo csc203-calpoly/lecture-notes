@@ -3967,6 +3967,653 @@ while (scanner.hasNext()) {
 </code></pre>
 <p>Because <code>Files.lines</code> returns a <code>Stream&lt;String&gt;</code>, the lines in the file and <em>streamed</em> through our pipeline, but this detail is abstracted away from you, the developer.</p>
 <p>If you use a simple collection in memory (like an array or list) as the source of a stream, you're not gaining much in the way of "streaming" — in that situation, the Streams API mostly provides a convenient library and syntax for performing operations on a collection data. Still pretty good!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="exception-handling"><a class="header" href="#exception-handling">Exception handling</a></h1>
+<blockquote>
+<p><em>Exceptions</em> are unexpected occurrences that disrupt the normal flow of your program. In this lesson we'll learn how we can use Java's Exception handling mechanisms for handling Exceptions.</p>
+<p>Here, "handling" an Exception can mean many things:</p>
+<ul>
+<li>Logging an error, or notifying the user that an action cannot be completed because an error occurred.</li>
+<li>Performing some work to "recover" from the Exception</li>
+<li>Letting someone else handle the Exception</li>
+</ul>
+</blockquote>
+<!--Outline
+
+- What an Exception is
+- Running example: reading a file
+- A sneak peek at the Exception class hierarchy
+- Handling an exception: try-catch
+- The finally block
+- Making it somebody else's problem: throws
+- Checked vs unchecked exceptions
+- Creating your own exception types
+-->
+<p>An Exception is...well, it's an <em>exceptional</em> situation that occurs in your program, either because:</p>
+<ul>
+<li>You've encountered a situation you cannot control: for example, your program tried to read a file that does not exist,</li>
+<li>You received input that you did not expect: for example, you expected a String containing a math expression like <code>23 + 32</code>, but instead got <code>"jiminy billy bob"</code></li>
+</ul>
+<p>In these cases, you (the programmer) need to decide how your program is going to handle those situations.
+In programs you wrote in your early classes, you may have decided to not handle them at all, opting simply to assume that your program would not be used in these unexpected ways.</p>
+<p>However, as you edge closer toward writing programs that real people will use, you will need to start accounting for these exceptional situations.</p>
+<h2 id="a-running-example-reading-a-file"><a class="header" href="#a-running-example-reading-a-file">A running example: Reading a file</a></h2>
+<p>As always, we'll keep a running example going.</p>
+<p>In this case, let's assume we have a file (<code>runningData.txt</code>) that contains a list of names and miles run by each person, like so:</p>
+<pre><code class="language-txt">Michael,5.2
+Phyllis,3.8
+Dwight,3.1
+Pam,2.5
+Jim,4.0
+Oscar,6.3
+Stanley,1.2
+</code></pre>
+<p>(I did say it was a "running" example.)</p>
+<p>And we have some simple Java code that reads the file, line by line, and totals up the total number of miles run.<sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup>
+Take a moment to read the code below.</p>
+<pre><code class="language-java">// When we run the program, this method will be executed
+void main() {
+  double totalMiles = getTotalMilesRun("runningData.txt");
+  System.out.println("Total miles run: " + totalMiles);
+}
+
+// Reads the given file and returns the total number of miles run
+// This method contains several potential points of failure!
+double getTotalMilesRun(String fileName) {
+  // Create a Scanner to read the file
+  Scanner fileScanner = new Scanner(new File(fileName));
+  double totalMiles = 0.0;
+
+  // Read each line of the file
+  while (fileScanner.hasNext()) {
+    String line = fileScanner.nextLine();
+    String[] parts = line.split(",");
+    String name = parts[0];
+    double miles = Double.parseDouble(parts[1]);
+    totalMiles += miles;
+  }
+
+  // Always a good idea to close the Scanner when you're done.
+  // More on this in the next lesson.
+  fileScanner.close();
+
+  return totalMiles;
+}
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>The <code>getTotalMilesRun</code> method contains several potential points of failure. <em>Can you see what they are</em>?</p>
+</blockquote>
+<h2 id="file-io-gone-wrong"><a class="header" href="#file-io-gone-wrong">File I/O gone wrong</a></h2>
+<p>First, the file may not exist, or we may not have permission to read it, or it may be locked by another program, etc.</p>
+<p>Any time we read a file, Java <em>requires us</em> to "have a plan" for these exceptional circumstances.
+Our program will not compile without such a plan.</p>
+<p><strong>What does that mean in terms of Java code?</strong> The code above will give us a compiler error on the following line:</p>
+<pre><code class="language-java">Scanner fileScanner = new Scanner(new File(fileName));
+</code></pre>
+<p>Hovering over the error shows us this message:</p>
+<pre><code>Unhandled exception: java.io.FileNotFoundException
+</code></pre>
+<p>This is telling us that that line of code—the <code>Scanner</code> constructor in particular—<em>might</em> throw a <code>FileNotFoundException</code>, and if we want to use the <code>Scanner</code>, we need to be able to handle that.
+The <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html#%3Cinit%3E(java.io.File)"><code>Scanner</code> constructor's documentation</a> states that it throws a <code>FileNotFoundException</code> if the file is not found.<sup class="footnote-reference" id="fr-best-1"><a href="#footnote-best">2</a></sup></p>
+<p>So how do we handle it?</p>
+<p>We have two options for handling this potential <code>FileNotFoundException</code>:</p>
+<ol>
+<li>We can either handle it ourselves (e.g., by printing a message saying that something went wrong when reading the file), or</li>
+<li>We can pass the buck to whoever called our method, letting them handle it instead</li>
+</ol>
+<p>We'll consider each option in turn.</p>
+<h2 id="option-1-handle-the-exception"><a class="header" href="#option-1-handle-the-exception">Option 1: Handle the exception</a></h2>
+<p>Java gives us the <code>try-catch</code> construct for handling Exceptions ourselves.
+It is used to "try" to do some work that might "throw" an Exception.
+And if an Exception is thrown, we can "catch" the Exception and handle it gracefully.</p>
+<p>The flow of control in a <code>try-catch</code> block is shown below (a code example follows):</p>
+<pre class="mermaid">flowchart TD
+    A[Start try block] --&gt; B{Exception thrown?}
+    B -- No --&gt; C[Finish the try block]
+    C --&gt; G[End]
+    B -- Yes --&gt; E[Jump to catch block]
+    E --&gt; G[Execution continues after the try-catch]
+</pre>
+<p>Here's an example of its usage:</p>
+<pre><code class="language-java">try {
+  // Do some work that could possibly throw an exception.
+  Scanner fileScanner = new Scanner(new File(fileName));
+
+  // If we reach here, we know the previous line was successful.
+  while (fileScanner.hasNext()) {
+    // Read and process each line as before.
+  }
+} catch (FileNotFoundException fnfe) {
+  // Gracefully handle the exception.
+  // For example, print a message.
+  System.out.println("Could not find a file called " + fileName);
+
+  // You could also print the exception message. The Exception
+  // is given to you in the "fnfe" variable.
+  System.out.println("Error message: " + fnfe.getMessage());
+}
+
+// After the try-catch block, execution continues here.
+doMoreStuff();
+</code></pre>
+<p>In sum:</p>
+<ul>
+<li>If an Exception occurs partway through the <code>try</code> block, execution jumps to the <code>catch</code> block. We skip any code in the the <code>try</code> block that comes after the offending line.</li>
+<li>After the <code>catch</code> block finishes executing, execution continues with the code <em>after</em> the <code>try-catch</code> statement.</li>
+</ul>
+<p>It can be tempting to think of it as a control flow construct akin to an <code>if-else</code> statement, but there are important differences to be aware of.
+Importantly, unlike an <code>if-else</code> statement, where only one branch is executed, in a <code>try-catch</code>, both the <code>try</code> block (partially) and the <code>catch</code> block (fully) may be executed.</p>
+<p>With this knowledge in hand, let's see our method using a <code>try-catch</code> block to handle the potential <code>FileNotFoundException</code>.</p>
+<h4 id="gettotalmilesrun-with-a-try-catch-block"><a class="header" href="#gettotalmilesrun-with-a-try-catch-block"><code>getTotalMilesRun</code>, with a <code>try-catch</code> block</a></h4>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  double totalMiles = 0.0;
+
+  try {
+    // Create a Scanner to read the file
+    Scanner fileScanner = new Scanner(new File(fileName));
+
+    // Read each line of the file
+    while (fileScanner.hasNext()) {
+      String line = fileScanner.nextLine();
+      String[] parts = line.split(",");
+      String name = parts[0];
+      double miles = Double.parseDouble(parts[1]);
+      totalMiles += miles;
+    }
+
+    // Always a good idea to close the Scanner when you're done.
+    fileScanner.close();
+  } catch (FileNotFoundException fnfe) {
+    // Gracefully handle the exception
+    System.out.println("Could not find a file called " + fileName);
+    System.out.println("Error message: " + fnfe.getMessage());
+  }
+
+  return totalMiles;
+}
+</code></pre>
+<p>Now, if we call <code>getTotalMilesRun</code> with a file that doesn't exist, our program can gracefully handle it by printing a useful error message.</p>
+<p>But what if some <em>other</em> Exception occurs, not specifically a <code>FileNotFoundException</code>? Will our <code>catch</code> still catch it?</p>
+<p>Here's a excerpt of the hierarchy of Exception types in Java. We'll say much more about this in the next lesson!</p>
+<pre class="mermaid">flowchart TD
+  Exception
+  Exception --&gt; Others...
+  Exception --&gt; IOException --&gt; FileNotFoundException
+  Exception --&gt; RuntimeException --&gt; NumberFormatException
+</pre>
+<p>All exception types inherit from the base <code>Exception</code> type.
+So, a <code>FileNotFoundException</code> <em>is an</em> <code>Exception</code>.
+A <code>NumberFormatException</code>—another exception type—<em>is an</em> <code>Exception</code>.</p>
+<p>So it's possible, but not advisable, to catch all possible Exceptions by simply catching the base <code>Exception</code> type, like so:</p>
+<pre><code class="language-java">} catch (Exception e) {
+  // This will catch any Exception, including FileNotFoundException,
+  // NumberFormatException, etc.
+}
+</code></pre>
+<p>However, this is considered an antipattern (as in, don't do it).
+It's important that our <code>catch</code> block catch the correct Exception type, so that error handling can be targeted to the particular thing that went wrong.
+If we treat all exceptions the same, we run the risk of not being able to track down the causes of failures if they occur.</p>
+<h4 id="handling-multiple-exception-types"><a class="header" href="#handling-multiple-exception-types">Handling multiple Exception types</a></h4>
+<p>If multiple Exception types are possible from your code, you can have multiple <code>catch</code> blocks, like so:</p>
+<pre><code class="language-java">try {
+  // Code that might throw multiple exception types
+} catch (FileNotFoundException fnfe) {
+  // Handle file not found
+} catch (NumberFormatException nfe) {
+  // Handle number format error
+}
+</code></pre>
+<p>If an exception occurs, it will be passed to the first <code>catch</code> block that matches its type.
+Note that the order of the <code>catch</code> blocks matters: more specific exceptions should be caught before more general ones.
+Java will not automatically map to the "closest matching" <code>catch</code> block.</p>
+<p>Alternatively, you may want to handle multiple exception types in the same way. For those cases, you can use the pipe (<code>|</code>) operator to catch multiple exceptions in a single <code>catch</code> block:</p>
+<pre><code class="language-java">try {
+  // Code that might throw multiple exception types
+  // This catch block would catch FileNotFoundExceptions or NumberFormatExceptions
+} catch (FileNotFoundException | NumberFormatException e) {
+  // Handle both exceptions the same way
+}
+</code></pre>
+<p>You should have a good reason to do this, since it can make your error handling and reporting less specific.
+That is, these two exceptions may indicate very different problems, and handling them the same way may not be appropriate.
+It also shouldn't be used as an escape hatch to avoid writing proper error handling code.</p>
+<blockquote>
+<p><strong>NOTE</strong></p>
+<p>An Exception being thrown is <em>kind of</em> like a <code>return</code> statement. When an Exception occurs inside a method, execution is interrupted and transferred to the nearest appropriate <code>catch</code> block (if it exists), or the Exception "escapes upward" to whoever called the method.
+Because of this, only one Exception can occur at a time in a single <code>try</code> block, just like only one <code>return</code> statement can be executed at a time in a method.</p>
+</blockquote>
+<h2 id="option-2-make-it-somebody-elses-problem"><a class="header" href="#option-2-make-it-somebody-elses-problem">Option 2: Make it somebody else's problem</a></h2>
+<p>Ok, so we know how to handle an Exception ourselves if it occurs.
+But we do have another option: we could make it somebody else's problem using the <code>throws</code> keyword.</p>
+<p>Instead of handling the exception ourselves, we could pass the buck to whoever called our <code>getTotalMilesRun</code> method.
+I mean, hey, they are the ones who told us the file name, maybe they have a better idea of what to do if the file doesn't exist.</p>
+<p>We can do this by adding a <code>throws</code> declaration to our method.</p>
+<p>In the method below, we've gone back to our original version of the method (without a <code>try-catch</code>), with one small change.
+In the method signature, we've added <code>throws FileNotFoundException</code>.</p>
+<p>This is us telling Java (and anyone who calls this method) that this method <em>might</em> throw a <code>FileNotFoundException</code>.</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) throws FileNotFoundException {
+  // Create a Scanner to read the file
+  Scanner fileScanner = new Scanner(new File(fileName));
+  double totalMiles = 0.0;
+
+  // Read each line of the file
+  while (fileScanner.hasNext()) {
+    String line = fileScanner.nextLine();
+    String[] parts = line.split(",");
+    String name = parts[0];
+    double miles = Double.parseDouble(parts[1]);
+    totalMiles += miles;
+  }
+
+  // Always a good idea to close the Scanner when you're done.
+  fileScanner.close();
+
+  return totalMiles;
+}
+</code></pre>
+<p>Now, anyone who calls <code>getTotalMilesRun</code> must handle the <code>FileNotFoundException</code> themselves (either by using a <code>try-catch</code>, or themselves declaring that they themselves would throw it).</p>
+<p>This is actually what the <code>Scanner</code> constructor did to us!
+Take a look at the <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html#%3Cinit%3E(java.io.File)">constructor's documentation again</a>.
+Notice that the constructor has a <code>throws</code> declaration.
+This caused <em>us</em> to take action to handle the potential <code>FileNotFoundException</code>.</p>
+<p>That is, if we now have the following  <code>main</code> method, <em>we will have a compiler error on the line where we call <code>getTotalMilesRun</code></em>, because the Exception is now the <code>main</code> method's problem to handle.</p>
+<pre><code class="language-java">void main() {
+  double totalMiles = getTotalMilesRun("runningData.txt");
+  System.out.println("Total miles run: " + totalMiles);
+}
+</code></pre>
+<p>Once again, we have two options:</p>
+<p>The <code>main</code> method could use <code>try-catch</code> to handle the exception, like we did in <a href="17_exceptions/index.html#option-1-handle-the-exception">Option 1</a>.</p>
+<p>Or, the <code>main</code> method can <em>propogate the Exception</em> using a <code>throws</code> declaration, like we did in <a href="17_exceptions/index.html#option-2-make-it-somebody-elses-problem">Option 2</a>.
+However, <strong>this is generally a bad idea for <code>main</code></strong>.
+There's nowhere else to go! <code>main</code> is the entry point of the program—the <em>user</em> is the one who called the method, by virtue of running our program.
+So if an Exception "escapes" <code>main</code>, the program will simply crash.</p>
+<h2 id="throwing-exceptions-intentionally"><a class="header" href="#throwing-exceptions-intentionally">Throwing Exceptions Intentionally</a></h2>
+<p>In addition to <code>catch</code>ing exceptions or declaring exceptions using <code>throws</code>, we can also <code>throw</code> exceptions for others to handle.</p>
+<p>A common pattern when writing methods that take parameters is to check <em>preconditions</em> about those parameters.</p>
+<p>For example, in our <code>getRunningTotalMiles</code>, we might want to check that the <code>fileName</code> parameter is not <code>null</code> or empty.
+If it is, we might manually throw an <code>IllegalArgumentException</code>, which is also an unchecked exception, and give it a meaningful error message.</p>
+<p>We can use the <code>throw</code> keyword to do this.</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  if (fileName == null || fileName.isEmpty()) {
+    throw new IllegalArgumentException("fileName cannot be null or empty");
+  }
+
+  // Rest of the method remains the same
+}
+</code></pre>
+<p>This is our way of saying "I got some invalid input, and I cannot proceed with it."
+We do this to throw an error back to whoever called the method with erroneous input, so they can fix the issue on their end.</p>
+<h2 id="checked-and-unchecked-exceptions"><a class="header" href="#checked-and-unchecked-exceptions">Checked and unchecked exceptions</a></h2>
+<p>Remember how I said our <code>getTotalMilesRun</code> method has several potential points of failure? We've only handled one of them so far: the possibility that the file doesn't exist.</p>
+<p>It was easy to notice that one, because the <code>Scanner</code> constructor explicitly told us about it by throwing a <code>FileNotFoundException</code>, and the compiler wouldn't move on until we handled it.</p>
+<p>These types of exceptions are called <em>checked exceptions</em>, because they are checked at compile time.</p>
+<p><em>Unchecked exceptions</em>, on the other hand, are not checked at compile time.
+Can you tell if there's potential for such an exception to occur in our <code>getTotalMilesRun</code> method? If so, what would it be?</p>
+<h2 id="referencesother-reading"><a class="header" href="#referencesother-reading">References/Other reading</a></h2>
+<ul>
+<li>Oracle's <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/">Java tutorial on Exceptions</a> is excellent.</li>
+</ul>
+<hr>
+<ol class="footnote-definition"><li id="footnote-1">
+<p>Since we're just dealing with simple methods here, I won't create classes for this example. Instead, we'll use top-level methods that are supported in Java 25 onward. <a href="#fr-1-1">↩</a></p>
+</li>
+<li id="footnote-best">
+<p>If we can't handle <code>Scanner</code> at its worst, do we really deserve it at its best? <a href="#fr-best-1">↩</a></p>
+</li>
+</ol><div style="break-before: page; page-break-before: always;"></div><h1 id="checked-and-unchecked-exceptions-1"><a class="header" href="#checked-and-unchecked-exceptions-1">Checked and unchecked exceptions</a></h1>
+<blockquote>
+<p>In this lesson, we'll learn about Exceptions that are "checked" or "unchecked" by the compiler and, more broadly, about the Exception hierarchy in Java.</p>
+</blockquote>
+<h2 id="recap-2"><a class="header" href="#recap-2">Recap</a></h2>
+<p>Here's one version of the code we left off with in the previous lesson.
+We're reading a file, and accounting for the case where the file doesn't exist.</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  if (fileName == null || fileName.isEmpty()) {
+    throw new IllegalArgumentException("fileName cannot be null or empty");
+  }
+
+  double totalMiles = 0.0;
+
+  try {
+    // Create a Scanner to read the file
+    Scanner fileScanner = new Scanner(new File(fileName));
+
+    // Read each line of the file
+    while (fileScanner.hasNext()) {
+      String line = fileScanner.nextLine();
+      String[] parts = line.split(",");
+      String name = parts[0];
+      double miles = Double.parseDouble(parts[1]);
+      totalMiles += miles;
+    }
+  } catch (FileNotFoundException fnfe) {
+    // Gracefully handle the exception
+    System.out.println("Could not find a file called " + fileName);
+    System.out.println("Error message: " + fnfe.getMessage());
+  }
+
+  return totalMiles;
+}
+</code></pre>
+<p>We were <em>forced</em> to account for that case by the compiler, because the <code>Scanner</code> constructor declares that it <code>throws</code> a <code>FileNotFoundException</code>.</p>
+<p>That's because the <code>FileNotFoundException</code> is a <em>checked</em> exception.
+The next section discusses the differences between <em>checked</em> and <em>unchecked</em> exceptions and shows some examples.</p>
+<h2 id="the-exception-type-hierarchy"><a class="header" href="#the-exception-type-hierarchy">The Exception type hierarchy</a></h2>
+<p>Here's an excerpt of the Java Exception type hierarchy (drawn from left-to-right so the font doesn't shrink too much).</p>
+<pre class="mermaid">flowchart LR
+  Exception --&gt; IOException
+  Exception --&gt; Others...
+  IOException --&gt; FileNotFoundException
+  Exception --&gt; RuntimeException
+  RuntimeException --&gt; NullPointerException
+  RuntimeException --&gt; IllegalArgumentException
+  RuntimeException --&gt; NumberFormatException
+</pre>
+<p>Broadly speaking, exception types that are subclasses of <code>Exception</code> but <em>not</em> subclasses of <code>RuntimeException</code> are <em>checked</em> by the compiler.</p>
+<blockquote>
+<p><em>Checked exceptions</em> are the ones for which the compiler checks whether or not you have a plan to handle them (i.e., a <code>try-catch</code> or a <code>throws</code>).</p>
+</blockquote>
+<p>On the other hand, subclasses of <code>RuntimeExceptions</code> are <em>unchecked</em> by the compiler.</p>
+<blockquote>
+<p><em>Unchecked exceptions</em> are the ones for which the compiler does not require exception-handling.</p>
+</blockquote>
+<p>For example, before dereferencing an object pointer (i.e., before using the dot operator <code>.</code> on the object to access its methods or instance variables), you need to be sure that it's not <code>null</code>. If it is <code>null</code>, you would get a <code>NullPointerException</code>, which is an unchecked exception.</p>
+<p>In the previous lesson, we saw an example of checking for null-ness and throwing an <code>IllegalArgumentException</code> in the case of invalid. <code>IllegalArgumentException</code> is another example of an unchecked exception, commonly used when preconditions are violated (e.g., when a method is called with invalid inputs or "arguments").</p>
+<h3 id="should-you-throw-checked-or-unchecked-exceptions"><a class="header" href="#should-you-throw-checked-or-unchecked-exceptions">Should you throw checked or unchecked exceptions?</a></h3>
+<p>When you're writing a method and want to notify method caller's about some erroneous conditions, you have a choice: you can throw a checked exception, or you can throw an unchecked exception. Which one should you use?</p>
+<p>The conventional wisdom is (courtesy of <a href="https://dn721901.ca.archive.org/0/items/java_20230528/Joshua%20Bloch%20-%20Effective%20Java%20%283rd%29%20-%202018.pdf">Joshua Bloch</a>):</p>
+<ul>
+<li><strong>Throw checked exceptions</strong> for cases where the error is recoverable. That is, your method will force the calling method to handle the exception. This is useful for things like reading files, where the caller can do something about the error (e.g., ask the user for a different file name, or create a new file).</li>
+<li><strong>Throw unchecked exceptions</strong> for things that are likely programmer errors, like passing <code>null</code> to a method that asks for an object, or passing a negative number to a method that asks for positive number. These are cases that simply shouldn't happen, and the programmer who gets hit with an unchecked exception should be able to fix the problem by changing <em>their</em> code, rather than having to write code to handle the exception.<sup class="footnote-reference" id="fr-you-1"><a href="#footnote-you">1</a></sup></li>
+</ul>
+<h2 id="handling-potential-unchecked-exceptions"><a class="header" href="#handling-potential-unchecked-exceptions">Handling potential unchecked exceptions</a></h2>
+<p>So, if the compiler doesn't require you to handle unchecked exceptions, does that mean you can ignore them? Absolutely not!</p>
+<p>They can still crash program if they "escape containment", so you need to either make sure they won't occur (e.g., because you've checked conditions before using data), or you need to handle them with a <code>try-catch</code> block if they do occur.</p>
+<p>How do we know <em>which</em> unchecked Exceptions might occur in our code?
+Some good practices are:</p>
+<ul>
+<li><strong>Be defensive</strong> about any data you're working with that comes from an external source, like a file, method parameter, or a returned value from another method.</li>
+<li><strong>Check for null-ness</strong> before dereferencing an object pointer, especially if the object came to you from an external source (e.g., a method parameter, or a return value from another method). This is a sub-category of the point above, but is quite common so it bears mentioning.
+<ul>
+<li>Because <code>NullPointerExceptions</code> are such a common failure mode, Java also contains the <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html"><code>Optional&lt;T&gt;</code></a> type.<sup class="footnote-reference" id="fr-generics-1"><a href="#footnote-generics">2</a></sup> If you're writing a method that might return <code>null</code> in certain conditions (e.g., a failed search in a data structure), you should consider returning an <code>Optional</code> instead. That way, a "client" (or "user") of your method will be forced to check for the presence of the value before using it.</li>
+</ul>
+</li>
+<li><strong>Read the documentation</strong> for methods you're using from external libraries. They will (or they <em>should</em>, at any rate) document the exceptions they will throw and under what conditions.
+<ul>
+<li>The corollary to this is: if <em>you're</em> throwing Exceptions in your own code, or returning exceptional values like <code>null</code>, make sure to document them clearly.</li>
+</ul>
+</li>
+</ul>
+<h3 id="is-our-method-safe-yet"><a class="header" href="#is-our-method-safe-yet">Is our method safe yet?</a></h3>
+<p>All right, with all that background: is our <code>getTotalMilesRun</code> method safe from unchecked exceptions?</p>
+<p>Let's go through our function line-by-line. It may seem a bit tedious, but it's a good habit to get into.
+An escaped Exception can crash your program, the consequences of which can be simply inconvenient (e.g., a user has to restart the program), catastrophic (e.g., a user loses data), or even dangerous (e.g., a user gets injured because of a software failure in a medical device, e.g., <a href="https://www.consumerreports.org/health/diabetes/when-diabetes-devices-fail-a2408992822/">there have been multiple casualties or life-threatening events as a result of faults or exceptions in blood glucose monitoring devices or insulin pumps</a>).
+There's simply no room for carelessness.</p>
+<p>What "external" data, methods, or constructors are we using? We go through the method's components line-by-line, and I've <strong>bolded</strong> the items we're gonna need to handle.</p>
+<ul>
+<li><code>fileName</code> might be <code>null</code> or empty. We've handled that already.</li>
+<li><code>new Scanner(...)</code>:  We've handled the checked <code>FileNotFoundException</code> that's throwable by this constructor. No other exceptions are documented by the <code>Scanner</code> constructor, so we're good here.</li>
+<li><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html#nextLine()"><code>fileScanner.nextLine()</code></a>: Gets the next line. The documentation declares two possible throwable exceptions:
+<ul>
+<li><code>NoSuchElementException</code>: Thrown if there <em>isn't</em> a next line. In this case we're okay because always we're checking <code>hasNext()</code> before calling it.</li>
+<li><strong><code>IllegalStateException</code>: Thrown if the scanner is "closed". Let's file that away as something we need to handle!</strong></li>
+</ul>
+</li>
+<li>We're reading a <code>line</code> from the file, and <code>split</code>ting it around a comma. This should be fine: the <code>nextLine</code> method wouldn't give us a <code>null</code> value back.</li>
+<li><code>parts[0]</code> and <code>Double.parseDouble(parts[1])</code>: Accesses the first and second element from the split pieces, and parses the second element into a <code>double</code>. These two lines are rife with potential program crashes!
+<ul>
+<li><strong><code>parts[0]</code>: Do we <em>know</em> there'll be a <code>parts[0]</code>?</strong> If the line is empty, this would result in an <code>ArrayIndexOutOfBoundsException</code>, an unchecked exception.</li>
+<li><code>Double.parseDouble(parts[1])</code>: This one's a double-whammy.
+<ul>
+<li><strong>Do we <em>know</em> there'll be a <code>parts[1]</code>?</strong></li>
+<li><strong>If there <em>is</em> a <code>parts[1]</code>, what if it isn't a numeric value like <code>32.2</code>, and is instead, like, a banana?</strong> This would result in a <code>NumberFormatException</code>, another unchecked exception.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Essentially, our program is happy with a well-formed data file like this:</p>
+<pre><code class="language-txt">Michael,5.2
+Phyllis,3.8
+Dwight,3.1
+Pam,2.5
+Jim,4.0
+Oscar,6.3
+Stanley,1.2
+</code></pre>
+<p>But we have no error handling for malformed data files like this:</p>
+<pre><code class="language-txt">Fun Run for the Cure
+
+Michael,5.2
+Phyllis,3.8
+Dwight,3.1
+
+Angela,missing
+
+Pam,2.5
+Jim,4.0
+
+Daryl,three
+
+Oscar,6.3
+Stanley,1.2
+</code></pre>
+<p>Ok, so our TO-DO list is:</p>
+<ol>
+<li>Handle the possibility of an <code>ArrayIndexOutOfBoundsException</code> from trying to access <code>parts[0]</code> or <code>parts[1]</code> when the line is empty or doesn't contain a comma.</li>
+<li>Handle the possibility of a <code>NumberFormatException</code> from trying to parse a non-numeric value with <code>Double.parseDouble</code>.</li>
+<li>Handle the possibility of an <code>IllegalStateException</code> from the <code>Scanner</code> constructor.</li>
+</ol>
+<h3 id="ask-for-permission-not-forgiveness"><a class="header" href="#ask-for-permission-not-forgiveness">Ask for permission, not forgiveness</a></h3>
+<p>How should we handle those potential failure points? Should we just go full-speed-ahead and wrap the whole method body in a <code>try-catch</code> block that catches all of those exceptions, handling them only if they occur?</p>
+<p>Or should we check if our data is valid <em>before</em> using it?</p>
+<p>In Java, the conventional wisdom is to <strong>"ask for permission, not forgiveness"</strong>: that is, check for the conditions that would cause an exception before you use the data, rather than just trying to use it and catching the exception if it occurs.</p>
+<blockquote>
+<p>Exceptions are, as their name implies, to be used only for exceptional conditions; they should never be used for ordinary control flow.</p>
+<p>Joshua Bloch. <a href="https://dn721901.ca.archive.org/0/items/java_20230528/Joshua%20Bloch%20-%20Effective%20Java%20%283rd%29%20-%202018.pdf"><em>Effective Java</em>, Chapter 10: Exceptions</a></p>
+</blockquote>
+<p>However, parsing strings into numeric values is almost the only exception (hah) to this rule: the Java standard library does not provide methods to check if a <code>String</code> is parse-able into a number.
+We could roll our own, but it could be error prone, and anyway, the <code>Double.parseDouble</code> method already does this check.
+So we would end up doing the check twice.</p>
+<p>Ok, all that said, here's our code where we're handling items #1 and #2 from our TO-DO list.
+For now, we're simply printing an error message and skipping invalid lines.
+In a real project, you might do something else, depending on requirements.
+For example, the <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html"><code>read_csv</code> function in the <code>pandas</code> library</a> will raise an error by default if it encounters malformed lines while reading a file, but also lets the user decide if they want some different response to malformed lines.</p>
+<p>It's really important to do <em>something</em> when handling an exception—there are few things worse in software development than silent software failures.</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  if (fileName == null || fileName.isEmpty()) {
+    throw new IllegalArgumentException("fileName cannot be null or empty");
+  }
+
+  double totalMiles = 0.0;
+
+  try {
+    // Create a Scanner to read the file
+    Scanner fileScanner = new Scanner(new File(fileName));
+
+    while (fileScanner.hasNext()) {
+      String line = fileScanner.nextLine();
+      String[] parts = line.split(",");
+
+      // Ask permission: Check if the line is valid before proceeding
+      if (parts.length &lt; 2) {
+        System.out.println("Invalid line: " + line);
+        continue; // skip this line and move on to the next one
+      }
+
+      String name = parts[0];
+      double miles;
+
+      // Ask forgiveness: try to parse the double, and recover from the
+      //  Exception if needed.
+      try {
+        miles = Double.parseDouble(parts[1]);
+      } catch (NumberFormatException nfe) {
+        System.out.println("Invalid miles value: " + parts[1]);
+        continue; // skip this line and move on to the next one
+      }
+
+      totalMiles += miles;
+    }
+
+    // Always a good idea to close the Scanner when we're done with it.
+    fileScanner.close();
+  } catch (FileNotFoundException fnfe) {
+    System.out.println("Could not find a file called " + fileName);
+    System.out.println("Error message: " + fnfe.getMessage());
+  }
+
+  return totalMiles;
+}
+</code></pre>
+<p>Ok, item #3 from our TO-DO list.
+We see that the <code>Scanner</code> constructor might throw an <code>IllegalStateException</code> if the <code>Scanner</code> is "closed". What does that mean?</p>
+<p>Well, when we use a <code>Scanner</code> to read a file, we're obtaining a resource (i.e., a file handle) from the operating system.
+When we're done with that resource, we need to "close" it, which tells the operating system that we're done with it and that it can be freed up for other uses.</p>
+<p>We're doing this using the <code>Scanner</code>'s <code>close()</code> method. After we've closed it, the <code>Scanner</code> can no longer be used to read lines from the file.</p>
+<p>In our case, we are clearly closing the <code>Scanner</code> <em>after</em> using it to read lines.
+So, in terms of the <code>IllegalStateException</code> from the <code>Scanner</code> constructor, we're okay.</p>
+<p><strong>Does that mean that nothing can possibly go wrong with our <code>getTotalMilesRun</code> method?</strong> Of course not! The file might be locked by another process, or it might be on a network drive that has gone offline, or it have so many records that our <code>totalMiles</code> variable overflows, or ... ... ...</p>
+<p>The point is, you can never be sure that your code is 100% safe from exceptions, but you can do your best to handle the ones you know about, and to check for conditions that might cause exceptions before they occur.</p>
+<p>In this case, we've done a fairly good job being defensive about the data we're working with, and we've handled the exceptions that we know about.</p>
+<p>That said, if something unforeseen <em>does</em> go wrong while reading the file, an exception would occur and jump to the <code>catch</code> block, or escape the method.
+Either way, we're going to be stuck with an open <code>Scanner</code>, because in that case we wouldn't have reached the <code>fileScanner.close()</code> method call.
+This will leave us with an open file handle, which can lead to resource leaks and other problems.</p>
+<p>Can we make sure that our <code>Scanner</code> <em>always</em> closes, <strong>no matter what</strong>?</p>
+<p>That's where the <code>finally</code> block comes in.</p>
+<hr>
+<ol class="footnote-definition"><li id="footnote-you">
+<p>Note that this imagined "other" programmer might well be <em>you</em>, working on a different part of the same code base. <a href="#fr-you-1">↩</a></p>
+</li>
+<li id="footnote-generics">
+<p>If you are not sure what the <code>&lt;T&gt;</code> means here, please see the notes about <em>generics</em> or <em>type parameters</em> in the <a href="18_checked_unchecked/../15_lambdas">lesson on lambdas</a>. <a href="#fr-generics-1">↩</a></p>
+</li>
+</ol><div style="break-before: page; page-break-before: always;"></div><h1 id="finally"><a class="header" href="#finally">finally</a></h1>
+<blockquote>
+<p>The <code>finally</code> keyword is used to define a block of code that will be executed after a <code>try-catch</code> block, regardless of whether an exception occurred or was caught. It is useful for cleaning up resources, like closing files or releasing locks, that need to be done regardless of the outcome of the <code>try-catch</code> block.</p>
+</blockquote>
+<p>In the previous lesson, we ended with the following <code>getTotalMilesRun</code> method. It's pretty good, but it has one problem: if something goes wrong while reading the file, we'll skip reading the rest of the file and throw an Exception, <strong><em>and we would skip closing the <code>Scanner</code></em></strong>.</p>
+<p>We can ensure that we <em>always</em> hit the <code>fileScanner.close()</code> line by enclosing it in a <code>finally</code> block.
+This requires relatively minor changes to our method.
+I've marked the new parts with comments in the code below.</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  if (fileName == null || fileName.isEmpty()) {
+    throw new IllegalArgumentException("fileName cannot be null or empty");
+  }
+
+  // NEW: We need to declare the Scanner in a broader scope
+  // so it's accessible in the finally block.
+  Scanner fileScanner = null;
+
+  double totalMiles = 0.0;
+
+  try {
+    fileScanner = new Scanner(new File(fileName));
+
+    while (fileScanner.hasNext()) {
+      String line = fileScanner.nextLine();
+      String[] parts = line.split(",");
+
+      if (parts.length &lt; 2) {
+        System.out.println("Invalid line: " + line);
+        continue;
+      }
+
+      String name = parts[0];
+      double miles;
+
+      try {
+        miles = Double.parseDouble(parts[1]);
+      } catch (NumberFormatException nfe) {
+        System.out.println("Invalid miles value: " + parts[1]);
+        continue;
+      }
+
+      totalMiles += miles;
+    }
+  } catch (FileNotFoundException fnfe) {
+    System.out.println("Could not find a file called " + fileName);
+    System.out.println("Error message: " + fnfe.getMessage());
+  } finally {
+    // This will be executed no matter what
+    if (fileScanner != null) {
+      fileScanner.close();
+    }
+  }
+
+  return totalMiles;
+}
+</code></pre>
+<h3 id="all-roads-lead-to-finally"><a class="header" href="#all-roads-lead-to-finally">All roads lead to finally</a></h3>
+<p>Let's update our mental mode of the flow of control with <code>try-catch</code> blocks by adding a <code>finally</code> block.</p>
+<pre class="mermaid">flowchart TD
+  A[try block]
+  A --&gt;|No exception or return| C[finally block]
+  A --&gt;|Exception, caught| D[catch block]
+  A --&gt;|Return statement&lt;br&gt;or uncaught Exception| C
+  D --&gt; C
+  C --&gt;|No pending exception&lt;br/&gt;or return| E[Continue with rest of code]
+  C --&gt;|Pending return value&lt;br&gt;or exception| F[Return value/Exception&lt;br/&gt;propagates up call stack]
+</pre>
+<p>Notice how we reach the <code>finally</code> block <em>no matter what</em>.
+Every path through the <code>try-catch</code> block goes through <code>finally</code>.</p>
+<ul>
+<li>If the <code>try</code> block goes through without a hitch, we'll go through <code>finally</code> before continuing with the code after the <code>try-catch-finally</code> block.</li>
+<li>If the <code>try</code> block encounters an exception,
+<ul>
+<li>If that exception is handled in a <code>catch</code> block, we'll go through the <code>catch</code> block and then through the <code>finally</code> block, before continuing with the code after the <code>try-catch-finally</code> block.</li>
+<li>If that exceptoin is <em>not</em> handled by any <code>catch</code> block, we'll <em>still</em> go through <code>finally</code> before throwing the Exception up the call stack to the method that called us</li>
+</ul>
+</li>
+<li>If a <code>try</code> or <code>catch</code> block <code>return</code> a value, we'll <em>still</em> go through <code>finally</code> before exiting the method.</li>
+</ul>
+<h2 id="try-with-resources"><a class="header" href="#try-with-resources">try-with-resources</a></h2>
+<p>The pattern we're seeing above—declaring a resource (like a <code>Scanner</code>) outside the <code>try</code> block, initializing it inside <code>try</code>, and then closing it in <code>finally</code>—is a common idiom in Java.</p>
+<p>Java therefore introduced a newer syntax called "try-with-resources" that takes care of closing your resources for you.</p>
+<blockquote>
+<p>You should always use the try-with-resources syntax when working with resources that need to be closed, like <code>Scanner</code>, <code>FileReader</code>, <code>BufferedReader</code>, <code>InputStream</code>, <code>OutputStream</code>, etc.</p>
+</blockquote>
+<p>We can therefore re-write our method as follows (and I promise this is its final form):</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  if (fileName == null || fileName.isEmpty()) {
+    throw new IllegalArgumentException("fileName cannot be null or empty");
+  }
+
+  double totalMiles = 0.0;
+
+  // NEW: Use try-with-resources to automatically close the Scanner
+  // The fileScanner variable is only visible inside the try block
+  try (Scanner fileScanner = new Scanner(new File(fileName))) {
+    while (fileScanner.hasNext()) {
+      String line = fileScanner.nextLine();
+      String[] parts = line.split(",");
+
+      if (parts.length &lt; 2) {
+        System.out.println("Invalid line: " + line);
+        continue;
+      }
+
+      String name = parts[0];
+      double miles;
+
+      try {
+        miles = Double.parseDouble(parts[1]);
+      } catch (NumberFormatException nfe) {
+        System.out.println("Invalid miles value: " + parts[1]);
+        continue;
+      }
+
+      totalMiles += miles;
+    }
+  } catch (FileNotFoundException fnfe) {
+    System.out.println("Could not find a file called " + fileName);
+    System.out.println("Error message: " + fnfe.getMessage());
+  }
+
+  return totalMiles;
+}
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contributors"><a class="header" href="#contributors">Contributors</a></h1>
 <p>Various CSC 203 instructors over the years, including</p>
 <ul>

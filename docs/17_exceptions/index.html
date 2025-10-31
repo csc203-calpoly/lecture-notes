@@ -1,0 +1,528 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Exceptions handling - Cal Poly CSC 203 Lecture notes</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Cal Poly CSC 203 Lecture notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="exception-handling"><a class="header" href="#exception-handling">Exception handling</a></h1>
+<blockquote>
+<p><em>Exceptions</em> are unexpected occurrences that disrupt the normal flow of your program. In this lesson we'll learn how we can use Java's Exception handling mechanisms for handling Exceptions.</p>
+<p>Here, "handling" an Exception can mean many things:</p>
+<ul>
+<li>Logging an error, or notifying the user that an action cannot be completed because an error occurred.</li>
+<li>Performing some work to "recover" from the Exception</li>
+<li>Letting someone else handle the Exception</li>
+</ul>
+</blockquote>
+<!--Outline
+
+- What an Exception is
+- Running example: reading a file
+- A sneak peek at the Exception class hierarchy
+- Handling an exception: try-catch
+- The finally block
+- Making it somebody else's problem: throws
+- Checked vs unchecked exceptions
+- Creating your own exception types
+-->
+<p>An Exception is...well, it's an <em>exceptional</em> situation that occurs in your program, either because:</p>
+<ul>
+<li>You've encountered a situation you cannot control: for example, your program tried to read a file that does not exist,</li>
+<li>You received input that you did not expect: for example, you expected a String containing a math expression like <code>23 + 32</code>, but instead got <code>"jiminy billy bob"</code></li>
+</ul>
+<p>In these cases, you (the programmer) need to decide how your program is going to handle those situations.
+In programs you wrote in your early classes, you may have decided to not handle them at all, opting simply to assume that your program would not be used in these unexpected ways.</p>
+<p>However, as you edge closer toward writing programs that real people will use, you will need to start accounting for these exceptional situations.</p>
+<h2 id="a-running-example-reading-a-file"><a class="header" href="#a-running-example-reading-a-file">A running example: Reading a file</a></h2>
+<p>As always, we'll keep a running example going.</p>
+<p>In this case, let's assume we have a file (<code>runningData.txt</code>) that contains a list of names and miles run by each person, like so:</p>
+<pre><code class="language-txt">Michael,5.2
+Phyllis,3.8
+Dwight,3.1
+Pam,2.5
+Jim,4.0
+Oscar,6.3
+Stanley,1.2
+</code></pre>
+<p>(I did say it was a "running" example.)</p>
+<p>And we have some simple Java code that reads the file, line by line, and totals up the total number of miles run.<sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup>
+Take a moment to read the code below.</p>
+<pre><code class="language-java">// When we run the program, this method will be executed
+void main() {
+  double totalMiles = getTotalMilesRun("runningData.txt");
+  System.out.println("Total miles run: " + totalMiles);
+}
+
+// Reads the given file and returns the total number of miles run
+// This method contains several potential points of failure!
+double getTotalMilesRun(String fileName) {
+  // Create a Scanner to read the file
+  Scanner fileScanner = new Scanner(new File(fileName));
+  double totalMiles = 0.0;
+
+  // Read each line of the file
+  while (fileScanner.hasNext()) {
+    String line = fileScanner.nextLine();
+    String[] parts = line.split(",");
+    String name = parts[0];
+    double miles = Double.parseDouble(parts[1]);
+    totalMiles += miles;
+  }
+
+  // Always a good idea to close the Scanner when you're done.
+  // More on this in the next lesson.
+  fileScanner.close();
+
+  return totalMiles;
+}
+</code></pre>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>The <code>getTotalMilesRun</code> method contains several potential points of failure. <em>Can you see what they are</em>?</p>
+</blockquote>
+<h2 id="file-io-gone-wrong"><a class="header" href="#file-io-gone-wrong">File I/O gone wrong</a></h2>
+<p>First, the file may not exist, or we may not have permission to read it, or it may be locked by another program, etc.</p>
+<p>Any time we read a file, Java <em>requires us</em> to "have a plan" for these exceptional circumstances.
+Our program will not compile without such a plan.</p>
+<p><strong>What does that mean in terms of Java code?</strong> The code above will give us a compiler error on the following line:</p>
+<pre><code class="language-java">Scanner fileScanner = new Scanner(new File(fileName));
+</code></pre>
+<p>Hovering over the error shows us this message:</p>
+<pre><code>Unhandled exception: java.io.FileNotFoundException
+</code></pre>
+<p>This is telling us that that line of code—the <code>Scanner</code> constructor in particular—<em>might</em> throw a <code>FileNotFoundException</code>, and if we want to use the <code>Scanner</code>, we need to be able to handle that.
+The <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html#%3Cinit%3E(java.io.File)"><code>Scanner</code> constructor's documentation</a> states that it throws a <code>FileNotFoundException</code> if the file is not found.<sup class="footnote-reference" id="fr-best-1"><a href="#footnote-best">2</a></sup></p>
+<p>So how do we handle it?</p>
+<p>We have two options for handling this potential <code>FileNotFoundException</code>:</p>
+<ol>
+<li>We can either handle it ourselves (e.g., by printing a message saying that something went wrong when reading the file), or</li>
+<li>We can pass the buck to whoever called our method, letting them handle it instead</li>
+</ol>
+<p>We'll consider each option in turn.</p>
+<h2 id="option-1-handle-the-exception"><a class="header" href="#option-1-handle-the-exception">Option 1: Handle the exception</a></h2>
+<p>Java gives us the <code>try-catch</code> construct for handling Exceptions ourselves.
+It is used to "try" to do some work that might "throw" an Exception.
+And if an Exception is thrown, we can "catch" the Exception and handle it gracefully.</p>
+<p>The flow of control in a <code>try-catch</code> block is shown below (a code example follows):</p>
+<pre class="mermaid">flowchart TD
+    A[Start try block] --&gt; B{Exception thrown?}
+    B -- No --&gt; C[Finish the try block]
+    C --&gt; G[End]
+    B -- Yes --&gt; E[Jump to catch block]
+    E --&gt; G[Execution continues after the try-catch]
+</pre>
+<p>Here's an example of its usage:</p>
+<pre><code class="language-java">try {
+  // Do some work that could possibly throw an exception.
+  Scanner fileScanner = new Scanner(new File(fileName));
+
+  // If we reach here, we know the previous line was successful.
+  while (fileScanner.hasNext()) {
+    // Read and process each line as before.
+  }
+} catch (FileNotFoundException fnfe) {
+  // Gracefully handle the exception.
+  // For example, print a message.
+  System.out.println("Could not find a file called " + fileName);
+
+  // You could also print the exception message. The Exception
+  // is given to you in the "fnfe" variable.
+  System.out.println("Error message: " + fnfe.getMessage());
+}
+
+// After the try-catch block, execution continues here.
+doMoreStuff();
+</code></pre>
+<p>In sum:</p>
+<ul>
+<li>If an Exception occurs partway through the <code>try</code> block, execution jumps to the <code>catch</code> block. We skip any code in the the <code>try</code> block that comes after the offending line.</li>
+<li>After the <code>catch</code> block finishes executing, execution continues with the code <em>after</em> the <code>try-catch</code> statement.</li>
+</ul>
+<p>It can be tempting to think of it as a control flow construct akin to an <code>if-else</code> statement, but there are important differences to be aware of.
+Importantly, unlike an <code>if-else</code> statement, where only one branch is executed, in a <code>try-catch</code>, both the <code>try</code> block (partially) and the <code>catch</code> block (fully) may be executed.</p>
+<p>With this knowledge in hand, let's see our method using a <code>try-catch</code> block to handle the potential <code>FileNotFoundException</code>.</p>
+<h4 id="gettotalmilesrun-with-a-try-catch-block"><a class="header" href="#gettotalmilesrun-with-a-try-catch-block"><code>getTotalMilesRun</code>, with a <code>try-catch</code> block</a></h4>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  double totalMiles = 0.0;
+
+  try {
+    // Create a Scanner to read the file
+    Scanner fileScanner = new Scanner(new File(fileName));
+
+    // Read each line of the file
+    while (fileScanner.hasNext()) {
+      String line = fileScanner.nextLine();
+      String[] parts = line.split(",");
+      String name = parts[0];
+      double miles = Double.parseDouble(parts[1]);
+      totalMiles += miles;
+    }
+
+    // Always a good idea to close the Scanner when you're done.
+    fileScanner.close();
+  } catch (FileNotFoundException fnfe) {
+    // Gracefully handle the exception
+    System.out.println("Could not find a file called " + fileName);
+    System.out.println("Error message: " + fnfe.getMessage());
+  }
+
+  return totalMiles;
+}
+</code></pre>
+<p>Now, if we call <code>getTotalMilesRun</code> with a file that doesn't exist, our program can gracefully handle it by printing a useful error message.</p>
+<p>But what if some <em>other</em> Exception occurs, not specifically a <code>FileNotFoundException</code>? Will our <code>catch</code> still catch it?</p>
+<p>Here's a excerpt of the hierarchy of Exception types in Java. We'll say much more about this in the next lesson!</p>
+<pre class="mermaid">flowchart TD
+  Exception
+  Exception --&gt; Others...
+  Exception --&gt; IOException --&gt; FileNotFoundException
+  Exception --&gt; RuntimeException --&gt; NumberFormatException
+</pre>
+<p>All exception types inherit from the base <code>Exception</code> type.
+So, a <code>FileNotFoundException</code> <em>is an</em> <code>Exception</code>.
+A <code>NumberFormatException</code>—another exception type—<em>is an</em> <code>Exception</code>.</p>
+<p>So it's possible, but not advisable, to catch all possible Exceptions by simply catching the base <code>Exception</code> type, like so:</p>
+<pre><code class="language-java">} catch (Exception e) {
+  // This will catch any Exception, including FileNotFoundException,
+  // NumberFormatException, etc.
+}
+</code></pre>
+<p>However, this is considered an antipattern (as in, don't do it).
+It's important that our <code>catch</code> block catch the correct Exception type, so that error handling can be targeted to the particular thing that went wrong.
+If we treat all exceptions the same, we run the risk of not being able to track down the causes of failures if they occur.</p>
+<h4 id="handling-multiple-exception-types"><a class="header" href="#handling-multiple-exception-types">Handling multiple Exception types</a></h4>
+<p>If multiple Exception types are possible from your code, you can have multiple <code>catch</code> blocks, like so:</p>
+<pre><code class="language-java">try {
+  // Code that might throw multiple exception types
+} catch (FileNotFoundException fnfe) {
+  // Handle file not found
+} catch (NumberFormatException nfe) {
+  // Handle number format error
+}
+</code></pre>
+<p>If an exception occurs, it will be passed to the first <code>catch</code> block that matches its type.
+Note that the order of the <code>catch</code> blocks matters: more specific exceptions should be caught before more general ones.
+Java will not automatically map to the "closest matching" <code>catch</code> block.</p>
+<p>Alternatively, you may want to handle multiple exception types in the same way. For those cases, you can use the pipe (<code>|</code>) operator to catch multiple exceptions in a single <code>catch</code> block:</p>
+<pre><code class="language-java">try {
+  // Code that might throw multiple exception types
+  // This catch block would catch FileNotFoundExceptions or NumberFormatExceptions
+} catch (FileNotFoundException | NumberFormatException e) {
+  // Handle both exceptions the same way
+}
+</code></pre>
+<p>You should have a good reason to do this, since it can make your error handling and reporting less specific.
+That is, these two exceptions may indicate very different problems, and handling them the same way may not be appropriate.
+It also shouldn't be used as an escape hatch to avoid writing proper error handling code.</p>
+<blockquote>
+<p><strong>NOTE</strong></p>
+<p>An Exception being thrown is <em>kind of</em> like a <code>return</code> statement. When an Exception occurs inside a method, execution is interrupted and transferred to the nearest appropriate <code>catch</code> block (if it exists), or the Exception "escapes upward" to whoever called the method.
+Because of this, only one Exception can occur at a time in a single <code>try</code> block, just like only one <code>return</code> statement can be executed at a time in a method.</p>
+</blockquote>
+<h2 id="option-2-make-it-somebody-elses-problem"><a class="header" href="#option-2-make-it-somebody-elses-problem">Option 2: Make it somebody else's problem</a></h2>
+<p>Ok, so we know how to handle an Exception ourselves if it occurs.
+But we do have another option: we could make it somebody else's problem using the <code>throws</code> keyword.</p>
+<p>Instead of handling the exception ourselves, we could pass the buck to whoever called our <code>getTotalMilesRun</code> method.
+I mean, hey, they are the ones who told us the file name, maybe they have a better idea of what to do if the file doesn't exist.</p>
+<p>We can do this by adding a <code>throws</code> declaration to our method.</p>
+<p>In the method below, we've gone back to our original version of the method (without a <code>try-catch</code>), with one small change.
+In the method signature, we've added <code>throws FileNotFoundException</code>.</p>
+<p>This is us telling Java (and anyone who calls this method) that this method <em>might</em> throw a <code>FileNotFoundException</code>.</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) throws FileNotFoundException {
+  // Create a Scanner to read the file
+  Scanner fileScanner = new Scanner(new File(fileName));
+  double totalMiles = 0.0;
+
+  // Read each line of the file
+  while (fileScanner.hasNext()) {
+    String line = fileScanner.nextLine();
+    String[] parts = line.split(",");
+    String name = parts[0];
+    double miles = Double.parseDouble(parts[1]);
+    totalMiles += miles;
+  }
+
+  // Always a good idea to close the Scanner when you're done.
+  fileScanner.close();
+
+  return totalMiles;
+}
+</code></pre>
+<p>Now, anyone who calls <code>getTotalMilesRun</code> must handle the <code>FileNotFoundException</code> themselves (either by using a <code>try-catch</code>, or themselves declaring that they themselves would throw it).</p>
+<p>This is actually what the <code>Scanner</code> constructor did to us!
+Take a look at the <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html#%3Cinit%3E(java.io.File)">constructor's documentation again</a>.
+Notice that the constructor has a <code>throws</code> declaration.
+This caused <em>us</em> to take action to handle the potential <code>FileNotFoundException</code>.</p>
+<p>That is, if we now have the following  <code>main</code> method, <em>we will have a compiler error on the line where we call <code>getTotalMilesRun</code></em>, because the Exception is now the <code>main</code> method's problem to handle.</p>
+<pre><code class="language-java">void main() {
+  double totalMiles = getTotalMilesRun("runningData.txt");
+  System.out.println("Total miles run: " + totalMiles);
+}
+</code></pre>
+<p>Once again, we have two options:</p>
+<p>The <code>main</code> method could use <code>try-catch</code> to handle the exception, like we did in <a href="#option-1-handle-the-exception">Option 1</a>.</p>
+<p>Or, the <code>main</code> method can <em>propogate the Exception</em> using a <code>throws</code> declaration, like we did in <a href="#option-2-make-it-somebody-elses-problem">Option 2</a>.
+However, <strong>this is generally a bad idea for <code>main</code></strong>.
+There's nowhere else to go! <code>main</code> is the entry point of the program—the <em>user</em> is the one who called the method, by virtue of running our program.
+So if an Exception "escapes" <code>main</code>, the program will simply crash.</p>
+<h2 id="throwing-exceptions-intentionally"><a class="header" href="#throwing-exceptions-intentionally">Throwing Exceptions Intentionally</a></h2>
+<p>In addition to <code>catch</code>ing exceptions or declaring exceptions using <code>throws</code>, we can also <code>throw</code> exceptions for others to handle.</p>
+<p>A common pattern when writing methods that take parameters is to check <em>preconditions</em> about those parameters.</p>
+<p>For example, in our <code>getRunningTotalMiles</code>, we might want to check that the <code>fileName</code> parameter is not <code>null</code> or empty.
+If it is, we might manually throw an <code>IllegalArgumentException</code>, which is also an unchecked exception, and give it a meaningful error message.</p>
+<p>We can use the <code>throw</code> keyword to do this.</p>
+<pre><code class="language-java">double getTotalMilesRun(String fileName) {
+  if (fileName == null || fileName.isEmpty()) {
+    throw new IllegalArgumentException("fileName cannot be null or empty");
+  }
+
+  // Rest of the method remains the same
+}
+</code></pre>
+<p>This is our way of saying "I got some invalid input, and I cannot proceed with it."
+We do this to throw an error back to whoever called the method with erroneous input, so they can fix the issue on their end.</p>
+<h2 id="checked-and-unchecked-exceptions"><a class="header" href="#checked-and-unchecked-exceptions">Checked and unchecked exceptions</a></h2>
+<p>Remember how I said our <code>getTotalMilesRun</code> method has several potential points of failure? We've only handled one of them so far: the possibility that the file doesn't exist.</p>
+<p>It was easy to notice that one, because the <code>Scanner</code> constructor explicitly told us about it by throwing a <code>FileNotFoundException</code>, and the compiler wouldn't move on until we handled it.</p>
+<p>These types of exceptions are called <em>checked exceptions</em>, because they are checked at compile time.</p>
+<p><em>Unchecked exceptions</em>, on the other hand, are not checked at compile time.
+Can you tell if there's potential for such an exception to occur in our <code>getTotalMilesRun</code> method? If so, what would it be?</p>
+<h2 id="referencesother-reading"><a class="header" href="#referencesother-reading">References/Other reading</a></h2>
+<ul>
+<li>Oracle's <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/">Java tutorial on Exceptions</a> is excellent.</li>
+</ul>
+<hr>
+<ol class="footnote-definition"><li id="footnote-1">
+<p>Since we're just dealing with simple methods here, I won't create classes for this example. Instead, we'll use top-level methods that are supported in Java 25 onward. <a href="#fr-1-1">↩</a></p>
+</li>
+<li id="footnote-best">
+<p>If we can't handle <code>Scanner</code> at its worst, do we really deserve it at its best? <a href="#fr-best-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../16_streams/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../18_checked_unchecked/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../16_streams/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../18_checked_unchecked/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
