@@ -341,7 +341,7 @@ In addition to `catch`ing exceptions or declaring exceptions using `throws`, we 
 A common pattern when writing methods that take parameters is to check _preconditions_ about those parameters.
 
 For example, in our `getRunningTotalMiles`, we might want to check that the `fileName` parameter is not `null` or empty.
-If it is, we might manually throw an `IllegalArgumentException`, which is also an unchecked exception, and give it a meaningful error message.
+If it is, we might manually throw an `IllegalArgumentException` and give it a meaningful error message.
 
 We can use the `throw` keyword to do this.
 

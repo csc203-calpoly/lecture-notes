@@ -442,7 +442,7 @@ So if an Exception "escapes" <code>main</code>, the program will simply crash.</
 <p>In addition to <code>catch</code>ing exceptions or declaring exceptions using <code>throws</code>, we can also <code>throw</code> exceptions for others to handle.</p>
 <p>A common pattern when writing methods that take parameters is to check <em>preconditions</em> about those parameters.</p>
 <p>For example, in our <code>getRunningTotalMiles</code>, we might want to check that the <code>fileName</code> parameter is not <code>null</code> or empty.
-If it is, we might manually throw an <code>IllegalArgumentException</code>, which is also an unchecked exception, and give it a meaningful error message.</p>
+If it is, we might manually throw an <code>IllegalArgumentException</code> and give it a meaningful error message.</p>
 <p>We can use the <code>throw</code> keyword to do this.</p>
 <pre><code class="language-java">double getTotalMilesRun(String fileName) {
   if (fileName == null || fileName.isEmpty()) {
