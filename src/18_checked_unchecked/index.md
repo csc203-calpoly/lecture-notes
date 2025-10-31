@@ -173,14 +173,19 @@ We could roll our own, but it could be error prone, and anyway, the `Double.pars
 So we would end up doing the check twice.
 
 Ok, all that said, here's our code where we're handling items #1 and #2 from our TO-DO list.
-For now, we're simply skipping invalid lines—in a real project, you may have other requirements for how to handle invalid data.
+For now, we're simply printing an error message and skipping invalid lines.
+In a real project, you might do something else, depending on requirements.
+For example, the [`read_csv` function in the `pandas` library](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html) will raise an error by default if it encounters malformed lines while reading a file, but also lets the user decide if they want some different response to malformed lines.
+
+It's really important to do _something_ when handling an exception—there are few things worse in software development than silent software failures.
 
 ```java
-// Still need to handle the possibility of an IllegalStateException from the Scanner constructor!
 double getTotalMilesRun(String fileName) {
   if (fileName == null || fileName.isEmpty()) {
     throw new IllegalArgumentException("fileName cannot be null or empty");
   }
+
+  double totalMiles = 0.0;
 
   try {
     // Create a Scanner to read the file
