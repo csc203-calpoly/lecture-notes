@@ -1,1 +1,0 @@
-# Checked and unchecked exceptions

@@ -7,7 +7,7 @@
 > - Performing some work to "recover" from the Exception
 > - Letting someone else handle the Exception
 
-Outline
+<!--Outline
 
 - What an Exception is
 - Running example: reading a file
@@ -17,7 +17,7 @@ Outline
 - Making it somebody else's problem: throws
 - Checked vs unchecked exceptions
 - Creating your own exception types
-
+-->
 An Exception is...well, it's an _exceptional_ situation that occurs in your program, either because:
 
 - You've encountered a situation you cannot control: for example, your program tried to read a file that does not exist,
@@ -102,24 +102,26 @@ Unhandled exception: java.io.FileNotFoundException
 ```
 
 This is telling us that that line of code—the `Scanner` constructor in particular—_might_ throw a `FileNotFoundException`, and if we want to use the `Scanner`, we need to be able to handle that.
-If we can't handle `Scanner` at its worst, do we really deserve it at its best?
+The [`Scanner` constructor's documentation](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html#%3Cinit%3E(java.io.File)) states that it throws a `FileNotFoundException` if the file is not found.[^best]
 
-> The `FileNotFoundException` is a subtype of the `Exception` class in Java.
-> We'll talk more about the `Exception` type hierarchy later in this lesson.
+[^best]: If we can't handle `Scanner` at its worst, do we really deserve it at its best?
 
 So how do we handle it?
 
 We have two options for handling this potential `FileNotFoundException`:
 
-- We can either handle it ourselves (e.g., by printing a message saying that something went wrong when reading the file), or
-- We can pass the buck to whoever called our method, letting them handle it instead
+1. We can either handle it ourselves (e.g., by printing a message saying that something went wrong when reading the file), or
+2. We can pass the buck to whoever called our method, letting them handle it instead
 
 We'll consider each option in turn.
 
-## Strategy 1: Handling the exception
+## Option 1: Handle the exception
 
 Java gives us the `try-catch` construct for handling Exceptions ourselves.
-The flow of control in a `try-catch` block is as follows:
+It is used to "try" to do some work that might "throw" an Exception.
+And if an Exception is thrown, we can "catch" the Exception and handle it gracefully.
+
+The flow of control in a `try-catch` block is shown below (a code example follows):
 
 ```mermaid
 flowchart TD
@@ -127,37 +129,45 @@ flowchart TD
     B -- No --> C[Finish the try block]
     C --> G[End]
     B -- Yes --> E[Jump to catch block]
-    E --> G[Execution continues]
+    E --> G[Execution continues after the try-catch]
 ```
 
-Here's an example of it usage:
+Here's an example of its usage:
 
 ```java
 try {
-  // Do some work that could possibly throw an exception
+  // Do some work that could possibly throw an exception.
   Scanner fileScanner = new Scanner(new File(fileName));
 
-  // If we reach here, we know the previous line was successful
+  // If we reach here, we know the previous line was successful.
   while (fileScanner.hasNext()) {
-    // Read and process each line as before
+    // Read and process each line as before.
   }
 } catch (FileNotFoundException fnfe) {
-  // Gracefully handle the exception
-  // For example, print a message
+  // Gracefully handle the exception.
+  // For example, print a message.
   System.out.println("Could not find a file called " + fileName);
 
-  // You could also print the exception message
+  // You could also print the exception message. The Exception
+  // is given to you in the "fnfe" variable.
   System.out.println("Error message: " + fnfe.getMessage());
 }
+
+// After the try-catch block, execution continues here.
+doMoreStuff();
 ```
 
-It looks like of like control flow we might be used to seeing with `if-else` statements, with some important differences:
+In sum:
 
-- If an Exception occurs somewhere inside the `try` block, execution jumps to the `catch` block. Any code in the `try` block _after_ the offending line is skipped.
+- If an Exception occurs partway through the `try` block, execution jumps to the `catch` block. We skip any code in the the `try` block that comes after the offending line.
 - After the `catch` block finishes executing, execution continues with the code _after_ the `try-catch` statement.
-- So, unlike an `if-else` statement, where only one branch is executed, in a `try-catch`, both the `try` block (partially) and the `catch` block (fully) may be executed.
 
-With this knowledge in hand, let's see the code with the `FileNotFoundException` handled:
+It can be tempting to think of it as a control flow construct akin to an `if-else` statement, but there are important differences to be aware of.
+Importantly, unlike an `if-else` statement, where only one branch is executed, in a `try-catch`, both the `try` block (partially) and the `catch` block (fully) may be executed.
+
+With this knowledge in hand, let's see our method using a `try-catch` block to handle the potential `FileNotFoundException`.
+
+#### `getTotalMilesRun`, with a `try-catch` block
 
 ```java
 double getTotalMilesRun(String fileName) {
@@ -185,16 +195,17 @@ double getTotalMilesRun(String fileName) {
 }
 ```
 
-When we call `getTotalMilesRun("runningData.txt")`, we'll be okay since the file exists.
-But now, if we call `getTotalMilesRun("nonexistentFile.txt")`, we'll see a useful error message printed.
+Now, if we call `getTotalMilesRun` with a file that doesn't exist, our program can gracefully handle it by printing a useful error message.
+
+But what if some _other_ Exception occurs, not specifically a `FileNotFoundException`? Will our `catch` still catch it?
 
 ### A brief detour: The Exception type hierarchy
 
 All exception types inherit from the base `Exception` type.
 So, a `FileNotFoundException` _is an_ `Exception`.
-A `NumberFormatException` _is an_ `Exception`.
+A `NumberFormatException`—another exception type—_is an_ `Exception`.
 
-It's possible, but not advisable, to catch all possible Exceptions by catching the base `Exception` type, like so:
+So it's possible, but not advisable, to catch all possible Exceptions by simply catching the base `Exception` type, like so:
 
 ```java
 } catch (Exception e) {
@@ -204,11 +215,12 @@ It's possible, but not advisable, to catch all possible Exceptions by catching t
 ```
 
 However, this is considered an antipattern (as in, don't do it).
-It's important that our `catch` block catch the correct Exception type.
+It's important that our `catch` block catch the correct Exception type, so that error handling can be targeted to the particular thing that went wrong.
+If we treat all exceptions the same, we run the risk of not being able to track down the causes of failures if they occur.
 
 #### Handling multiple Exception types
 
-If you have multiple specific Exceptions that could be thrown, you can have multiple `catch` blocks, like so:
+If multiple Exception types are possible from your code, you can have multiple `catch` blocks, like so:
 
 ```java
 try {
@@ -224,29 +236,40 @@ If an exception occurs, it will be passed to the first `catch` block that matche
 Note that the order of the `catch` blocks matters: more specific exceptions should be caught before more general ones.
 Java will not automatically map to the "closest matching" `catch` block.
 
-Sometimes, you may need to handle multiple exception types in the same way. For those cases, you can use the pipe (`|`) operator to catch multiple exceptions in a single `catch` block:
+Alternatively, you may want to handle multiple exception types in the same way. For those cases, you can use the pipe (`|`) operator to catch multiple exceptions in a single `catch` block:
 
 ```java
 try {
   // Code that might throw multiple exception types
+  // This catch block would catch FileNotFoundExceptions or NumberFormatExceptions
 } catch (FileNotFoundException | NumberFormatException e) {
   // Handle both exceptions the same way
 }
 ```
 
-However, you should have a good reason to do this, since it can make your error handling and reporting less specific.
+You should have a good reason to do this, since it can make your error handling and reporting less specific.
 That is, these two exceptions may indicate very different problems, and handling them the same way may not be appropriate.
 It also shouldn't be used as an escape hatch to avoid writing proper error handling code.
 
-## Strategy 2: Make it somebody else's problem
+> **NOTE**
+>
+> An Exception being thrown is _kind of_ like a `return` statement. When an Exception occurs inside a method, execution is interrupted and transferred to the nearest appropriate `catch` block (if it exists), or the Exception "escapes upward" to whoever called the method.
+> Because of this, only one Exception can occur at a time in a single `try` block, just like only one `return` statement can be executed at a time in a method.
+
+## Option 2: Make it somebody else's problem
+
+Ok, so we know how to handle an Exception ourselves if it occurs.
+But we do have another option: we could make it somebody else's problem using the `throws` keyword.
 
 Instead of handling the exception ourselves, we could pass the buck to whoever called our `getTotalMilesRun` method.
 I mean, hey, they are the ones who told us the file name, maybe they have a better idea of what to do if the file doesn't exist.
 
 We can do this by adding a `throws` declaration to our method.
 
-In the method below, we've gone back to our original version of the method: no `try-catch` anymore.
-In the method signature, we've added `throws FileNotFoundException`—this is us telling Java (and anyone who calls this method) that this method _might_ throw a `FileNotFoundException`.
+In the method below, we've gone back to our original version of the method (without a `try-catch`), with one small change.
+In the method signature, we've added `throws FileNotFoundException`.
+
+This is us telling Java (and anyone who calls this method) that this method _might_ throw a `FileNotFoundException`.
 
 ```java
 double getTotalMilesRun(String fileName) throws FileNotFoundException {
@@ -269,6 +292,11 @@ double getTotalMilesRun(String fileName) throws FileNotFoundException {
 
 Now, anyone who calls `getTotalMilesRun` must handle the `FileNotFoundException` themselves (either by using a `try-catch`, or themselves declaring that they themselves would throw it).
 
+This is actually what the `Scanner` constructor did to us!
+Take a look at the [constructor's documentation again](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html#%3Cinit%3E(java.io.File)).
+Notice that the constructor has a `throws` declaration.
+This caused _us_ to take action to handle the potential `FileNotFoundException`.
+
 That is, if we now have the following  `main` method, _we will have a compiler error on the line where we call `getTotalMilesRun`_, because the Exception is now the `main` method's problem to handle.
 
 ```java
@@ -280,8 +308,23 @@ void main() {
 
 Once again, we have two options:
 
-- Option 1 is to declare that `main` might throw a `FileNotFoundException`. **This is generally a bad idea for `main`**, because there's nowhere else to go. `main` is the entry point of the program, so if an Exception "escapes" `main`, the program will crash.
-- Option 2 is to handle the exception with a `try-catch`.
+The `main` method could use `try-catch` to handle the exception, like we did in [Option 1](#option-1-handle-the-exception).
+
+Or, the `main` method can _propogate the Exception_ using a `throws` declaration, like we did in [Option 2](#option-2-make-it-somebody-elses-problem).
+However, **this is generally a bad idea for `main`**.
+There's nowhere else to go! `main` is the entry point of the program—the _user_ is the one who called the method, by virtue of running our program.
+So if an Exception "escapes" `main`, the program will simply crash.
+
+## Checked and unchecked exceptions
+
+Remember how I said our `getTotalMilesRun` method has several potential points of failure? We've only handled one of them so far: the possibility that the file doesn't exist.
+
+It was easy to notice that one, because the `Scanner` constructor explicitly told us about it by throwing a `FileNotFoundException`, and the compiler wouldn't move on until we handled it.
+
+These types of exceptions are called _checked exceptions_, because they are checked at compile time.
+
+_Unchecked exceptions_, on the other hand, are not checked at compile time.
+Can you tell if there's potential for such an exception to occur in our `getTotalMilesRun` method? If so, what would it be?
 
 ## References/Other reading
 
