@@ -74,6 +74,10 @@ double getTotalMilesRun(String fileName) {
     totalMiles += miles;
   }
 
+  // Always a good idea to close the Scanner when you're done.
+  // More on this in the next lesson.
+  fileScanner.close();
+
   return totalMiles;
 }
 ```
@@ -185,6 +189,9 @@ double getTotalMilesRun(String fileName) {
       double miles = Double.parseDouble(parts[1]);
       totalMiles += miles;
     }
+
+    // Always a good idea to close the Scanner when you're done.
+    fileScanner.close();
   } catch (FileNotFoundException fnfe) {
     // Gracefully handle the exception
     System.out.println("Could not find a file called " + fileName);
@@ -199,7 +206,16 @@ Now, if we call `getTotalMilesRun` with a file that doesn't exist, our program c
 
 But what if some _other_ Exception occurs, not specifically a `FileNotFoundException`? Will our `catch` still catch it?
 
-### A brief detour: The Exception type hierarchy
+Here's a excerpt of the hierarchy of Exception types in Java. We'll say much more about this in the next lesson!
+
+```mermaid
+flowchart TD
+  Exception
+  Exception --> Others...
+  Exception --> IOException --> FileNotFoundException
+  Exception --> RuntimeException --> NumberFormatException
+```
+
 
 All exception types inherit from the base `Exception` type.
 So, a `FileNotFoundException` _is an_ `Exception`.
@@ -286,6 +302,9 @@ double getTotalMilesRun(String fileName) throws FileNotFoundException {
     totalMiles += miles;
   }
 
+  // Always a good idea to close the Scanner when you're done.
+  fileScanner.close();
+
   return totalMiles;
 }
 ```
@@ -314,6 +333,30 @@ Or, the `main` method can _propogate the Exception_ using a `throws` declaration
 However, **this is generally a bad idea for `main`**.
 There's nowhere else to go! `main` is the entry point of the program—the _user_ is the one who called the method, by virtue of running our program.
 So if an Exception "escapes" `main`, the program will simply crash.
+
+## Throwing Exceptions Intentionally
+
+In addition to `catch`ing exceptions or declaring exceptions using `throws`, we can also `throw` exceptions for others to handle.
+
+A common pattern when writing methods that take parameters is to check _preconditions_ about those parameters.
+
+For example, in our `getRunningTotalMiles`, we might want to check that the `fileName` parameter is not `null` or empty.
+If it is, we might manually throw an `IllegalArgumentException`, which is also an unchecked exception, and give it a meaningful error message.
+
+We can use the `throw` keyword to do this.
+
+```java
+double getTotalMilesRun(String fileName) {
+  if (fileName == null || fileName.isEmpty()) {
+    throw new IllegalArgumentException("fileName cannot be null or empty");
+  }
+
+  // Rest of the method remains the same
+}
+```
+
+This is our way of saying "I got some invalid input, and I cannot proceed with it."
+We do this to throw an error back to whoever called the method with erroneous input, so they can fix the issue on their end.
 
 ## Checked and unchecked exceptions
 
