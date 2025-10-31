@@ -83,8 +83,7 @@ This is where the *lambda* syntax comes in. Lambdas have the following basic "an
 (<params>) -> <lambda body>;
 ```
 
-{: .callout }
-A lambda is an anonymous function.
+> A lambda is an anonymous function.
 
 Since the lambda is a function, it has inputs (`<params>`) and it has a body (`<lambda body>`).
 But, since it's anonymous, it doesn't have a name.
