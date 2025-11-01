@@ -27,6 +27,9 @@ double getTotalMilesRun(String fileName) {
       double miles = Double.parseDouble(parts[1]);
       totalMiles += miles;
     }
+
+    // Always a good idea to close the Scanner when we're done with it.
+    fileScanner.close();
   } catch (FileNotFoundException fnfe) {
     // Gracefully handle the exception
     System.out.println("Could not find a file called " + fileName);
@@ -71,12 +74,12 @@ In the previous lesson, we saw an example of checking for null-ness and throwing
 
 ### Should you throw checked or unchecked exceptions?
 
-When you're writing a method and want to notify method caller's about some erroneous conditions, you have a choice: you can throw a checked exception, or you can throw an unchecked exception. Which one should you use?
+When you're writing a method and want to notify the method caller's about some erroneous conditions, you have a choice: you can throw a checked exception, or you can throw an unchecked exception. Which one should you use?
 
 The conventional wisdom is (courtesy of [Joshua Bloch](https://dn721901.ca.archive.org/0/items/java_20230528/Joshua%20Bloch%20-%20Effective%20Java%20%283rd%29%20-%202018.pdf)):
 
 - **Throw checked exceptions** for cases where the error is recoverable. That is, your method will force the calling method to handle the exception. This is useful for things like reading files, where the caller can do something about the error (e.g., ask the user for a different file name, or create a new file).
-- **Throw unchecked exceptions** for things that are likely programmer errors, like passing `null` to a method that asks for an object, or passing a negative number to a method that asks for positive number. These are cases that simply shouldn't happen, and the programmer who gets hit with an unchecked exception should be able to fix the problem by changing _their_ code, rather than having to write code to handle the exception.[^you]
+- **Throw unchecked exceptions** for things that are likely programmer errors, like passing `null` to a method that asks for an object, or passing a negative number to a method that asks for positive number. These are cases that simply shouldn't happen, and the programmer who gets hit with an unchecked exception should be able to fix the problem by changing _their_ code, rather than you having to write code to handle the exception.[^you]
 
 [^you]: Note that this imagined "other" programmer might well be _you_, working on a different part of the same code base.
 
@@ -84,13 +87,13 @@ The conventional wisdom is (courtesy of [Joshua Bloch](https://dn721901.ca.archi
 
 So, if the compiler doesn't require you to handle unchecked exceptions, does that mean you can ignore them? Absolutely not!
 
-They can still crash program if they "escape containment", so you need to either make sure they won't occur (e.g., because you've checked conditions before using data), or you need to handle them with a `try-catch` block if they do occur.
+Unchecked exceptions can still crash your program if they "escape containment", so you need to either make sure they won't occur (e.g., because you've checked preconditions), or you need to handle them with a `try-catch` block if they do occur.
 
 How do we know _which_ unchecked Exceptions might occur in our code?
 Some good practices are:
 
-- **Be defensive** about any data you're working with that comes from an external source, like a file, method parameter, or a returned value from another method.
-- **Check for null-ness** before dereferencing an object pointer, especially if the object came to you from an external source (e.g., a method parameter, or a return value from another method). This is a sub-category of the point above, but is quite common so it bears mentioning.
+- **Be defensive** about any data you're working with that comes from an external source, like a file, method parameter, or a returned value from a method you don't control.
+- **Check for null-ness** before dereferencing an object pointer, especially if the object came to you from an external source. This is a sub-category of the point above, but is quite common so it bears mentioning.
   - Because `NullPointerExceptions` are such a common failure mode, Java also contains the [`Optional<T>`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html) type.[^generics] If you're writing a method that might return `null` in certain conditions (e.g., a failed search in a data structure), you should consider returning an `Optional` instead. That way, a "client" (or "user") of your method will be forced to check for the presence of the value before using it.
 - **Read the documentation** for methods you're using from external libraries. They will (or they _should_, at any rate) document the exceptions they will throw and under what conditions.
   - The corollary to this is: if _you're_ throwing Exceptions in your own code, or returning exceptional values like `null`, make sure to document them clearly.
@@ -99,8 +102,11 @@ Some good practices are:
 
 All right, with all that background: is our `getTotalMilesRun` method safe from unchecked exceptions?
 
-Let's go through our function line-by-line. It may seem a bit tedious, but it's a good habit to get into.
-An escaped Exception can crash your program, the consequences of which can be simply inconvenient (e.g., a user has to restart the program), catastrophic (e.g., a user loses data), or even dangerous (e.g., a user gets injured because of a software failure in a medical device, e.g., [there have been multiple casualties or life-threatening events as a result of faults or exceptions in blood glucose monitoring devices or insulin pumps](https://www.consumerreports.org/health/diabetes/when-diabetes-devices-fail-a2408992822/)).
+Let's go through the method line-by-line.
+It may seem a bit tedious, but it's a good habit to get into.
+An escaped Exception can crash your program, the consequences of which can be simply inconvenient (e.g., a user has to restart the program), catastrophic (e.g., a user loses data), or even dangerous (e.g., a user gets injured because of a software failure in a medical device).
+[There have been multiple casualties or life-threatening events as a result of faults or exceptions in blood glucose monitoring devices or insulin pumps](https://www.consumerreports.org/health/diabetes/when-diabetes-devices-fail-a2408992822/)).
+
 There's simply no room for carelessness.
 
 What "external" data, methods, or constructors are we using? We go through the method's components line-by-line, and I've **bolded** the items we're gonna need to handle.
@@ -173,11 +179,6 @@ We could roll our own, but it could be error prone, and anyway, the `Double.pars
 So we would end up doing the check twice.
 
 Ok, all that said, here's our code where we're handling items #1 and #2 from our TO-DO list.
-For now, we're simply printing an error message and skipping invalid lines.
-In a real project, you might do something else, depending on requirements.
-For example, the [`read_csv` function in the `pandas` library](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html) will raise an error by default if it encounters malformed lines while reading a file, but also lets the user decide if they want some different response to malformed lines.
-
-It's really important to do _something_ when handling an exception—there are few things worse in software development than silent software failures.
 
 ```java
 double getTotalMilesRun(String fileName) {
@@ -227,29 +228,35 @@ double getTotalMilesRun(String fileName) {
 }
 ```
 
-Ok, item #3 from our TO-DO list.
+It's really important to do _something_ when handling an exception—there are few things worse in software development than silent software failures.
+For now, we're simply printing an error message and skipping invalid lines.
+In a real project, you might do something else, depending on requirements.
+
+For example, the [`read_csv` function in the `pandas` library](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html) will raise an error by default if it encounters malformed lines while reading a file, but also lets the user decide if they want some different response to malformed lines.
+
+**On to item #3 from our TO-DO list!**
 We see that the `Scanner` constructor might throw an `IllegalStateException` if the `Scanner` is "closed". What does that mean?
 
 Well, when we use a `Scanner` to read a file, we're obtaining a resource (i.e., a file handle) from the operating system.
 When we're done with that resource, we need to "close" it, which tells the operating system that we're done with it and that it can be freed up for other uses.
 
-We're doing this using the `Scanner`'s `close()` method. After we've closed it, the `Scanner` can no longer be used to read lines from the file.
+In the code above, we're doing this with the `fileScanner.close()` method call. After we've closed the `Scanner`, it can no longer be used to read lines from the file.
 
 In our case, we are clearly closing the `Scanner` _after_ using it to read lines.
 So, in terms of the `IllegalStateException` from the `Scanner` constructor, we're okay.
 
-**Does that mean that nothing can possibly go wrong with our `getTotalMilesRun` method?** Of course not! The file might be locked by another process, or it might be on a network drive that has gone offline, or it have so many records that our `totalMiles` variable overflows, or ... ... ...
+With that, we've addressed our TO-DO list of items.
+
+**Does that mean that nothing can possibly go wrong with our `getTotalMilesRun` method?** Of course not! The file might be locked by another process, or it might be on a network drive that has gone offline, or it might have so many records that our `totalMiles` variable overflows, or ... ... ...
 
 The point is, you can never be sure that your code is 100% safe from exceptions, but you can do your best to handle the ones you know about, and to check for conditions that might cause exceptions before they occur.
 
 In this case, we've done a fairly good job being defensive about the data we're working with, and we've handled the exceptions that we know about.
 
-That said, if something unforeseen _does_ go wrong while reading the file, an exception would occur and jump to the `catch` block, or escape the method.
-Either way, we're going to be stuck with an open `Scanner`, because in that case we wouldn't have reached the `fileScanner.close()` method call.
+However, if something unforeseen _does_ go wrong while reading the file, an exception would occur and jump to the `catch` block, or escape the method.
+Either way, _we're going to be stuck with an open `Scanner`_, because in we wouldn't have reached the `fileScanner.close()` method call.
 This will leave us with an open file handle, which can lead to resource leaks and other problems.
 
-Can we make sure that our `Scanner` _always_ closes, **no matter what**?
-
-That's where the `finally` block comes in.
+Can we make sure that our `Scanner` _always_ closes, **no matter what**? That's where the `finally` block comes in, discussed in the next lesson.
 
 [^generics]: If you are not sure what the `<T>` means here, please see the notes about _generics_ or _type parameters_ in the [lesson on lambdas](../15_lambdas).

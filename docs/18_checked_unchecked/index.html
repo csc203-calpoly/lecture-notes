@@ -203,6 +203,9 @@ We're reading a file, and accounting for the case where the file doesn't exist.<
       double miles = Double.parseDouble(parts[1]);
       totalMiles += miles;
     }
+
+    // Always a good idea to close the Scanner when we're done with it.
+    fileScanner.close();
   } catch (FileNotFoundException fnfe) {
     // Gracefully handle the exception
     System.out.println("Could not find a file called " + fileName);
@@ -237,20 +240,20 @@ The next section discusses the differences between <em>checked</em> and <em>unch
 <p>For example, before dereferencing an object pointer (i.e., before using the dot operator <code>.</code> on the object to access its methods or instance variables), you need to be sure that it's not <code>null</code>. If it is <code>null</code>, you would get a <code>NullPointerException</code>, which is an unchecked exception.</p>
 <p>In the previous lesson, we saw an example of checking for null-ness and throwing an <code>IllegalArgumentException</code> in the case of invalid. <code>IllegalArgumentException</code> is another example of an unchecked exception, commonly used when preconditions are violated (e.g., when a method is called with invalid inputs or "arguments").</p>
 <h3 id="should-you-throw-checked-or-unchecked-exceptions"><a class="header" href="#should-you-throw-checked-or-unchecked-exceptions">Should you throw checked or unchecked exceptions?</a></h3>
-<p>When you're writing a method and want to notify method caller's about some erroneous conditions, you have a choice: you can throw a checked exception, or you can throw an unchecked exception. Which one should you use?</p>
+<p>When you're writing a method and want to notify the method caller's about some erroneous conditions, you have a choice: you can throw a checked exception, or you can throw an unchecked exception. Which one should you use?</p>
 <p>The conventional wisdom is (courtesy of <a href="https://dn721901.ca.archive.org/0/items/java_20230528/Joshua%20Bloch%20-%20Effective%20Java%20%283rd%29%20-%202018.pdf">Joshua Bloch</a>):</p>
 <ul>
 <li><strong>Throw checked exceptions</strong> for cases where the error is recoverable. That is, your method will force the calling method to handle the exception. This is useful for things like reading files, where the caller can do something about the error (e.g., ask the user for a different file name, or create a new file).</li>
-<li><strong>Throw unchecked exceptions</strong> for things that are likely programmer errors, like passing <code>null</code> to a method that asks for an object, or passing a negative number to a method that asks for positive number. These are cases that simply shouldn't happen, and the programmer who gets hit with an unchecked exception should be able to fix the problem by changing <em>their</em> code, rather than having to write code to handle the exception.<sup class="footnote-reference" id="fr-you-1"><a href="#footnote-you">1</a></sup></li>
+<li><strong>Throw unchecked exceptions</strong> for things that are likely programmer errors, like passing <code>null</code> to a method that asks for an object, or passing a negative number to a method that asks for positive number. These are cases that simply shouldn't happen, and the programmer who gets hit with an unchecked exception should be able to fix the problem by changing <em>their</em> code, rather than you having to write code to handle the exception.<sup class="footnote-reference" id="fr-you-1"><a href="#footnote-you">1</a></sup></li>
 </ul>
 <h2 id="handling-potential-unchecked-exceptions"><a class="header" href="#handling-potential-unchecked-exceptions">Handling potential unchecked exceptions</a></h2>
 <p>So, if the compiler doesn't require you to handle unchecked exceptions, does that mean you can ignore them? Absolutely not!</p>
-<p>They can still crash program if they "escape containment", so you need to either make sure they won't occur (e.g., because you've checked conditions before using data), or you need to handle them with a <code>try-catch</code> block if they do occur.</p>
+<p>Unchecked exceptions can still crash your program if they "escape containment", so you need to either make sure they won't occur (e.g., because you've checked preconditions), or you need to handle them with a <code>try-catch</code> block if they do occur.</p>
 <p>How do we know <em>which</em> unchecked Exceptions might occur in our code?
 Some good practices are:</p>
 <ul>
-<li><strong>Be defensive</strong> about any data you're working with that comes from an external source, like a file, method parameter, or a returned value from another method.</li>
-<li><strong>Check for null-ness</strong> before dereferencing an object pointer, especially if the object came to you from an external source (e.g., a method parameter, or a return value from another method). This is a sub-category of the point above, but is quite common so it bears mentioning.
+<li><strong>Be defensive</strong> about any data you're working with that comes from an external source, like a file, method parameter, or a returned value from a method you don't control.</li>
+<li><strong>Check for null-ness</strong> before dereferencing an object pointer, especially if the object came to you from an external source. This is a sub-category of the point above, but is quite common so it bears mentioning.
 <ul>
 <li>Because <code>NullPointerExceptions</code> are such a common failure mode, Java also contains the <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html"><code>Optional&lt;T&gt;</code></a> type.<sup class="footnote-reference" id="fr-generics-1"><a href="#footnote-generics">2</a></sup> If you're writing a method that might return <code>null</code> in certain conditions (e.g., a failed search in a data structure), you should consider returning an <code>Optional</code> instead. That way, a "client" (or "user") of your method will be forced to check for the presence of the value before using it.</li>
 </ul>
@@ -263,9 +266,11 @@ Some good practices are:</p>
 </ul>
 <h3 id="is-our-method-safe-yet"><a class="header" href="#is-our-method-safe-yet">Is our method safe yet?</a></h3>
 <p>All right, with all that background: is our <code>getTotalMilesRun</code> method safe from unchecked exceptions?</p>
-<p>Let's go through our function line-by-line. It may seem a bit tedious, but it's a good habit to get into.
-An escaped Exception can crash your program, the consequences of which can be simply inconvenient (e.g., a user has to restart the program), catastrophic (e.g., a user loses data), or even dangerous (e.g., a user gets injured because of a software failure in a medical device, e.g., <a href="https://www.consumerreports.org/health/diabetes/when-diabetes-devices-fail-a2408992822/">there have been multiple casualties or life-threatening events as a result of faults or exceptions in blood glucose monitoring devices or insulin pumps</a>).
-There's simply no room for carelessness.</p>
+<p>Let's go through the method line-by-line.
+It may seem a bit tedious, but it's a good habit to get into.
+An escaped Exception can crash your program, the consequences of which can be simply inconvenient (e.g., a user has to restart the program), catastrophic (e.g., a user loses data), or even dangerous (e.g., a user gets injured because of a software failure in a medical device).
+<a href="https://www.consumerreports.org/health/diabetes/when-diabetes-devices-fail-a2408992822/">There have been multiple casualties or life-threatening events as a result of faults or exceptions in blood glucose monitoring devices or insulin pumps</a>).</p>
+<p>There's simply no room for carelessness.</p>
 <p>What "external" data, methods, or constructors are we using? We go through the method's components line-by-line, and I've <strong>bolded</strong> the items we're gonna need to handle.</p>
 <ul>
 <li><code>fileName</code> might be <code>null</code> or empty. We've handled that already.</li>
@@ -332,11 +337,7 @@ Stanley,1.2
 <p>However, parsing strings into numeric values is almost the only exception (hah) to this rule: the Java standard library does not provide methods to check if a <code>String</code> is parse-able into a number.
 We could roll our own, but it could be error prone, and anyway, the <code>Double.parseDouble</code> method already does this check.
 So we would end up doing the check twice.</p>
-<p>Ok, all that said, here's our code where we're handling items #1 and #2 from our TO-DO list.
-For now, we're simply printing an error message and skipping invalid lines.
-In a real project, you might do something else, depending on requirements.
-For example, the <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html"><code>read_csv</code> function in the <code>pandas</code> library</a> will raise an error by default if it encounters malformed lines while reading a file, but also lets the user decide if they want some different response to malformed lines.</p>
-<p>It's really important to do <em>something</em> when handling an exception—there are few things worse in software development than silent software failures.</p>
+<p>Ok, all that said, here's our code where we're handling items #1 and #2 from our TO-DO list.</p>
 <pre><code class="language-java">double getTotalMilesRun(String fileName) {
   if (fileName == null || fileName.isEmpty()) {
     throw new IllegalArgumentException("fileName cannot be null or empty");
@@ -383,21 +384,25 @@ For example, the <a href="https://pandas.pydata.org/pandas-docs/stable/reference
   return totalMiles;
 }
 </code></pre>
-<p>Ok, item #3 from our TO-DO list.
+<p>It's really important to do <em>something</em> when handling an exception—there are few things worse in software development than silent software failures.
+For now, we're simply printing an error message and skipping invalid lines.
+In a real project, you might do something else, depending on requirements.</p>
+<p>For example, the <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html"><code>read_csv</code> function in the <code>pandas</code> library</a> will raise an error by default if it encounters malformed lines while reading a file, but also lets the user decide if they want some different response to malformed lines.</p>
+<p><strong>On to item #3 from our TO-DO list!</strong>
 We see that the <code>Scanner</code> constructor might throw an <code>IllegalStateException</code> if the <code>Scanner</code> is "closed". What does that mean?</p>
 <p>Well, when we use a <code>Scanner</code> to read a file, we're obtaining a resource (i.e., a file handle) from the operating system.
 When we're done with that resource, we need to "close" it, which tells the operating system that we're done with it and that it can be freed up for other uses.</p>
-<p>We're doing this using the <code>Scanner</code>'s <code>close()</code> method. After we've closed it, the <code>Scanner</code> can no longer be used to read lines from the file.</p>
+<p>In the code above, we're doing this with the <code>fileScanner.close()</code> method call. After we've closed the <code>Scanner</code>, it can no longer be used to read lines from the file.</p>
 <p>In our case, we are clearly closing the <code>Scanner</code> <em>after</em> using it to read lines.
 So, in terms of the <code>IllegalStateException</code> from the <code>Scanner</code> constructor, we're okay.</p>
-<p><strong>Does that mean that nothing can possibly go wrong with our <code>getTotalMilesRun</code> method?</strong> Of course not! The file might be locked by another process, or it might be on a network drive that has gone offline, or it have so many records that our <code>totalMiles</code> variable overflows, or ... ... ...</p>
+<p>With that, we've addressed our TO-DO list of items.</p>
+<p><strong>Does that mean that nothing can possibly go wrong with our <code>getTotalMilesRun</code> method?</strong> Of course not! The file might be locked by another process, or it might be on a network drive that has gone offline, or it might have so many records that our <code>totalMiles</code> variable overflows, or ... ... ...</p>
 <p>The point is, you can never be sure that your code is 100% safe from exceptions, but you can do your best to handle the ones you know about, and to check for conditions that might cause exceptions before they occur.</p>
 <p>In this case, we've done a fairly good job being defensive about the data we're working with, and we've handled the exceptions that we know about.</p>
-<p>That said, if something unforeseen <em>does</em> go wrong while reading the file, an exception would occur and jump to the <code>catch</code> block, or escape the method.
-Either way, we're going to be stuck with an open <code>Scanner</code>, because in that case we wouldn't have reached the <code>fileScanner.close()</code> method call.
+<p>However, if something unforeseen <em>does</em> go wrong while reading the file, an exception would occur and jump to the <code>catch</code> block, or escape the method.
+Either way, <em>we're going to be stuck with an open <code>Scanner</code></em>, because in we wouldn't have reached the <code>fileScanner.close()</code> method call.
 This will leave us with an open file handle, which can lead to resource leaks and other problems.</p>
-<p>Can we make sure that our <code>Scanner</code> <em>always</em> closes, <strong>no matter what</strong>?</p>
-<p>That's where the <code>finally</code> block comes in.</p>
+<p>Can we make sure that our <code>Scanner</code> <em>always</em> closes, <strong>no matter what</strong>? That's where the <code>finally</code> block comes in, discussed in the next lesson.</p>
 <hr>
 <ol class="footnote-definition"><li id="footnote-you">
 <p>Note that this imagined "other" programmer might well be <em>you</em>, working on a different part of the same code base. <a href="#fr-you-1">↩</a></p>

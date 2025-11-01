@@ -1,4 +1,4 @@
-# Exception handling
+# Exceptions
 
 > _Exceptions_ are unexpected occurrences that disrupt the normal flow of your program. In this lesson we'll learn how we can use Java's Exception handling mechanisms for handling Exceptions.
 >
@@ -368,6 +368,8 @@ These types of exceptions are called _checked exceptions_, because they are chec
 
 _Unchecked exceptions_, on the other hand, are not checked at compile time.
 Can you tell if there's potential for such an exception to occur in our `getTotalMilesRun` method? If so, what would it be?
+
+We'll discuss these further in the next lesson.
 
 ## References/Other reading
 

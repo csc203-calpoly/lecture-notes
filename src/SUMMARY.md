@@ -17,7 +17,7 @@
   - [Comparators](14_comparators/index.md)
 - [Lambdas and functional interfaces](15_lambdas/index.md)
 - [Streams](16_streams/index.md)
-- [Exceptions handling](17_exceptions/index.md)
+- [Exceptions](17_exceptions/index.md)
   - [Checked and unchecked exceptions](18_checked_unchecked/index.md)
   - [`finally`](19_finally/index.md)
 
