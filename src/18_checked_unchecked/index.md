@@ -45,12 +45,25 @@ We were _forced_ to account for that case by the compiler, because the `Scanner`
 That's because the `FileNotFoundException` is a _checked_ exception.
 The next section discusses the differences between _checked_ and _unchecked_ exceptions and shows some examples.
 
-## The Exception type hierarchy
+## The "Throwable" type hierarchy
 
-Here's an excerpt of the Java Exception type hierarchy (drawn from left-to-right so the font doesn't shrink too much).
+We saw a brief segment of the Exception type hierarchy in the previous lesson.
+Here's a fuller picture, though still not exhaustive.
+
+The top-level `Throwable` type is the root of the exception/error hierarchy in Java.
+Its two main subtypes are the `Error` type and the `Exception` type.
+
+`Error` is used for things like `StackOverflowError` (thrown when your program runs out of stack space, usually due to infinite recursion) and `OutOfMemoryError` (throw when, well, when your program is out of memory).
+These are usually problems at the JVM level, and you typically don't try to catch or handle them in your code.
+
+We've been mainly concerned with the `Exception` type and its subclasses.
 
 ```mermaid
-flowchart LR
+flowchart TD
+  Throwable --> Error
+  Error --> OutOfMemoryError
+  Error --> StackOverflowError
+  Throwable --> Exception
   Exception --> IOException
   Exception --> Others...
   IOException --> FileNotFoundException
@@ -58,13 +71,21 @@ flowchart LR
   RuntimeException --> NullPointerException
   RuntimeException --> IllegalArgumentException
   RuntimeException --> NumberFormatException
+
+  classDef runtimeEx fill:#ffcccc,stroke:#ff0000,stroke-width:2px,stroke-dasharray: 5 5,color: #000000
+  classDef checkedEx fill:#ccffff,stroke:#0000ff,stroke-width:2px,color: #000000
+
+  class RuntimeException,NullPointerException,IllegalArgumentException,NumberFormatException runtimeEx
+  class Exception,IOException,FileNotFoundException,Others... checkedEx
 ```
 
 Broadly speaking, exception types that are subclasses of `Exception` but _not_ subclasses of `RuntimeException` are _checked_ by the compiler.
+These are represented as <span style="background-color: #ccffff; color: black; border: 1pt #0000ff solid;">blueish</span> nodes in the type hierarchy above.
 
 > _Checked exceptions_ are the ones for which the compiler checks whether or not you have a plan to handle them (i.e., a `try-catch` or a `throws`).
 
 On the other hand, subclasses of `RuntimeExceptions` are _unchecked_ by the compiler.
+These are represented as <span style="background-color: #ffcccc; color: black; border: 1pt #ff0000 dashed;">reddish</span> nodes in the type hierarchy above.
 
 > _Unchecked exceptions_ are the ones for which the compiler does not require exception-handling.
 
@@ -253,10 +274,22 @@ The point is, you can never be sure that your code is 100% safe from exceptions,
 
 In this case, we've done a fairly good job being defensive about the data we're working with, and we've handled the exceptions that we know about.
 
-However, if something unforeseen _does_ go wrong while reading the file, an exception would occur and jump to the `catch` block, or escape the method.
-Either way, _we're going to be stuck with an open `Scanner`_, because in we wouldn't have reached the `fileScanner.close()` method call.
+**However, there's one last thing to consider.**
+If something unforeseen _does_ go wrong while reading the file, an exception would occur and jump to the `catch` block, or escape the method.
+Either way, _we're going to be stuck with an open `Scanner`_, because we wouldn't reach the `fileScanner.close()` method call in these scenarios.
 This will leave us with an open file handle, which can lead to resource leaks and other problems.
 
-Can we make sure that our `Scanner` _always_ closes, **no matter what**? That's where the `finally` block comes in, discussed in the next lesson.
+Can we make sure that our `Scanner` _always_ closes, **no matter what**?
+
+The `finally` block, discussed in the next lesson, can be used for this purpose.
+
+## Optional additional reading about error handling
+
+Different languages, communities, and teams have differing views about exceptions.
+
+- For example, Google's style guide for C++ [recommends against the use of exceptions](https://google.github.io/styleguide/cppguide.html#Exceptions).
+- Google's [Java style guide](https://google.github.io/styleguide/javaguide.html#s6.2-caught-exceptions) makes no such recommendation, and cautions against ignoring caught exceptions.
+- The Rust language [does not have exceptions at all](https://doc.rust-lang.org/book/ch09-00-error-handling.html), and instead uses other language constructs to deal with "recoverable" and "unrecoverable" errors.
+- The article [_Everything wrong with exceptions_](https://mortoray.com/everything-wrong-with-exceptions/), despite its title, gives a fairly balanced view of the pros and cons of exceptions as an error-handling mechanism.
 
 [^generics]: If you are not sure what the `<T>` means here, please see the notes about _generics_ or _type parameters_ in the [lesson on lambdas](../15_lambdas).

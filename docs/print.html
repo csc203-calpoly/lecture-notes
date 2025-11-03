@@ -4303,9 +4303,19 @@ We're reading a file, and accounting for the case where the file doesn't exist.<
 <p>We were <em>forced</em> to account for that case by the compiler, because the <code>Scanner</code> constructor declares that it <code>throws</code> a <code>FileNotFoundException</code>.</p>
 <p>That's because the <code>FileNotFoundException</code> is a <em>checked</em> exception.
 The next section discusses the differences between <em>checked</em> and <em>unchecked</em> exceptions and shows some examples.</p>
-<h2 id="the-exception-type-hierarchy"><a class="header" href="#the-exception-type-hierarchy">The Exception type hierarchy</a></h2>
-<p>Here's an excerpt of the Java Exception type hierarchy (drawn from left-to-right so the font doesn't shrink too much).</p>
-<pre class="mermaid">flowchart LR
+<h2 id="the-throwable-type-hierarchy"><a class="header" href="#the-throwable-type-hierarchy">The "Throwable" type hierarchy</a></h2>
+<p>We saw a brief segment of the Exception type hierarchy in the previous lesson.
+Here's a fuller picture, though still not exhaustive.</p>
+<p>The top-level <code>Throwable</code> type is the root of the exception/error hierarchy in Java.
+Its two main subtypes are the <code>Error</code> type and the <code>Exception</code> type.</p>
+<p><code>Error</code> is used for things like <code>StackOverflowError</code> (thrown when your program runs out of stack space, usually due to infinite recursion) and <code>OutOfMemoryError</code> (throw when, well, when your program is out of memory).
+These are usually problems at the JVM level, and you typically don't try to catch or handle them in your code.</p>
+<p>We've been mainly concerned with the <code>Exception</code> type and its subclasses.</p>
+<pre class="mermaid">flowchart TD
+  Throwable --&gt; Error
+  Error --&gt; OutOfMemoryError
+  Error --&gt; StackOverflowError
+  Throwable --&gt; Exception
   Exception --&gt; IOException
   Exception --&gt; Others...
   IOException --&gt; FileNotFoundException
@@ -4313,12 +4323,20 @@ The next section discusses the differences between <em>checked</em> and <em>unch
   RuntimeException --&gt; NullPointerException
   RuntimeException --&gt; IllegalArgumentException
   RuntimeException --&gt; NumberFormatException
+
+  classDef runtimeEx fill:#ffcccc,stroke:#ff0000,stroke-width:2px,stroke-dasharray: 5 5,color: #000000
+  classDef checkedEx fill:#ccffff,stroke:#0000ff,stroke-width:2px,color: #000000
+
+  class RuntimeException,NullPointerException,IllegalArgumentException,NumberFormatException runtimeEx
+  class Exception,IOException,FileNotFoundException,Others... checkedEx
 </pre>
-<p>Broadly speaking, exception types that are subclasses of <code>Exception</code> but <em>not</em> subclasses of <code>RuntimeException</code> are <em>checked</em> by the compiler.</p>
+<p>Broadly speaking, exception types that are subclasses of <code>Exception</code> but <em>not</em> subclasses of <code>RuntimeException</code> are <em>checked</em> by the compiler.
+These are represented as <span style="background-color: #ccffff; color: black; border: 1pt #0000ff solid;">blueish</span> nodes in the type hierarchy above.</p>
 <blockquote>
 <p><em>Checked exceptions</em> are the ones for which the compiler checks whether or not you have a plan to handle them (i.e., a <code>try-catch</code> or a <code>throws</code>).</p>
 </blockquote>
-<p>On the other hand, subclasses of <code>RuntimeExceptions</code> are <em>unchecked</em> by the compiler.</p>
+<p>On the other hand, subclasses of <code>RuntimeExceptions</code> are <em>unchecked</em> by the compiler.
+These are represented as <span style="background-color: #ffcccc; color: black; border: 1pt #ff0000 dashed;">reddish</span> nodes in the type hierarchy above.</p>
 <blockquote>
 <p><em>Unchecked exceptions</em> are the ones for which the compiler does not require exception-handling.</p>
 </blockquote>
@@ -4484,10 +4502,20 @@ So, in terms of the <code>IllegalStateException</code> from the <code>Scanner</c
 <p><strong>Does that mean that nothing can possibly go wrong with our <code>getTotalMilesRun</code> method?</strong> Of course not! The file might be locked by another process, or it might be on a network drive that has gone offline, or it might have so many records that our <code>totalMiles</code> variable overflows, or ... ... ...</p>
 <p>The point is, you can never be sure that your code is 100% safe from exceptions, but you can do your best to handle the ones you know about, and to check for conditions that might cause exceptions before they occur.</p>
 <p>In this case, we've done a fairly good job being defensive about the data we're working with, and we've handled the exceptions that we know about.</p>
-<p>However, if something unforeseen <em>does</em> go wrong while reading the file, an exception would occur and jump to the <code>catch</code> block, or escape the method.
-Either way, <em>we're going to be stuck with an open <code>Scanner</code></em>, because in we wouldn't have reached the <code>fileScanner.close()</code> method call.
+<p><strong>However, there's one last thing to consider.</strong>
+If something unforeseen <em>does</em> go wrong while reading the file, an exception would occur and jump to the <code>catch</code> block, or escape the method.
+Either way, <em>we're going to be stuck with an open <code>Scanner</code></em>, because we wouldn't reach the <code>fileScanner.close()</code> method call in these scenarios.
 This will leave us with an open file handle, which can lead to resource leaks and other problems.</p>
-<p>Can we make sure that our <code>Scanner</code> <em>always</em> closes, <strong>no matter what</strong>? That's where the <code>finally</code> block comes in, discussed in the next lesson.</p>
+<p>Can we make sure that our <code>Scanner</code> <em>always</em> closes, <strong>no matter what</strong>?</p>
+<p>The <code>finally</code> block, discussed in the next lesson, can be used for this purpose.</p>
+<h2 id="optional-additional-reading-about-error-handling"><a class="header" href="#optional-additional-reading-about-error-handling">Optional additional reading about error handling</a></h2>
+<p>Different languages, communities, and teams have differing views about exceptions.</p>
+<ul>
+<li>For example, Google's style guide for C++ <a href="https://google.github.io/styleguide/cppguide.html#Exceptions">recommends against the use of exceptions</a>.</li>
+<li>Google's <a href="https://google.github.io/styleguide/javaguide.html#s6.2-caught-exceptions">Java style guide</a> makes no such recommendation, and cautions against ignoring caught exceptions.</li>
+<li>The Rust language <a href="https://doc.rust-lang.org/book/ch09-00-error-handling.html">does not have exceptions at all</a>, and instead uses other language constructs to deal with "recoverable" and "unrecoverable" errors.</li>
+<li>The article <a href="https://mortoray.com/everything-wrong-with-exceptions/"><em>Everything wrong with exceptions</em></a>, despite its title, gives a fairly balanced view of the pros and cons of exceptions as an error-handling mechanism.</li>
+</ul>
 <hr>
 <ol class="footnote-definition"><li id="footnote-you">
 <p>Note that this imagined "other" programmer might well be <em>you</em>, working on a different part of the same code base. <a href="#fr-you-1">↩</a></p>
@@ -4629,6 +4657,7 @@ Every path through the <code>try-catch</code> block goes through <code>finally</
 <li>Julie Workman</li>
 <li>Paul Hatalsky</li>
 <li>Alex Bisberg</li>
+<li>Sussan Einakian</li>
 </ul>
 
                     </main>
