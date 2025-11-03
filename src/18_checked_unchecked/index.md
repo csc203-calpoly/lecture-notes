@@ -126,9 +126,7 @@ All right, with all that background: is our `getTotalMilesRun` method safe from 
 Let's go through the method line-by-line.
 It may seem a bit tedious, but it's a good habit to get into.
 An escaped Exception can crash your program, the consequences of which can be simply inconvenient (e.g., a user has to restart the program), catastrophic (e.g., a user loses data), or even dangerous (e.g., a user gets injured because of a software failure in a medical device).
-[There have been multiple casualties or life-threatening events as a result of faults or exceptions in blood glucose monitoring devices or insulin pumps](https://www.consumerreports.org/health/diabetes/when-diabetes-devices-fail-a2408992822/)).
-
-There's simply no room for carelessness.
+As an example of that last, [there have been multiple casualties or life-threatening events as the result of faults or exceptions in blood glucose monitoring devices or insulin pumps](https://www.consumerreports.org/health/diabetes/when-diabetes-devices-fail-a2408992822/).
 
 What "external" data, methods, or constructors are we using? We go through the method's components line-by-line, and I've **bolded** the items we're gonna need to handle.
 
