@@ -3967,6 +3967,635 @@ while (scanner.hasNext()) {
 </code></pre>
 <p>Because <code>Files.lines</code> returns a <code>Stream&lt;String&gt;</code>, the lines in the file and <em>streamed</em> through our pipeline, but this detail is abstracted away from you, the developer.</p>
 <p>If you use a simple collection in memory (like an array or list) as the source of a stream, you're not gaining much in the way of "streaming" — in that situation, the Streams API mostly provides a convenient library and syntax for performing operations on a collection data. Still pretty good!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="search-algorithms"><a class="header" href="#search-algorithms">Search algorithms</a></h1>
+<style>
+.to-do-list {
+  padding-left: 50px;
+}
+</style>
+<blockquote>
+<p>In this lesson, we'll do a brief recap about search algorithms with which we're already familiar (depth-first search and breadth-first search), and use those as a launchpoint to talk about a "smarter" search algorithm called A* search (pronounced "A-star").</p>
+<p>This lesson is not quite an <em>object-oriented programming</em> lesson per se. It's definitely very specifically tied to one of the programming projects.</p>
+</blockquote>
+<p>In your previous class (for many of you, CSC 202 <em>Data Structures</em>), you learned about the general tree data structure.
+A tree is hierarchical data structure, made up of a root node that has zero or more child nodes, each of which is a tree (or a "subtree").</p>
+<p>For example, this is a tree:</p>
+<pre class="mermaid">graph TD;
+    A((A))
+    B((B))
+    C((C))
+    D((D))
+    E((E))
+    F((F))
+    G((G))
+
+    A--&gt;B;
+    A--&gt;C;
+    B--&gt;D;
+    B--&gt;E;
+    C--&gt;F;
+    C--&gt;G;
+</pre>
+<p>One of the many operations you can perform in trees is to <em>search</em> for a particular value, using some <em>search algorithm</em>.
+For example, we may want to find a path from the root of the tree (<code>A</code>) to a particular target node (say, <code>E</code>).</p>
+<h2 id="the-anatomy-of-a-search"><a class="header" href="#the-anatomy-of-a-search">The anatomy of a search</a></h2>
+<p>Two search algorithms that you may already be familiar with are <strong>depth-first search (DFS)</strong> and <strong>breadth-first search (BFS)</strong>.</p>
+<p>A <strong>depth-first search</strong> proceeds by exploring (or "visiting") the root node first, then recursively searching each subtree.
+The following animation from Wikipedia illustrates it well:</p>
+<figure>
+<img src="17_a_star/./Depth-First-Search.gif" alt="An animation showing a depth-first search.gif" style="max-width: 350px;"/>
+<figcaption>Nodes are numbered by the order in which they would be visited in a depth-first search.<br>
+By <a href="17_a_star///commons.wikimedia.org/w/index.php?title=User:Mre&amp;action=edit&amp;redlink=1" class="new" title="User:Mre (page does not exist)">Mre</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=6342841">Link</a>
+</figcaption>
+</figure>
+<p>In contrast, a <strong>breadth-first search</strong> proceeds by visiting all nodes at a given level (or "depth") before moving on to nodes at the next level.</p>
+<figure>
+<img src="17_a_star/./Animated_BFS.gif" alt="An animation showing a breadth-first search." style="max-width: 400px;"/>
+<figcaption>Breadth-first search on a tree structure. First the root is explored, then each node at the next level, then the next level, and so on. Also sometimes known as a "level-order" search.<br>
+<a href="https://commons.wikimedia.org/w/index.php?curid=1864649">By Blake Matheny, CC BY-SA 3.0</a>
+</figcaption>
+</figure>
+<p>Both DFS and BFS can be described with the following structure:</p>
+<ul>
+<li>First, know your <code>startNode</code> and your <code>targetNode</code>.</li>
+<li>Initialize a "to-do list" of nodes that need to be explored during the search. This is also sometimes called the "frontier".</li>
+<li>Add your <code>startNode</code> to the "to-do" list—it's the first thing that'll be explored.</li>
+<li>While your to-do list is not empty:
+<ul>
+<li>Remove the next node from the to-do list.</li>
+<li>Is it the <code>targetNode</code>? If so, you're done!</li>
+<li>If it's not the <code>targetNode</code>, add its children to the to-do list.</li>
+<li>Run this loop again.</li>
+</ul>
+</li>
+<li>If you end the loop without having found <code>targetNode</code>, then it must not be reachable from <code>startNode</code>.</li>
+</ul>
+<p>Or, expressed in pseudocode:</p>
+<pre><code class="language-txt">1. | function search(startNode, targetNode) {
+2. |  initialize todoList;
+3. |  add startNode to todoList;
+4. |  while (todoList is not empty) {
+5. |    currentNode = remove next node from todoList;
+6. |    if (currentNode == targetNode) {
+7. |      return "found!";
+8. |    }
+9. |    add children of currentNode to todoList;
+10.|  }
+11.|  return "not found";
+12.| }
+</code></pre>
+<p>The <em>only</em> difference between DFS and BFS is the order in which the "next" node is removed from the to-do list.</p>
+<p>That is, on line 5 above, if we remove the most recently-added node from the to-do list, then we're doing a depth-first search (because we go deep into one branch before exploring others).
+If we remove the least-recently-added node from the to-do list, then we're doing a breadth-first search (because we explore all nodes at the current depth before going deeper).</p>
+<blockquote>
+<p>Another way to think about this is: in DFS, the to-do list is a <strong>stack</strong> data structure (last-in, first-out), while in BFS, the to-do list is a <strong>queue</strong> data structure (first-in, first-out).</p>
+</blockquote>
+<h2 id="search-in-a-graph"><a class="header" href="#search-in-a-graph">Search in a graph</a></h2>
+<blockquote>
+<p>Searches in graphs require a small but crucial modification to the general search algorithm above.</p>
+</blockquote>
+<p>The steps above are sufficient for searches in <em>tree</em> data structures.
+However, in this lesson, we will be focusing on searches in <em>graph</em> data structures.</p>
+<p>A <strong>graph</strong> is a set of nodes (also called <em>vertices</em>) connected by edges.
+There are key differences between trees and graphs.
+In graphs,</p>
+<ul>
+<li>there's no fixed "root" node. Typically, a "search" in a graph starts from some arbitrarily chosen <code>startNode</code>.</li>
+<li>nodes can be connected in arbitrary ways, as opposed to the hierarchical parent-child relationship seen in trees.</li>
+</ul>
+<p>For example, this is a graph, but not a tree:</p>
+<pre class="mermaid">graph LR;
+    A((A))
+    B((B))
+    C((C))
+    D((D))
+    E((E))
+
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+</pre>
+<p>Crucially, in graphs, there may be <em>cycles</em>.
+<strong>Cycles</strong> occur when a node is reachable from itself by following a sequence of edges.
+In the example above, we can start at <code>A</code>, and take a series of edges to get back to <code>A</code> again: <code>A -&gt; B -&gt; D -&gt; C -&gt; A</code>.</p>
+<h3 id="activity"><a class="header" href="#activity">Activity</a></h3>
+<p>Let's run through our general search algorithm using the graph above.
+We'll start from node <code>A</code> and try to search for node <code>E</code>.
+Let's use BFS.</p>
+<p>We'll by marking <code>E</code> as our target, and adding <code>A</code> to our to-do list, which is a queue (because BFS).</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::frontier
+    B((B))
+    C((C))
+    D((D))
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+</ul>
+<!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
+</div>
+<div class='to-do-list'>
+<p>To-do list (added <code>A</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>A</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p>Our next step is to dequeue <code>A</code> from the to-do list. It is now our <strong>current</strong> node. It's not our target, so we enqueue its neighbours, <code>B</code> and <code>C</code>.</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::current
+    B((B)):::frontier
+    C((C)):::frontier
+    D((D))
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+</ul>
+<!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
+</div>
+<div class='to-do-list'>
+<p>To-do list (removed <code>A</code>, added <code>B</code> and <code>C</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>C</td>
+    <td>B</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p>Now, we'll dequeue <code>B</code> from the to-do list, because it was "first in", and explore it.
+Again, exploring it means <em>adding its neighbours to the to-do list</em>.</p>
+<p><strong>At this point, we have a problem</strong>.
+When we explore <code>B</code>, and try to add its neighbours to our to-do list, we would correctly enqueue <code>D</code>. But because <code>A</code> is also a neighbour of <code>B</code>, we'd end up re-adding <code>A</code> to the list!</p>
+<p>Even if we didn't re-add <code>A</code> now, we would re-add it later when we explore <code>C</code>, which is also a neighbour of <code>A</code>.</p>
+<div style="display: flex">
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::frontier
+    B((B)):::current
+    C((C)):::frontier
+    D((D)):::frontier
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+</ul>
+<!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
+</div>
+<div class='to-do-list'>
+<p>To-do list (removed <code>B</code>, added <code>D</code> and <code>A</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>D</td>
+    <td>A</td>
+    <td>C</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p>Eventually, this would cause us to re-visit <code>A</code>, which in turn would re-add <code>B</code> to the to-do list, which would re-add <code>A</code>, and so on.
+Because of this, our search would just ping-pong between <code>A</code> and <code>B</code> forever, never reaching our target <code>E</code>.</p>
+<blockquote>
+<p><strong>To avoid this in a graph with cycles, we need to also keep track of which nodes we've already visited</strong>. Let's revisit our "anatomy of a search" pseudocode. See lines 9 and 10 in our updated pseudocode.</p>
+</blockquote>
+<p>(Note that this assumes a node cannot be its own neighbour.)</p>
+<pre><code class="language-txt">1. | function search(startNode, targetNode) {
+2. |  initialize todoList;
+3. |  add startNode to todoList;
+4. |  while (todoList is not empty) {
+5. |    currentNode = remove next node from todoList;
+6. |    if (currentNode == targetNode) {
+7. |      return "found!";
+8. |    }
+9. |    add ONLY UNVISITED children of currentNode to todoList;
+10.|    mark currentNode as visited;
+11.|  }
+12.|  return "not found";
+13.| }
+</code></pre>
+<p><strong>Here's how our search would progress with this modification.</strong></p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::frontier
+    B((B))
+    C((C))
+    D((D))
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+</ul>
+<!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
+</div>
+<div class='to-do-list'>
+<p>To-do list (added <code>A</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>A</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p>Next, we make <code>A</code> our current node by dequeing it and enqueing its neighbours:</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::current
+    B((B)):::frontier
+    C((C)):::frontier
+    D((D))
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+</ul>
+<!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
+</div>
+<div class='to-do-list'>
+<p>To-do list (removed <code>A</code>, added <code>B</code> and <code>C</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>C</td>
+    <td>B</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p><strong>The big addition here is that we now mark <code>A</code> as visited before picking up one of its neighbours to search next</strong>.</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::visited
+    B((B)):::frontier
+    C((C)):::frontier
+    D((D))
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+<li><span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span></li>
+</ul>
+</div>
+<div class='to-do-list'>
+<p>To-do list:</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>C</td>
+    <td>B</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p>We can now proceed to dequeue <code>B</code>, explore it, and add its unvisited neighbour <code>D</code> to the to-do list (but not <code>A</code>, since it's already been visited):</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::visited
+    B((B)):::current
+    C((C)):::frontier
+    D((D)):::frontier
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+<li><span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span></li>
+</ul>
+</div>
+<div class='to-do-list'>
+<p>To-do list (removed <code>B</code>; added <code>D</code>, <em>but not</em> <code>A</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>D</td>
+    <td>C</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p>The search can now make forward progress instead of going in circles. Hurray!</p>
+<p>We now mark <code>B</code> as visited, and pick up <code>C</code>, since that's first in our queue.</p>
+<p><code>C</code> has three neighbours: <code>A</code> (already visited), <code>D</code> (in the to-do list already), and <code>E</code> (our target!).
+We will add only <code>E</code> to the to-do list (but we won't change its colour in the graph below—don't want you forgetting that its our target!).</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::visited
+    B((B)):::visited
+    C((C)):::current
+    D((D)):::frontier
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+<li><span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span></li>
+</ul>
+</div>
+<div class='to-do-list'>
+<p>To-do list (removed <code>C</code>; added <code>E</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>E</td>
+    <td>D</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p>Next, we'll mark <code>C</code> as visited, and dequeue <code>D</code> from the to-do list.</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::visited
+    B((B)):::visited
+    C((C)):::visited
+    D((D)):::current
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+<li><span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span></li>
+</ul>
+</div>
+<div class='to-do-list'>
+<p>To-do list (removed <code>D</code>):</p>
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>E</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+</div>
+</div>
+<p><code>D</code> has no neighbours that need further action, and the only node left in our to-do list is <code>E</code>, which is our target!</p>
+<p>We finish by dequeuing <code>E</code>, exploring it, and finding that it is indeed our target node.</p>
+<div style='display: flex'>
+<div>
+<pre class="mermaid">graph LR;
+    A((A)):::visited
+    B((B)):::visited
+    C((C)):::visited
+    D((D)):::visited
+    E((E)):::target
+    A---B;
+    A---C;
+    B---D;
+    C---D;
+    D---E;
+    C---E;
+    
+    classDef target fill:#10b981,stroke:#059669,stroke-width:3px,color:#000
+    classDef visited fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff
+    classDef current fill:#f59e0b,stroke:#d97706,stroke-width:4px,color:#000
+    classDef frontier fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000
+</pre>
+</div>
+<div>
+<ul>
+<li><span style="background-color: #10b981; color: black; border: 1pt #059669 solid;">target</span></li>
+<li><span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span></li>
+<li><span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span></li>
+<li><span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span></li>
+</ul>
+</div>
+<div class='to-do-list'>
+<p>To-do list is empty</p>
+</div>
+</div>
+<p>Success!</p>
+<p>We've just walked through a breadth-first search in a graph with cycles, using a to-do list (queue) to manage the nodes we have yet to visit, and also some mechanism to track which nodes we've already visited.</p>
+<blockquote>
+<p><strong>PONDER</strong></p>
+<p>Here are two questions to think about (and unlike the rest of this chapter, these <em>are</em> software design questions):</p>
+<ul>
+<li>How would you manage visited nodes in an actual implementation of this algorithm?</li>
+<li>Right now, all we can say is "yes, we found it". But a more useful search function would give back a path from <code>startNode</code> to <code>targetNode</code>. How would you modify the algorithm to do that? What additional data structures or information would you need to keep track of?</li>
+</ul>
+</blockquote>
+<h2 id="some-interactive-examples"><a class="header" href="#some-interactive-examples">Some interactive examples</a></h2>
+<p>Ok, we have the basic idea of DFS and BFS down.
+Let's see what those algorithms look like in a 2-dimensional grid environment.</p>
+<p>First, recognise that we can think of the grid as a graph.
+Each square in the grid is a node, and each node is connected to its neighbours (up, down, left, right).</p>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@5/dist/inspector.css">
+<h3 id="dfs-depth-first-search"><a class="header" href="#dfs-depth-first-search">DFS (Depth-First Search)</a></h3>
+<p>The interactive widget below lets you visualize a depth-first search in action in a grid-like environment.
+You can use your mouse to drag the start point (green square) and the target point (red square) to different locations on the grid, or click "Shuffle grid" to randomize their locations.</p>
+<p>When you're ready, click "Toggle Search" to start the search.</p>
+<div id="observablehq-viewof-gridControls-dfs"></div>
+<div id="observablehq-instructions-dfs"></div>
+<div id="observablehq-grid-dfs"></div>
+<script type="module">
+import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js";
+import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations.js?v=4";
+new Runtime().module(define, name => {
+  if (name === "viewof gridControls") return new Inspector(document.querySelector("#observablehq-viewof-gridControls-dfs"));
+  if (name === "instructions") return new Inspector(document.querySelector("#observablehq-instructions-dfs"));
+  if (name === "grid") return new Inspector(document.querySelector("#observablehq-grid-dfs"));
+  return ["searchPoints"].includes(name);
+}).redefine("searchType", "DFS");
+</script>
+<p>DFS looks...kind of crazy in a grid, because it goes as deep as possible in one direction before backtracking.
+It is not very efficient in a grid, because so much depends on the order in which directions are explored.</p>
+<p>(In this example, the order is left, up, right, down.)</p>
+<p>We're just not gonna talk more about DFS here.</p>
+<h3 id="bfs-breadth-first-search"><a class="header" href="#bfs-breadth-first-search">BFS (Breadth-First Search)</a></h3>
+<p>The interactive widget below lets you visualize a breadth-first search in action.</p>
+<p>In a tree, BFS looks like a "level-order" search; in a grid, it looks like concentric circles expanding outwards from the start point.</p>
+<div id="observablehq-viewof-gridControls-bfs"></div>
+<div id="observablehq-instructions-bfs"></div>
+<div id="observablehq-grid-bfs"></div>
+<script type="module">
+import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js";
+import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations.js?v=4";
+new Runtime().module(define, name => {
+  if (name === "viewof gridControls") return new Inspector(document.querySelector("#observablehq-viewof-gridControls-bfs"));
+  if (name === "instructions") return new Inspector(document.querySelector("#observablehq-instructions-bfs"));
+  if (name === "grid") return new Inspector(document.querySelector("#observablehq-grid-bfs"));
+  return ["searchPoints"].includes(name);
+}).redefine("searchType", "BFS");
+</script>
+<p>Notice the limitations of BFS in a grid environment: it explores a lot of unnecessary nodes, especially when the start and target points are far apart.</p>
+<p>For example, drag the points so that the end node is directly to the right of the start node, a few spaces away.
+We can <em>see</em> that the shortest path is a straight line to the right, but BFS still explores all the nodes above and below that line.</p>
+<p>That is because BFS naively uses a first-in, first-out queue to explore nodes, without any regard for their actual distance from the target.
+We have information about where the target is (its x-y coordinates), but BFS doesn't use it!</p>
+<h2 id="can-we-do-better"><a class="header" href="#can-we-do-better">Can we do better?</a></h2>
+<div id="observablehq-viewof-gridControls-astar"></div>
+<div id="observablehq-instructions-astar"></div>
+<div id="observablehq-grid-astar"></div>
+<script type="module">
+import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js";
+import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations.js?v=4";
+new Runtime().module(define, name => {
+  if (name === "viewof gridControls") return new Inspector(document.querySelector("#observablehq-viewof-gridControls-astar"));
+  if (name === "instructions") return new Inspector(document.querySelector("#observablehq-instructions-astar"));
+  if (name === "grid") return new Inspector(document.querySelector("#observablehq-grid-astar"));
+  return ["searchPoints"].includes(name);
+}).redefine("searchType", "AStar");
+</script>
+<p><small>Credit: animations embedded from <a href="https://observablehq.com/@ayaankazerouni/search-algorithm-animations">this Observable notebook</a>.</small></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="exceptions"><a class="header" href="#exceptions">Exceptions</a></h1>
 <blockquote>
 <p><em>Exceptions</em> are unexpected occurrences that disrupt the normal flow of your program. In this lesson we'll learn how we can use Java's Exception handling mechanisms for handling Exceptions.</p>
