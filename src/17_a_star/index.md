@@ -1,24 +1,68 @@
 # Search algorithms 
 
+<style>
+.to-do-list {
+  padding-left: 50px;
+}
+</style>
+
 > In this lesson, we'll do a brief recap about search algorithms with which we're already familiar (depth-first search and breadth-first search), and use those as a launchpoint to talk about a "smarter" search algorithm called A* search (pronounced "A-star").
 >
 > This lesson is not quite an _object-oriented programming_ lesson per se. It's definitely very specifically tied to one of the programming projects.
 
-In your previous class (for many of you, CSC 202 _Data Structures_), you learned about [_binary trees_](https://en.wikipedia.org/wiki/Binary_tree).
-A binary tree is a recursive data structure.
-A binary tree is either empty, or it consists of a _node_ that has at most two children, each of which is itself a binary tree.
+In your previous class (for many of you, CSC 202 _Data Structures_), you learned about the general tree data structure.
+A tree is hierarchical data structure, made up of a root node that has zero or more child nodes, each of which is a tree (or a "subtree").
 
-You can also have general _trees_, which are similar to binary trees, except that each node can have any number of children (not just two).
+For example, this is a tree:
+
+```mermaid
+graph TD;
+    A((A))
+    B((B))
+    C((C))
+    D((D))
+    E((E))
+    F((F))
+    G((G))
+
+    A-->B;
+    A-->C;
+    B-->D;
+    B-->E;
+    C-->F;
+    C-->G;
+```
 
 One of the many operations you can perform in trees is to _search_ for a particular value, using some _search algorithm_.
+For example, we may want to find a path from the root of the tree (`A`) to a particular target node (say, `E`).
 
 ## The anatomy of a search
+Two search algorithms that you may already be familiar with are **depth-first search (DFS)** and **breadth-first search (BFS)**.
 
-In general, most search algorithms have the following general structure:
+A **depth-first search** proceeds by exploring (or "visiting") the root node first, then recursively searching each subtree.
+The following animation from Wikipedia illustrates it well:
+
+<figure>
+<img src="./Depth-First-Search.gif" alt="An animation showing a depth-first search.gif" style="max-width: 350px;"/>
+<figcaption>Nodes are numbered by the order in which they would be visited in a depth-first search.<br>
+By <a href="//commons.wikimedia.org/w/index.php?title=User:Mre&amp;action=edit&amp;redlink=1" class="new" title="User:Mre (page does not exist)">Mre</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=6342841">Link</a>
+</figcaption>
+</figure>
+
+In contrast, a **breadth-first search** proceeds by visiting all nodes at a given level (or "depth") before moving on to nodes at the next level.
+
+<figure>
+<img src="./Animated_BFS.gif" alt="An animation showing a breadth-first search." style="max-width: 400px;"/>
+<figcaption>Breadth-first search on a tree structure. First the root is explored, then each node at the next level, then the next level, and so on. Also sometimes known as a "level-order" search.<br>
+<a href="https://commons.wikimedia.org/w/index.php?curid=1864649">By Blake Matheny, CC BY-SA 3.0</a>
+</figcaption>
+</figure>
+
+Both DFS and BFS can be described with the following structure:
 
 * First, know your `startNode` and your `targetNode`.
-* Initialize your "to-do" list of nodes that need to be explored during the search.
-* Add your `startNode` to the "to-do" list.
+* Initialize a "to-do list" of nodes that need to be explored during the search. This is also sometimes called the "frontier".
+* Add your `startNode` to the "to-do" list—it's the first thing that'll be explored.
 * While your to-do list is not empty:
   * Remove the next node from the to-do list.
   * Is it the `targetNode`? If so, you're done!
@@ -26,32 +70,29 @@ In general, most search algorithms have the following general structure:
   * Run this loop again.
 * If you end the loop without having found `targetNode`, then it must not be reachable from `startNode`.
 
-This general structure can describe numerous search algorithms.
-Two examples come to mind:
+Or, expressed in pseudocode:
 
-A **depth-first search** searches by searching the root node first, then recursively searching each subtree.
-The following animation from Wikipedia illustrates it well:
+```txt
+1. | function search(startNode, targetNode) {
+2. |  initialize todoList;
+3. |  add startNode to todoList;
+4. |  while (todoList is not empty) {
+5. |    currentNode = remove next node from todoList;
+6. |    if (currentNode == targetNode) {
+7. |      return "found!";
+8. |    }
+9. |    add children of currentNode to todoList;
+10.|  }
+11.|  return "not found";
+12.| }
+```
 
-<figure>
-<img src="./Depth-First-Search.gif" alt="An animation showing a depth-first search.gif" style="max-width: 350px;"/>
-<figcaption>Depth-First Search example on a tree structure. First the root is explored, then each subtree is explored recursively.<br>
-By <a href="//commons.wikimedia.org/w/index.php?title=User:Mre&amp;action=edit&amp;redlink=1" class="new" title="User:Mre (page does not exist)">Mre</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=6342841">Link</a>
-</figcaption>
-</figure>
+The _only_ difference between DFS and BFS is the order in which the "next" node is removed from the to-do list.
 
-In contrast, a **breadth-first search** searches by searching all nodes at the present depth prior to moving on to the nodes at the next depth level.
+That is, on line 5 above, if we remove the most recently-added node from the to-do list, then we're doing a depth-first search (because we go deep into one branch before exploring others).
+If we remove the least-recently-added node from the to-do list, then we're doing a breadth-first search (because we explore all nodes at the current depth before going deeper).
 
-<figure>
-<img src="./Animated_BFS.gif" alt="An animation showing a breadth-first search." style="max-width: 350px;"/>
-<figcaption>Breadth-first search on a tree structure. First the root is explored, then each node at the next level, then the next level, and so on. Also sometimes known as a "level-order" search.<br>
-<a href="https://commons.wikimedia.org/w/index.php?curid=1864649">By Blake Matheny, CC BY-SA 3.0</a>
-</figcaption>
-</figure>
-
-The _only_ difference between DFS and BFS is the order in which nodes are removed from the to-do list.
-
-> That is, **the choice of data structure used for the to-do list determines whether the search will be depth-first or breadth-first**.
-A DFS uses a _stack_ (last-in, first-out), while a BFS uses a _queue_ (first-in, first-out).
+> Another way to think about this is: in DFS, the to-do list is a **stack** data structure (last-in, first-out), while in BFS, the to-do list is a **queue** data structure (first-in, first-out).
 
 ## Search in a graph
 
@@ -61,10 +102,11 @@ The steps above are sufficient for searches in _tree_ data structures.
 However, in this lesson, we will be focusing on searches in _graph_ data structures.
 
 A **graph** is a set of nodes (also called _vertices_) connected by edges.
-Some key differences between graphs and trees are:
+There are key differences between trees and graphs.
+In graphs,
 
-- In graphs, there's no fixed "root" node. Typically, a "search" in a graph starts from some arbitrarily chosen `startNode`.
-- In graphs, nodes can be connected in arbitrary ways, as opposed to the hierarchical parent-child relationship seen in trees.
+- there's no fixed "root" node. Typically, a "search" in a graph starts from some arbitrarily chosen `startNode`.
+- nodes can be connected in arbitrary ways, as opposed to the hierarchical parent-child relationship seen in trees.
 
 For example, this is a graph, but not a tree:
 
@@ -88,11 +130,11 @@ Crucially, in graphs, there may be _cycles_.
 **Cycles** occur when a node is reachable from itself by following a sequence of edges.
 In the example above, we can start at `A`, and take a series of edges to get back to `A` again: `A -> B -> D -> C -> A`.
 
-> **PONDER**
->
-> Run through our general search algorithm above in your head, using the graph above, starting from node `A` and searching for node `E`. What problem do you run into?
+### Activity 
 
-Let's do the above search using BFS.
+Let's run through our general search algorithm using the graph above.
+We'll start from node `A` and try to search for node `E`. 
+Let's use BFS.
 
 We'll by marking `E` as our target, and adding `A` to our to-do list, which is a queue (because BFS).
 
@@ -129,10 +171,25 @@ graph LR;
 <!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
 </div>
 
+
+<div class='to-do-list'>
+
+To-do list (added `A`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>A</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
+</div>
+
 </div>
 
 
-Our next step is to dequeue `A` from the to-do list, and explore it. Here "exploring" it means checking if it's our target. It's not, so we enqueue its neighbours, `B` and `C`.
+Our next step is to dequeue `A` from the to-do list. It is now our **current** node. It's not our target, so we enqueue its neighbours, `B` and `C`.
 
 <div style='display: flex'>
 <div>
@@ -167,6 +224,21 @@ graph LR;
 <!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
 </div>
 
+<div class='to-do-list'>
+
+To-do list (removed `A`, added `B` and `C`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>C</td>
+    <td>B</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
+</div>
+
 </div>
 
 Now, we'll dequeue `B` from the to-do list, because it was "first in", and explore it.
@@ -174,6 +246,8 @@ Again, exploring it means _adding its neighbours to the to-do list_.
 
 **At this point, we have a problem**.
 When we explore `B`, and try to add its neighbours to our to-do list, we would correctly enqueue `D`. But because `A` is also a neighbour of `B`, we'd end up re-adding `A` to the list!
+
+Even if we didn't re-add `A` now, we would re-add it later when we explore `C`, which is also a neighbour of `A`.
 
 <div style="display: flex">
 
@@ -209,28 +283,49 @@ graph LR;
 <!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
 </div>
 
+<div class='to-do-list'>
+
+To-do list (removed `B`, added `D` and `A`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>D</td>
+    <td>A</td>
+    <td>C</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
 </div>
 
 
-Because of this, our search would just ping-pong between `A` and `B` forever, never reaching our target `E`. That is, we'd go into an infinite loop.
+</div>
 
-**How can we avoid this?** We need to also keep track of which nodes we've already _visited_. Let's revisit our "anatomy of a search", with **the bolded addition**:
+Eventually, this would cause us to re-visit `A`, which in turn would re-add `B` to the to-do list, which would re-add `A`, and so on.
+Because of this, our search would just ping-pong between `A` and `B` forever, never reaching our target `E`.
 
-* First, know your `startNode` and your `targetNode`.
-* Initialize your "to-do" list of nodes that need to be explored during the search.
-* Initialize your "visited" set of nodes that have already been explored.
-* Add your `startNode` to the "to-do" list.
-* While your to-do list is not empty:
-  * Remove the next node from the to-do list.
-  * Is it the `targetNode`? If so, you're done!
-  * **Mark the current node as visited.**
-  * If it's not the `targetNode`, add _only its unvisited neighbours_ to the to-do list.
-  * Run this loop again.
-* If you end the loop without having found `targetNode`, then it must not be reachable
+> **To avoid this in a graph with cycles, we need to also keep track of which nodes we've already visited**. Let's revisit our "anatomy of a search" pseudocode. See lines 9 and 10 in our updated pseudocode.
 
-### Searching while keeping track of visited nodes
+(Note that this assumes a node cannot be its own neighbour.)
 
-Now, our search can proceed as follows. Once again, starting by enqueuing `A`.
+```txt
+1. | function search(startNode, targetNode) {
+2. |  initialize todoList;
+3. |  add startNode to todoList;
+4. |  while (todoList is not empty) {
+5. |    currentNode = remove next node from todoList;
+6. |    if (currentNode == targetNode) {
+7. |      return "found!";
+8. |    }
+9. |    add ONLY UNVISITED children of currentNode to todoList;
+10.|    mark currentNode as visited;
+11.|  }
+12.|  return "not found";
+13.| }
+```
+
+**Here's how our search would progress with this modification.**
 
 <div style='display: flex'>
 <div>
@@ -265,9 +360,23 @@ graph LR;
 <!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
 </div>
 
+<div class='to-do-list'>
+
+To-do list (added `A`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>A</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
 </div>
 
-Next, we make `A` our current node by dequeing it and adding its neighbours:
+</div>
+
+Next, we make `A` our current node by dequeing it and enqueing its neighbours:
 
 <div style='display: flex'>
 <div>
@@ -300,6 +409,21 @@ graph LR;
 - <span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span>
 - <span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span> 
 <!--- The <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">purple</span> nodes have already been visited.-->
+</div>
+
+<div class='to-do-list'>
+
+To-do list (removed `A`, added `B` and `C`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>C</td>
+    <td>B</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
 </div>
 
 </div>
@@ -339,6 +463,22 @@ graph LR;
 - <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span>
 </div>
 
+<div class='to-do-list'>
+
+To-do list:
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>C</td>
+    <td>B</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
+</div>
+
+
 </div>
 
 We can now proceed to dequeue `B`, explore it, and add its unvisited neighbour `D` to the to-do list (but not `A`, since it's already been visited):
@@ -376,9 +516,27 @@ graph LR;
 - <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span>
 </div>
 
+
+<div class='to-do-list'>
+
+To-do list (removed `B`; added `D`, _but not_ `A`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>D</td>
+    <td>C</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
 </div>
 
-The search can now make forward progress, instead of going in circles. We now mark `B` as visited, and pick up `C`, since that's first in our queue.
+</div>
+
+The search can now make forward progress instead of going in circles. Hurray!
+
+We now mark `B` as visited, and pick up `C`, since that's first in our queue.
 
 `C` has three neighbours: `A` (already visited), `D` (in the to-do list already), and `E` (our target!).
 We will add only `E` to the to-do list (but we won't change its colour in the graph below—don't want you forgetting that its our target!).
@@ -414,6 +572,22 @@ graph LR;
 - <span style="background-color: #f59e0b; color: black; border: 1pt #d97706 solid;">current node</span>
 - <span style="background-color: #06b6d4; color: black; border: 1pt #0891b2 solid;">to-do list</span> 
 - <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span>
+</div>
+
+
+<div class='to-do-list'>
+
+To-do list (removed `C`; added `E`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>E</td>
+    <td>D</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
 </div>
 
 </div>
@@ -454,11 +628,25 @@ graph LR;
 - <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span>
 </div>
 
+<div class='to-do-list'>
+
+To-do list (removed `D`):
+
+<table>
+  <tr>
+    <td>&rarr;</td>
+    <td>E</td>
+    <td>&rarr;</td>
+  </tr>
+</table>
+
+</div>
+
 </div>
 
 `D` has no neighbours that need further action, and the only node left in our to-do list is `E`, which is our target!
 
-We finish by dequeuing `E`, exploring it, and finding that it is indeed our target node. Success!
+We finish by dequeuing `E`, exploring it, and finding that it is indeed our target node.
 
 
 <div style='display: flex'>
@@ -494,20 +682,41 @@ graph LR;
 - <span style="background-color: #7c3aed; color: white; border: 1pt #5b21b6 solid;">visited</span>
 </div>
 
+<div class='to-do-list'>
+
+To-do list is empty
+
 </div>
+
+</div>
+
+Success!
+
+We've just walked through a breadth-first search in a graph with cycles, using a to-do list (queue) to manage the nodes we have yet to visit, and also some mechanism to track which nodes we've already visited.
+
+> **PONDER**
+>
+> Here are two questions to think about (and unlike the rest of this chapter, these _are_ software design questions):
+>
+> * How would you manage visited nodes in an actual implementation of this algorithm?
+> * Right now, all we can say is "yes, we found it". But a more useful search function would give back a path from `startNode` to `targetNode`. How would you modify the algorithm to do that? What additional data structures or information would you need to keep track of?
 
 ## Some interactive examples
 
-These interactive widgets let you explore various search algorithms in a grid environment.
+Ok, we have the basic idea of DFS and BFS down.
+Let's see what those algorithms look like in a 2-dimensional grid environment.
+
+First, recognise that we can think of the grid as a graph.
+Each square in the grid is a node, and each node is connected to its neighbours (up, down, left, right).
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@5/dist/inspector.css">
   
 ### DFS (Depth-First Search)
 
-The interactive widget below lets you visualize a depth-first search in action.
+The interactive widget below lets you visualize a depth-first search in action in a grid-like environment.
 You can use your mouse to drag the start point (green square) and the target point (red square) to different locations on the grid, or click "Shuffle grid" to randomize their locations.
 
-When you're ready, click "Toggle Search" to start the search — see how the algorithm explores the grid in a breadth-first manner.
+When you're ready, click "Toggle Search" to start the search.
 
 <div id="observablehq-viewof-gridControls-dfs"></div>
 <div id="observablehq-instructions-dfs"></div>
