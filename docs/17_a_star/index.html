@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Search algorithms (draft) - Cal Poly CSC 203 Lecture notes</title>
+        <title>Search algorithms - Cal Poly CSC 203 Lecture notes</title>
 
 
         <!-- Custom HTML head -->
@@ -768,7 +768,7 @@ new Runtime().module(define, name => {
 </script>
 <p>DFS looks...kind of crazy in a grid, because it goes as deep as possible in one direction before backtracking.
 It is not very efficient in a grid, because so much depends on the order in which directions are explored.</p>
-<p>(In this example, the order is left, up, right, down.)</p>
+<p>(In this example, the order is top, right, bottom, left.)</p>
 <p>We're just not gonna talk more about DFS here.</p>
 <h3 id="bfs-breadth-first-search"><a class="header" href="#bfs-breadth-first-search">BFS (Breadth-First Search)</a></h3>
 <p>The interactive widget below lets you visualize a breadth-first search in action.</p>
@@ -789,9 +789,14 @@ new Runtime().module(define, name => {
 <p>Notice the limitations of BFS in a grid environment: it explores a lot of unnecessary nodes, especially when the start and target points are far apart.</p>
 <p>For example, drag the points so that the end node is directly to the right of the start node, a few spaces away.
 We can <em>see</em> that the shortest path is a straight line to the right, but BFS still explores all the nodes above and below that line.</p>
-<p>That is because BFS naively uses a first-in, first-out queue to explore nodes, without any regard for their actual distance from the target.
-We have information about where the target is (its x-y coordinates), but BFS doesn't use it!</p>
-<h2 id="can-we-do-better"><a class="header" href="#can-we-do-better">Can we do better?</a></h2>
+<p>We have information about where the target is (its x-y coordinates), but BFS doesn't use it!
+That is because BFS naively uses a first-in, first-out queue to explore nodes, without any regard for their actual distance from the target.</p>
+<p><strong>Can we do better?</strong></p>
+<h2 id="a-search"><a class="header" href="#a-search">A* Search</a></h2>
+<p>That is where <strong>A*</strong> (A-star) search comes in.</p>
+<p>A* search is like a "smarter" version of BFS; instead of a simple first-in, first-out queue, it uses a <strong>priority queue</strong> to explore nodes that are "closer" to the target first.</p>
+<p>The best way to see this in action is to use the interactive widget below.
+Align the <code>start</code> and <code>goal</code> points so they're a few spaces apart in a straight line, and see how A* search doesn't waste time searching <em>all around itself</em>, and instead heads straight for the target.</p>
 <div id="observablehq-viewof-gridControls-astar"></div>
 <div id="observablehq-instructions-astar"></div>
 <div id="observablehq-grid-astar"></div>
@@ -805,7 +810,99 @@ new Runtime().module(define, name => {
   return ["searchPoints"].includes(name);
 }).redefine("searchType", "AStar");
 </script>
-<p><small>Credit: animations embedded from <a href="https://observablehq.com/@ayaankazerouni/search-algorithm-animations">this Observable notebook</a>.</small></p>
+<p>As another example, drag the <code>goal</code> point so it's not in a straight line from the <code>start</code> point. See how A* search still heads <em>generally</em> in the right direction. For example, if the <code>goal</code> is upward and to the right of the <code>start</code> point, our visited nodes might still look <em>somewhat</em> like a BFS, except we will avoid searching obviously-wrong directions (like downwards or to the left).</p>
+<h3 id="so-how-does-a-search-work"><a class="header" href="#so-how-does-a-search-work">So how does A* search work?</a></h3>
+<p>Ok, so we have a vague sense that A* search is better than BFS, because it'll likely search fewer nodes due to its use of a priority queue.
+<strong>But how is the priority queue making ordering decisions?</strong> How does it decide what the best "next steps" are?</p>
+<p>The A* algorithm keeps track of two pieces of information for each node: the <strong>g-value</strong> and the <strong>h-value</strong> (defined below).</p>
+<p>The priority of a node is determined by the sum of its g-value and h-value, often called the <strong>f-value</strong>.
+Nodes with lower f-values are given higher priority, and are therefore removed from the priority queue first.</p>
+<p><strong>The g-value</strong></p>
+<p>This is the number of steps taken to get from the <code>start</code> node to the current node. As you consider a node for addition to the priority queue, you can compute this value by taking the g-value of its previous node and adding 1.</p>
+<p>So, for example:</p>
+<ul>
+<li>You start at the <code>start</code>. Its g-value is 0.</li>
+<li>The <code>start</code> node will have four neighbours (assuming it's not at the edge of the grid and none of its neighbours are obstacles). Each of those neighbours will have a g-value of 1 (one step from the start).</li>
+<li>Those neighbours will themselves have neighbours, each with a g-value of 2 (two steps from the start), and so on.</li>
+</ul>
+<p>However, consider that there may be obstacles in the grid that prevent direct movement.
+In that scenario, the g-value will reflect the <em>actual number of steps</em> taken to reach a node, not just the straight-line distance.</p>
+<p>So, for example, you might have a node that's physically 2 steps away from start (based purely on mathematical differences in their coordinates).
+But, if there are obstacles in the way, and your search took 5 steps to reach that node, then that node's g-value is 5.</p>
+<p><strong>The h-value</strong></p>
+<p>The second bit of information that we keep track of for each node is its h-value, also called the <strong>heuristic</strong> value.
+This is the <em>estimated</em> number of steps needed to get from the current node to the <code>goal</code> node.</p>
+<p>This is usually computed using some distance metric, like Manhattan distance or Euclidean distance.</p>
+<p>The Manhattan distance between two points <code>p1</code> and <code>p2</code> is computed as <code>Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y)</code>.
+Intuitively, it's the number of steps you would need to take to get from <code>p1</code> to <code>p2</code>, moving only in straight lines along the grid.</p>
+<p>So in the grid below, the Manhattan distance from A to B is 4.
+Most directly, this could be achieved by moving 2 steps down and 2 steps right, or 2 steps right and 2 steps down.
+Or you could move 1 step down, 2 steps right, and 1 step down.
+Either way, the total number of steps is 4.</p>
+<table>
+  <tr>
+    <td>A</td>
+    <td> . </td>
+    <td> . </td>
+  </tr>
+  <tr>
+    <td> . </td>
+    <td> . </td>
+    <td> . </td>
+  </tr>
+  <tr>
+    <td> . </td>
+    <td> . </td>
+    <td> B </td>
+  </tr>
+</table>
+<p>Euclidean distance is computed as <code>Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))</code> or \( \sqrt{(p1_{x} - p2_{x})^2 + (p1_{y} - p2_{y})^2} \)</p>
+<p>Intuitively, it's the straight-line distance between <code>p1</code> and <code>p2</code>.
+Euclidean distance may be useful if diagonal movement is allowed in the grid.</p>
+<p>In our examples, we're only moving in straight lines, so we'll use Manhattan distance as our heuristic.</p>
+<p><strong>Putting it together</strong></p>
+<p>When considering which node to explore next, A* search computes the <strong>f-value</strong> for each node in the priority queue as <code>f = g + h</code>.</p>
+<blockquote>
+<p>Each node's f-value can be thought of as "the estimated total cost of a path that goes through this node". It includes the <em>known</em> number of steps taken to get here (g-value) and the <em>estimated</em> number of steps needed to reach the goal (h-value).</p>
+</blockquote>
+<h3 id="the-algorithm"><a class="header" href="#the-algorithm">The algorithm</a></h3>
+<ol>
+<li>Know the <code>start</code> and <code>goal</code> nodes.</li>
+<li>Initialize a priority queue (the to-do list). This is often called the "open list".</li>
+<li>Initialize a set to keep track of visited nodes. This is often called the "closed set" or "closed list".</li>
+<li>Add the <code>start</code> node to the priority queue, with a g-value of 0 and an h-value computed using the heuristic function, i.e., <code>manhattan(start, goal)</code>.</li>
+<li>While the priority queue is not empty:
+<ul>
+<li>Remove the node with the lowest f-value from the priority queue. This is the current node.</li>
+<li>If the current node is the <code>goal</code> node, the search is done. <strong>Think about how you would reconstruct the path from <code>start</code> to <code>goal</code> at this point.</strong></li>
+<li>For each unvisited neighbour of the current node:
+<ul>
+<li>Compute its g-value as <code>current.g + 1</code>.</li>
+<li>Compute its h-value using the heuristic function, i.e., <code>manhattan(neighbour, goal)</code>.</li>
+<li>Check if the neighbour is already in the priority queue. (This can happen if you reach a neighbour multiple times via different paths.)
+<ul>
+<li>If the neighbour is not already in the priority queue, add it with its computed g and h values.</li>
+<li>If the neighbour <em>is</em> already in the priority queue, but the new g-value is lower than its existing g-value, update its g and h values in the priority queue. (In practice, this will require removing and re-adding the node to the priority queue to maintain the correct ordering.)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Mark the current node as visited (i.e., add it to the closed list).</li>
+</ul>
+</li>
+</ol>
+<h2 id="but-wait-obstacles"><a class="header" href="#but-wait-obstacles">But wait! Obstacles</a></h2>
+<p>A* search looks miles better than BFS in a grid without obstacles.
+However, even more interesting is how A* search performs in a grid with obstacles.
+Scroll up or click the link to go to the <a href="#observablehq-viewof-gridControls-astar">interactive widget for A-star search</a>.</p>
+<p>Click and drag across the grid to add obstacles (grey squares).
+Obstacles are nodes that cannot be explored or traversed.
+Try placing obstacles in various configurations, for example:</p>
+<ul>
+<li>Place obstacles right around the start point, forcing the search to find a way out.</li>
+<li>Place obstacles around (but not completely blocking) the goal point, forcing the search to find a way in. In particular, note how A*'s use of a heuristic helps it head directly for the goal rather optimistically—until it hits a road block and has to find a way around it.</li>
+<li>What happens when you block off any access to the goal point?</li>
+</ul>
 
                     </main>
 
