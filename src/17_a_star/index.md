@@ -724,7 +724,7 @@ When you're ready, click "Toggle Search" to start the search.
 
 <script type="module">
 import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js";
-import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations.js?v=4";
+import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations@1883.js?v=4";
 new Runtime().module(define, name => {
   if (name === "viewof gridControls") return new Inspector(document.querySelector("#observablehq-viewof-gridControls-dfs"));
   if (name === "instructions") return new Inspector(document.querySelector("#observablehq-instructions-dfs"));
@@ -753,7 +753,7 @@ In a tree, BFS looks like a "level-order" search; in a grid, it looks like conce
 
 <script type="module">
 import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js";
-import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations.js?v=4";
+import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations@1883.js?v=4";
 new Runtime().module(define, name => {
   if (name === "viewof gridControls") return new Inspector(document.querySelector("#observablehq-viewof-gridControls-bfs"));
   if (name === "instructions") return new Inspector(document.querySelector("#observablehq-instructions-bfs"));
@@ -787,7 +787,7 @@ Align the `start` and `goal` points so they're a few spaces apart in a straight 
 
 <script type="module">
 import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js";
-import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations.js?v=4";
+import define from "https://api.observablehq.com/@ayaankazerouni/search-algorithm-animations@1883.js?v=4";
 new Runtime().module(define, name => {
   if (name === "viewof gridControls") return new Inspector(document.querySelector("#observablehq-viewof-gridControls-astar"));
   if (name === "instructions") return new Inspector(document.querySelector("#observablehq-instructions-astar"));
