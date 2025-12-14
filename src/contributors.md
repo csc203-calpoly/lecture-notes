@@ -7,5 +7,6 @@ Various CSC 203 instructors over the years, including
 - Aaron Keen
 - Julie Workman
 - Paul Hatalsky
+- Paris Kalathas
 - Alex Bisberg
 - Sussan Einakian
