@@ -206,12 +206,12 @@ For the purposes of this example, let's assume <code>Album</code> objects have t
 <h3 id="a-for-each-loop-solution"><a class="header" href="#a-for-each-loop-solution">A <code>for-each</code> loop solution</a></h3>
 <p>As you read the code below, try to identify usage of the <strong>map</strong> or <strong>filter</strong> patterns.</p>
 <pre><code class="language-java">public static double averageSalesAfter2000(List&lt;Album&gt; albums) {
-  long sum = 0;
+  double sum = 0;
   int albumsAfter2000 = 0;
 
   for (Album current : albums) {
-    if (album.getYear() &gt; 2000) {
-      long sales = album.getSales();
+    if (current.getYear() &gt; 2000) {
+      long sales = current.getSales();
       sum = sum + sales;
       albumsAfter2000 = albumsAfter2000 + 1;
     }

@@ -189,7 +189,7 @@ Because `p1` and `p2` are *reference types*, each of those variables is pointing
 
 Now, you and me and everyone else understands that if two points have the same `x` and `y` coordinates, they should probably be considered equal.
 
-That is why all reference types provide an `equals` function, which checks *equality* (using some logical definition of equality) rather than *sameness*.
+That is why all existing reference types provide an `equals` function, which checks *equality* (using some logical definition of equality) rather than *sameness*.
 
 We can use it as follows:
 
@@ -318,7 +318,7 @@ int[] scores = new int[4]; // A new array of size 4
 ```
 
 The above line created an array `scores` of size 4. But we didn't specify the contents of this array.
-However, the array is not "empty"—there is no such thing as an empty array in Java.
+However, the array is not "empty"—unless it's a 0-length array, there's always _something_ in the array.
 
 When you create an array, you're allocating that amount of contiguous space for its contents.
 So, whether or not you declare the contents of the array, that space is allocated.

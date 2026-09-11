@@ -310,7 +310,7 @@ The answer is `false`, because the `==` operator checks *sameness*, not *equalit
 Because `p1` and `p2` are *reference types*, each of those variables is pointing to a different location in memory.
 </details>
 <p>Now, you and me and everyone else understands that if two points have the same <code>x</code> and <code>y</code> coordinates, they should probably be considered equal.</p>
-<p>That is why all reference types provide an <code>equals</code> function, which checks <em>equality</em> (using some logical definition of equality) rather than <em>sameness</em>.</p>
+<p>That is why all existing reference types provide an <code>equals</code> function, which checks <em>equality</em> (using some logical definition of equality) rather than <em>sameness</em>.</p>
 <p>We can use it as follows:</p>
 <pre><code class="language-java">Point p1 = new Point(1, 2);
 Point p2 = new Point(1, 2);
@@ -400,7 +400,7 @@ scores[8] = 78; // There is no position 8. This program will crash.
 <pre><code class="language-java">int[] scores = new int[4]; // A new array of size 4
 </code></pre>
 <p>The above line created an array <code>scores</code> of size 4. But we didn't specify the contents of this array.
-However, the array is not "empty"—there is no such thing as an empty array in Java.</p>
+However, the array is not "empty"—unless it's a 0-length array, there's always <em>something</em> in the array.</p>
 <p>When you create an array, you're allocating that amount of contiguous space for its contents.
 So, whether or not you declare the contents of the array, that space is allocated.</p>
 <p>What's sitting in that space?</p>
@@ -777,7 +777,7 @@ According to the documentation, Java by default creates a backing array of size 
 </tbody></table>
 </div>
 <p>Suppose we add ten items to the list.</p>
-<pre><code class="language-java">for (int i = 0: i &lt; 10; i++) {
+<pre><code class="language-java">for (int i = 0; i &lt; 10; i++) {
     list.add(i);
 }
 </code></pre>
@@ -809,8 +809,16 @@ According to the documentation, Java by default creates a backing array of size 
 </tbody></table>
 </div>
 <p>The <code>ArrayList</code> abstracts away all of these gory details, allowing us to deal with the list as simply a dynamically sizeable linear sequence of data.</p>
-<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> (\( \theta(1) \)), i.e., it takes the same amount of time no matter how large the list is.</p>
-<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> (\( \theta(n) \)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
+<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> (O(1)), i.e., it takes the same amount of time no matter how large the list is.</p>
+<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> (O(n)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
+<p><strong>What do you think the cost of the append operation is?</strong></p>
+<p>In the worst case, this would be O(n): the worst case is that we're at capacity and we need copy all items to new backing array, and then add the new item.
+However, this worst case occurs rarely enough to where it's not the most useful to design around the absolute worst case.
+For the vast majority of appends---when we double the size of the backing array each time capacity grows---the cost is O(1).
+The linear cost is an occasional expense that helps most insertions happen quickly.</p>
+<p>We call this the <em>amortized cost</em> of inserting into an <code>ArrayList</code>.</p>
+<p>Of course, if we only increased the backing array size by one each time, then we would incur a linear time cost far more often, and the equation changes dramatically.
+But no efficient <code>ArrayList</code> implementation would do this.</p>
 <p><code>LinkedLists</code></p>
 <p>The other type of list that Java provides is the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html"><code>LinkedList</code></a>. We won't belabour the point here, since you likely studied <code>LinkedLists</code> in the previous class.</p>
 <p>Unlike the <code>ArrayList</code>, the <code>LinkedList</code> is made up of a sequence of objects connected ("linked") by pointers.
@@ -826,13 +834,13 @@ Each item points to the next item, forming a chain of items, i.e., the linked li
 <li>You can check if the list contains an item using the <code>contains</code> method.</li>
 <li>You can check if the list is empty by using the <code>isEmpty</code> method.</li>
 </ul>
-<p>So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the worst case for various tasks.</p>
+<p>So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the <em>worst case</em> for various tasks.</p>
 <div class="table-wrapper"><table><thead><tr><th>Operation</th><th><code>ArrayList</code></th><th><code>LinkedList</code></th></tr></thead><tbody>
-<tr><td>Random access</td><td>\( \theta(1) \)</td><td>\( \theta(n) \)</td></tr>
-<tr><td>Add to end (append)</td><td>\( \theta(n) \)</td><td>\( \theta(1) \)</td></tr>
-<tr><td>Add to arbitrary position</td><td>\( \theta(n) \)</td><td>\( \theta(n) \) to get to the position<br>\( \theta(1) \) to add the item</td></tr>
-<tr><td>Remove (from a given position)</td><td>\( \theta(1) \) to get to the position<br/>\( \theta(n) \) to remove the item and shift items in the list as appropriate</td><td>\( \theta(n) \) to get to the position<br/>\( \theta(1) \) to perform the removal</td></tr>
-<tr><td>Contains</td><td>\( \theta(n) \)</td><td>\( \theta(n) \)</td></tr>
+<tr><td>Random access</td><td>\( O(1) \)</td><td>\( O(n) \)</td></tr>
+<tr><td>Add to end (append)</td><td>Amortized cost is O(1)</td><td>O(1)</td></tr>
+<tr><td>Add to arbitrary position</td><td>O(n)</td><td>O(n)  to get to the position<br> O(1)  to add the item</td></tr>
+<tr><td>Remove (from a given position)</td><td>O(1)  to get to the position<br/> O(n)  to remove the item and shift items in the list as appropriate</td><td>O(n)  to get to the position<br/> O(1)  to perform the removal</td></tr>
+<tr><td>Contains</td><td>O(n)</td><td>O(n)</td></tr>
 </tbody></table>
 </div>
 <h3 id="a-note-about-boxed-primitive-types"><a class="header" href="#a-note-about-boxed-primitive-types">A note about "boxed" primitive types</a></h3>
@@ -1819,6 +1827,7 @@ The <code>GreedyPlayer</code> is not the sharpest tool in the shed, and in addit
     } else {
       toRemove = pile.getSticks();
     }
+    pile.removeSticks(toRemove);
     return toRemove;
   }
 }
@@ -2810,7 +2819,7 @@ public boolean equals(Object other) {
       return false;
    }
 
-   if (getClass().equals(other.getClass())) {
+   if (!getClass().equals(other.getClass())) {
       return false;
    }
 
@@ -3339,9 +3348,9 @@ Collections.sort(albums, titleComp);
 </code></pre>
 <p>In the example above, the comparator is a <em>value</em> that is passed to the <code>sort</code> function as a parameter.
 You can write the function without first storing it in the <code>titleComp</code> variable.</p>
-<pre><code class="language-java">Collections.sort(albums, (Album a1, Album a2) -&gt; a1.getTitle().compareTo(a2.getTitle()));
+<pre><code class="language-java">Collections.sort(albums, (a1, a2) -&gt; a1.getTitle().compareTo(a2.getTitle()));
 </code></pre>
-<p>This time we <em>do</em> need to specify the types of <code>a1</code> and <code>a2</code>, because this time the compiler doesn't have clues from which to infer the the types of those parameters.</p>
+<!-- This time we _do_ need to specify the types of `a1` and `a2`, because this time the compiler doesn't have clues from which to infer the the types of those parameters. -->
 <h3 id="more-lambda-examples"><a class="header" href="#more-lambda-examples">More lambda examples</a></h3>
 <h4 id="compare-albums-by-year-an-int"><a class="header" href="#compare-albums-by-year-an-int">Compare albums by year (an <code>int</code>)</a></h4>
 <p>Here is an example comparator that would compare two <code>Album</code>s by <code>year</code>.</p>
@@ -3727,7 +3736,7 @@ In these cases, lambdas are written inline as arguments to those functions thems
 <p>You <em>could</em> do all of that in a for loop, or you could use lambdas and streams. Here's a sneak peak:</p>
 <pre><code class="language-java">List&lt;Integer&gt; scores = List.of(42, 39, 43, 44, 40, 37, 35);
 
-List&lt;Double&gt; scoresUpdated = scores.stream()
+List&lt;Integer&gt; scoresUpdated = scores.stream()
                                    .map(s -&gt; ((double) s / 44) * 100) // percentages
                                    .map(s -&gt; s + 5) // bump up
                                    .map(Math::round) // round the scores.
@@ -3767,12 +3776,12 @@ For the purposes of this example, let's assume <code>Album</code> objects have t
 <h3 id="a-for-each-loop-solution"><a class="header" href="#a-for-each-loop-solution">A <code>for-each</code> loop solution</a></h3>
 <p>As you read the code below, try to identify usage of the <strong>map</strong> or <strong>filter</strong> patterns.</p>
 <pre><code class="language-java">public static double averageSalesAfter2000(List&lt;Album&gt; albums) {
-  long sum = 0;
+  double sum = 0;
   int albumsAfter2000 = 0;
 
   for (Album current : albums) {
-    if (album.getYear() &gt; 2000) {
-      long sales = album.getSales();
+    if (current.getYear() &gt; 2000) {
+      long sales = current.getSales();
       sum = sum + sales;
       albumsAfter2000 = albumsAfter2000 + 1;
     }
@@ -5381,6 +5390,7 @@ Every path through the <code>try-catch</code> block goes through <code>finally</
 <li>Aaron Keen</li>
 <li>Julie Workman</li>
 <li>Paul Hatalsky</li>
+<li>Paris Kalathas</li>
 <li>Alex Bisberg</li>
 <li>Sussan Einakian</li>
 </ul>

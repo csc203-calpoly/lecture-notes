@@ -164,7 +164,7 @@ And this is our backing array to begin with:
 Suppose we add ten items to the list.
 
 ```java
-for (int i = 0: i < 10; i++) {
+for (int i = 0; i < 10; i++) {
     list.add(i);
 }
 ```
@@ -204,9 +204,21 @@ When the backing array becomes full, the `ArrayList` does the following:
 
 The `ArrayList` abstracts away all of these gory details, allowing us to deal with the list as simply a dynamically sizeable linear sequence of data.
 
-Because the backing data structure is an array, the `ArrayList` lets us access any arbitrary item in the list in *constant time* (\\( \theta(1) \\)), i.e., it takes the same amount of time no matter how large the list is.
+Because the backing data structure is an array, the `ArrayList` lets us access any arbitrary item in the list in *constant time* (O(1)), i.e., it takes the same amount of time no matter how large the list is.
 
-However, this comes with a cost: removing or adding items to the list can take *linear time* (\\( \theta(n) \\)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).
+However, this comes with a cost: removing or adding items to the list can take *linear time* (O(n)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).
+
+**What do you think the cost of the append operation is?**
+
+In the worst case, this would be O(n): the worst case is that we're at capacity and we need copy all items to new backing array, and then add the new item.
+However, this worst case occurs rarely enough to where it's not the most useful to design around the absolute worst case.
+For the vast majority of appends---when we double the size of the backing array each time capacity grows---the cost is O(1).
+The linear cost is an occasional expense that helps most insertions happen quickly.
+
+We call this the _amortized cost_ of inserting into an `ArrayList`.
+
+Of course, if we only increased the backing array size by one each time, then we would incur a linear time cost far more often, and the equation changes dramatically.
+But no efficient `ArrayList` implementation would do this.
 
 `LinkedLists`
 
@@ -229,15 +241,15 @@ It even has mostly the same methods as the `ArrayList`:
 - You can check if the list contains an item using the `contains` method.
 - You can check if the list is empty by using the `isEmpty` method.
 
-So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the worst case for various tasks.
+So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the _worst case_ for various tasks.
 
 |Operation | `ArrayList` | `LinkedList` |
 | -- | -- | -- |
-| Random access | \\( \theta(1) \\) | \\( \theta(n) \\) |
-| Add to end (append) | \\( \theta(n) \\) | \\( \theta(1) \\) |
-| Add to arbitrary position | \\( \theta(n) \\) | \\( \theta(n) \\) to get to the position<br>\\( \theta(1) \\) to add the item|
-| Remove (from a given position) | \\( \theta(1) \\) to get to the position<br/>\\( \theta(n) \\) to remove the item and shift items in the list as appropriate | \\( \theta(n) \\) to get to the position<br/>\\( \theta(1) \\) to perform the removal |
-| Contains | \\( \theta(n) \\) | \\( \theta(n) \\) |
+| Random access | \\( O(1) \\) | \\( O(n) \\) |
+| Add to end (append) | Amortized cost is O(1)  |  O(1)  |
+| Add to arbitrary position |  O(n)  |  O(n)  to get to the position<br> O(1)  to add the item|
+| Remove (from a given position) |  O(1)  to get to the position<br/> O(n)  to remove the item and shift items in the list as appropriate |  O(n)  to get to the position<br/> O(1)  to perform the removal |
+| Contains |  O(n)  |  O(n)  |
 
 ### A note about "boxed" primitive types
 

@@ -301,6 +301,7 @@ The <code>GreedyPlayer</code> is not the sharpest tool in the shed, and in addit
     } else {
       toRemove = pile.getSticks();
     }
+    pile.removeSticks(toRemove);
     return toRemove;
   }
 }

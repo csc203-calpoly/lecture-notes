@@ -152,10 +152,10 @@ In the example above, the comparator is a _value_ that is passed to the `sort` f
 You can write the function without first storing it in the `titleComp` variable.
 
 ```java
-Collections.sort(albums, (Album a1, Album a2) -> a1.getTitle().compareTo(a2.getTitle()));
+Collections.sort(albums, (a1, a2) -> a1.getTitle().compareTo(a2.getTitle()));
 ```
 
-This time we _do_ need to specify the types of `a1` and `a2`, because this time the compiler doesn't have clues from which to infer the the types of those parameters.
+<!-- This time we _do_ need to specify the types of `a1` and `a2`, because this time the compiler doesn't have clues from which to infer the the types of those parameters. -->
 
 ### More lambda examples
 

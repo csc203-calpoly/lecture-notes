@@ -292,9 +292,9 @@ Collections.sort(albums, titleComp);
 </code></pre>
 <p>In the example above, the comparator is a <em>value</em> that is passed to the <code>sort</code> function as a parameter.
 You can write the function without first storing it in the <code>titleComp</code> variable.</p>
-<pre><code class="language-java">Collections.sort(albums, (Album a1, Album a2) -&gt; a1.getTitle().compareTo(a2.getTitle()));
+<pre><code class="language-java">Collections.sort(albums, (a1, a2) -&gt; a1.getTitle().compareTo(a2.getTitle()));
 </code></pre>
-<p>This time we <em>do</em> need to specify the types of <code>a1</code> and <code>a2</code>, because this time the compiler doesn't have clues from which to infer the the types of those parameters.</p>
+<!-- This time we _do_ need to specify the types of `a1` and `a2`, because this time the compiler doesn't have clues from which to infer the the types of those parameters. -->
 <h3 id="more-lambda-examples"><a class="header" href="#more-lambda-examples">More lambda examples</a></h3>
 <h4 id="compare-albums-by-year-an-int"><a class="header" href="#compare-albums-by-year-an-int">Compare albums by year (an <code>int</code>)</a></h4>
 <p>Here is an example comparator that would compare two <code>Album</code>s by <code>year</code>.</p>

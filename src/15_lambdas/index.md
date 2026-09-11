@@ -371,7 +371,7 @@ You _could_ do all of that in a for loop, or you could use lambdas and streams. 
 ```java
 List<Integer> scores = List.of(42, 39, 43, 44, 40, 37, 35);
 
-List<Double> scoresUpdated = scores.stream()
+List<Integer> scoresUpdated = scores.stream()
                                    .map(s -> ((double) s / 44) * 100) // percentages
                                    .map(s -> s + 5) // bump up
                                    .map(Math::round) // round the scores.

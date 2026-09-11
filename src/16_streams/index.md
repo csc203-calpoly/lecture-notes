@@ -36,12 +36,12 @@ As you read the code below, try to identify usage of the **map** or **filter** p
 
 ```java
 public static double averageSalesAfter2000(List<Album> albums) {
-  long sum = 0;
+  double sum = 0;
   int albumsAfter2000 = 0;
 
   for (Album current : albums) {
-    if (album.getYear() > 2000) {
-      long sales = album.getSales();
+    if (current.getYear() > 2000) {
+      long sales = current.getSales();
       sum = sum + sales;
       albumsAfter2000 = albumsAfter2000 + 1;
     }

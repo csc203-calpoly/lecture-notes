@@ -288,7 +288,7 @@ public boolean equals(Object other) {
       return false;
    }
 
-   if (getClass().equals(other.getClass())) {
+   if (!getClass().equals(other.getClass())) {
       return false;
    }
 

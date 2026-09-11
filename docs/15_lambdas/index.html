@@ -445,7 +445,7 @@ In these cases, lambdas are written inline as arguments to those functions thems
 <p>You <em>could</em> do all of that in a for loop, or you could use lambdas and streams. Here's a sneak peak:</p>
 <pre><code class="language-java">List&lt;Integer&gt; scores = List.of(42, 39, 43, 44, 40, 37, 35);
 
-List&lt;Double&gt; scoresUpdated = scores.stream()
+List&lt;Integer&gt; scoresUpdated = scores.stream()
                                    .map(s -&gt; ((double) s / 44) * 100) // percentages
                                    .map(s -&gt; s + 5) // bump up
                                    .map(Math::round) // round the scores.

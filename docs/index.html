@@ -309,7 +309,7 @@ The answer is `false`, because the `==` operator checks *sameness*, not *equalit
 Because `p1` and `p2` are *reference types*, each of those variables is pointing to a different location in memory.
 </details>
 <p>Now, you and me and everyone else understands that if two points have the same <code>x</code> and <code>y</code> coordinates, they should probably be considered equal.</p>
-<p>That is why all reference types provide an <code>equals</code> function, which checks <em>equality</em> (using some logical definition of equality) rather than <em>sameness</em>.</p>
+<p>That is why all existing reference types provide an <code>equals</code> function, which checks <em>equality</em> (using some logical definition of equality) rather than <em>sameness</em>.</p>
 <p>We can use it as follows:</p>
 <pre><code class="language-java">Point p1 = new Point(1, 2);
 Point p2 = new Point(1, 2);
@@ -399,7 +399,7 @@ scores[8] = 78; // There is no position 8. This program will crash.
 <pre><code class="language-java">int[] scores = new int[4]; // A new array of size 4
 </code></pre>
 <p>The above line created an array <code>scores</code> of size 4. But we didn't specify the contents of this array.
-However, the array is not "empty"—there is no such thing as an empty array in Java.</p>
+However, the array is not "empty"—unless it's a 0-length array, there's always <em>something</em> in the array.</p>
 <p>When you create an array, you're allocating that amount of contiguous space for its contents.
 So, whether or not you declare the contents of the array, that space is allocated.</p>
 <p>What's sitting in that space?</p>

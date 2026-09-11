@@ -289,7 +289,7 @@ According to the documentation, Java by default creates a backing array of size 
 </tbody></table>
 </div>
 <p>Suppose we add ten items to the list.</p>
-<pre><code class="language-java">for (int i = 0: i &lt; 10; i++) {
+<pre><code class="language-java">for (int i = 0; i &lt; 10; i++) {
     list.add(i);
 }
 </code></pre>
@@ -321,8 +321,16 @@ According to the documentation, Java by default creates a backing array of size 
 </tbody></table>
 </div>
 <p>The <code>ArrayList</code> abstracts away all of these gory details, allowing us to deal with the list as simply a dynamically sizeable linear sequence of data.</p>
-<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> (\( \theta(1) \)), i.e., it takes the same amount of time no matter how large the list is.</p>
-<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> (\( \theta(n) \)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
+<p>Because the backing data structure is an array, the <code>ArrayList</code> lets us access any arbitrary item in the list in <em>constant time</em> (O(1)), i.e., it takes the same amount of time no matter how large the list is.</p>
+<p>However, this comes with a cost: removing or adding items to the list can take <em>linear time</em> (O(n)) in the worst case, because all items in the backing might need to be shifted left (after removals) or right (before additions).</p>
+<p><strong>What do you think the cost of the append operation is?</strong></p>
+<p>In the worst case, this would be O(n): the worst case is that we're at capacity and we need copy all items to new backing array, and then add the new item.
+However, this worst case occurs rarely enough to where it's not the most useful to design around the absolute worst case.
+For the vast majority of appends---when we double the size of the backing array each time capacity grows---the cost is O(1).
+The linear cost is an occasional expense that helps most insertions happen quickly.</p>
+<p>We call this the <em>amortized cost</em> of inserting into an <code>ArrayList</code>.</p>
+<p>Of course, if we only increased the backing array size by one each time, then we would incur a linear time cost far more often, and the equation changes dramatically.
+But no efficient <code>ArrayList</code> implementation would do this.</p>
 <p><code>LinkedLists</code></p>
 <p>The other type of list that Java provides is the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html"><code>LinkedList</code></a>. We won't belabour the point here, since you likely studied <code>LinkedLists</code> in the previous class.</p>
 <p>Unlike the <code>ArrayList</code>, the <code>LinkedList</code> is made up of a sequence of objects connected ("linked") by pointers.
@@ -338,13 +346,13 @@ Each item points to the next item, forming a chain of items, i.e., the linked li
 <li>You can check if the list contains an item using the <code>contains</code> method.</li>
 <li>You can check if the list is empty by using the <code>isEmpty</code> method.</li>
 </ul>
-<p>So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the worst case for various tasks.</p>
+<p>So when should you use one vs. the other? Each one is better for certain kinds of tasks. The table below shows their time complexities in the <em>worst case</em> for various tasks.</p>
 <div class="table-wrapper"><table><thead><tr><th>Operation</th><th><code>ArrayList</code></th><th><code>LinkedList</code></th></tr></thead><tbody>
-<tr><td>Random access</td><td>\( \theta(1) \)</td><td>\( \theta(n) \)</td></tr>
-<tr><td>Add to end (append)</td><td>\( \theta(n) \)</td><td>\( \theta(1) \)</td></tr>
-<tr><td>Add to arbitrary position</td><td>\( \theta(n) \)</td><td>\( \theta(n) \) to get to the position<br>\( \theta(1) \) to add the item</td></tr>
-<tr><td>Remove (from a given position)</td><td>\( \theta(1) \) to get to the position<br/>\( \theta(n) \) to remove the item and shift items in the list as appropriate</td><td>\( \theta(n) \) to get to the position<br/>\( \theta(1) \) to perform the removal</td></tr>
-<tr><td>Contains</td><td>\( \theta(n) \)</td><td>\( \theta(n) \)</td></tr>
+<tr><td>Random access</td><td>\( O(1) \)</td><td>\( O(n) \)</td></tr>
+<tr><td>Add to end (append)</td><td>Amortized cost is O(1)</td><td>O(1)</td></tr>
+<tr><td>Add to arbitrary position</td><td>O(n)</td><td>O(n)  to get to the position<br> O(1)  to add the item</td></tr>
+<tr><td>Remove (from a given position)</td><td>O(1)  to get to the position<br/> O(n)  to remove the item and shift items in the list as appropriate</td><td>O(n)  to get to the position<br/> O(1)  to perform the removal</td></tr>
+<tr><td>Contains</td><td>O(n)</td><td>O(n)</td></tr>
 </tbody></table>
 </div>
 <h3 id="a-note-about-boxed-primitive-types"><a class="header" href="#a-note-about-boxed-primitive-types">A note about "boxed" primitive types</a></h3>

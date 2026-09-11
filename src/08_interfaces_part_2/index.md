@@ -150,6 +150,7 @@ public class GreedyPlayer implements Player {
     } else {
       toRemove = pile.getSticks();
     }
+    pile.removeSticks(toRemove);
     return toRemove;
   }
 }
